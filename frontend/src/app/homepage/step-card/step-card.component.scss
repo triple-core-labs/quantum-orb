@@ -1,0 +1,15 @@
+:host {
+  @apply relative flex flex-col justify-start items-start gap-y-8 text-pale;
+
+  .label {
+    @apply text-lg font-bold uppercase;
+  }
+
+  .description {
+    @apply text-sm;
+  }
+
+  .card-number {
+    @apply text-yellow text-lg border-pale border rounded-full text-center w-[40px] aspect-square p-3 absolute right-[calc(100%+1rem)] top-0;
+  }
+}
