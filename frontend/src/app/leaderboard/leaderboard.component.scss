@@ -1,23 +1,48 @@
-body {
-    color: #FCFDC7;
-  }
+:host {
+    @apply block bg-black;
 
-  h1{
-    text-align: center;
-    color: #FCFDC7;
-  }
-  
-  table {
+    .leaderboard {
+        @apply flex flex-col items-center gap-y-12 w-full;
 
-    td, th {
-      text-align: center;
+        .title {
+            @apply flex justify-between items-center text-pale w-full;
+        }
+
+        .table {
+            @apply w-full;
+
+            th.rank {
+                @apply w-16; // 70px
+              }
+        
+              th.address {
+                @apply w-96; // 420px
+              }
+        
+              th.invitations {
+                @apply w-36; // 140px
+              }
+        
+              th.points {
+                @apply w-36; // 140px
+              }
+
+            td, th {
+                @apply text-center;
+            }
+
+            thead {
+                @apply text-yellow;
+              }
+
+            td {
+                @apply text-pale;
+            }
+            
+            tr {
+                @apply mb-5; // 20px
+            }
+            
+        }
     }
-
-    th{
-        color: #FCFC03;
-    }
-
-    td{
-        color: #FCFDC7;
-    }
-  }
+}
