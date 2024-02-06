@@ -85,7 +85,7 @@
     }
 
     .action-button {
-      @apply max-md:block max-md:absolute max-md:left-1/2 max-md:-translate-x-1/2 max-md:bottom-12;
+      @apply max-md:block max-md:absolute max-md:left-1/2 max-md:-translate-x-1/2 max-md:bottom-4;
 
       svg {
         @apply hidden;
