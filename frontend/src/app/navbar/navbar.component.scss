@@ -1,0 +1,33 @@
+:host {
+  @apply w-[90%] h-[93px] max-w-[1296px] flex justify-between pt-4 fixed top-0 left-1/2 -translate-x-1/2 backdrop-blur-md;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 80.5px,
+    87.2% 80.5px,
+    85.7% 100%,
+    17.7% 100%,
+    16.2% 80.5px,
+    0 80.5px
+  );
+
+  .logo {
+    @apply ml-[5%];
+  }
+
+  nav {
+    @apply absolute left-1/2 -translate-x-1/2 top-10 flex justify-center items-center gap-x-8 text-pale text-sm;
+
+    a {
+      @apply relative transition-colors hover:text-yellow;
+
+      &:before {
+        @apply absolute left-0 top-full w-0 bg-yellow h-[2px] transition-[width];
+      }
+
+      &.active {
+        @apply before:w-full;
+      }
+    }
+  }
+}

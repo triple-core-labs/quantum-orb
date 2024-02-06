@@ -1,0 +1,31 @@
+:host {
+  @apply flex flex-col justify-start items-center gap-y-32 w-full;
+
+  .opening {
+    @apply w-full flex justify-between items-center;
+
+    .left-part {
+      @apply w-3/5 flex flex-col justify-start items-start gap-y-8;
+
+      h1 {
+        @apply text-pale;
+
+        span {
+          @apply text-yellow;
+        }
+      }
+
+      p {
+        @apply text-pale text-base;
+      }
+    }
+
+    .right-part {
+      @apply w-2/5 flex justify-center items-center;
+    }
+  }
+
+  .steps {
+    @apply grid grid-cols-4 gap-32 px-16;
+  }
+}
