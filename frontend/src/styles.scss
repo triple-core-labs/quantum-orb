@@ -21,6 +21,23 @@ body {
 }
 
 @layer base {
+  *::-webkit-scrollbar {
+    width: 7px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    @apply bg-black;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    @apply bg-yellow;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    @apply bg-yellow/80;
+  }
+
   h1 {
     @apply text-6xl font-bold;
   }
