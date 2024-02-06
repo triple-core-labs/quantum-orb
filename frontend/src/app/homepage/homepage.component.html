@@ -1,1 +1,47 @@
-<p>homepage works!</p>
+<div class="opening">
+  <div class="left-part">
+    <h1>UNBOX YOUR <span>LUCK</span></h1>
+    <p>
+      Participate in everyday orb opening and maximize your chances of getting
+      airdrop
+    </p>
+    <button class="action-button">START NOW</button>
+  </div>
+  <div class="right-part">
+    <img
+      src="/assets/images/opening_orb.png"
+      alt="A split in half planet with glowing reward inside"
+    />
+  </div>
+</div>
+
+<div class="steps">
+  <step-card
+    [label]="'connect wallet'"
+    [description]="'Connect your preferred wallet'"
+    [img]="'/assets/images/card1.png'"
+    [cardNumber]="1"
+  ></step-card>
+  <step-card
+    [label]="'open orbs'"
+    [description]="
+      'Lorem ipsum dolor sit amet consectetur. Platea vulputate accumsan nam penatibus purus.'
+    "
+    [img]="'/assets/images/card2.png'"
+    [cardNumber]="2"
+  ></step-card>
+  <step-card
+    [label]="'earn points'"
+    [description]="'Earn points to maximize your chances of getting airdrop'"
+    [img]="'/assets/images/card3.png'"
+    [cardNumber]="3"
+  ></step-card>
+  <step-card
+    [label]="'invite friend'"
+    [description]="
+      'Invite friends using our referral programm and earn rewards for each of them'
+    "
+    [img]="'/assets/images/card4.png'"
+    [cardNumber]="4"
+  ></step-card>
+</div>

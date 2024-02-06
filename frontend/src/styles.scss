@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "Tomorrow";
+  src: url("./assets/fonts/Tomorrow-Light.ttf");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Tomorrow";
+  src: url("./assets/fonts/Tomorrow-Bold.ttf");
+  font-weight: bold;
+}
+
+html,
+body {
+  @apply h-full w-full m-0 bg-black relative flex flex-col justify-start items-center;
+  font-family: Tomorrow, "Helvetica Neue", sans-serif;
+}
+
+@layer base {
+  h1 {
+    @apply text-6xl font-bold;
+  }
+
+  .action-button {
+    @apply bg-yellow px-4 py-2 text-black font-bold text-lg uppercase h-max;
+    clip-path: polygon(
+      0 0,
+      calc(100% - 15px) 0,
+      100% 15px,
+      100% 100%,
+      calc(100% - 25px) 100%,
+      calc(100% - 25px) calc(100% - 5px),
+      calc(100% - 60px) calc(100% - 5px),
+      calc(100% - 60px) 100%,
+      15px 100%,
+      0 calc(100% - 15px)
+    );
+  }
+}
