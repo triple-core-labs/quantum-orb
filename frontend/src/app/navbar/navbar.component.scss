@@ -1,40 +1,40 @@
 :host {
-  @apply w-[calc(100%-4rem)] h-[93px] max-w-screen-limit flex justify-between pt-4 fixed top-0 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-md z-50;
+  @apply w-full md:w-[calc(100%-4rem)] h-[93px] max-w-screen-limit flex justify-between max-md:px-4 pt-4 fixed top-0 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-md z-50 transition-all;
   clip-path: polygon(
     0 0,
     100% 0,
-    100% 80.5px,
-    87.2% 80.5px,
+    100% calc(100% - 12px),
+    87.2% calc(100% - 12px),
     85.7% 100%,
     17.7% 100%,
-    16.2% 80.5px,
-    0 80.5px
+    16.2% calc(100% - 12px),
+    0 calc(100% - 12px)
   );
 
   &:after {
     @apply content-[''] bg-yellow/30 w-full h-full absolute left-0 top-0;
     clip-path: polygon(
-      0 79px,
-      calc(16.2% + 1px) 79px,
+      0 calc(100% - 13.5px),
+      calc(16.2% + 1px) calc(100% - 13.5px),
       calc(17.7% + 1px) calc(100% - 1px),
       calc(85.7% - 1px) calc(100% - 1px),
-      calc(87.2% - 1px) 79px,
-      100% 79px,
-      100% 80.5px,
-      87.2% 80.5px,
+      calc(87.2% - 1px) calc(100% - 13.5px),
+      100% calc(100% - 13.5px),
+      100% calc(100% - 12px),
+      87.2% calc(100% - 12px),
       85.7% 100%,
       17.7% 100%,
-      16.2% 80.5px,
-      0 80.5px
+      16.2% calc(100% - 12px),
+      0 calc(100% - 12px)
     );
   }
 
   .logo {
-    @apply ml-[5%];
+    @apply max-md:scale-75 md:ml-[5%];
   }
 
   nav {
-    @apply absolute left-1/2 -translate-x-1/2 top-10 flex justify-center items-center gap-x-8 text-pale text-sm;
+    @apply absolute left-1/2 -translate-x-1/2 top-10 hidden md:flex justify-center items-center gap-x-8 text-pale text-sm;
 
     a {
       @apply relative transition-colors hover:text-yellow;
@@ -45,6 +45,64 @@
 
       &.active {
         @apply before:w-full;
+      }
+    }
+  }
+
+  .action-button {
+    @apply hidden md:block;
+
+    svg {
+      @apply w-[1.5em] lg:hidden;
+    }
+
+    span {
+      @apply max-lg:hidden;
+    }
+  }
+
+  .menu-button {
+    @apply flex items-start pt-3 md:hidden;
+
+    svg {
+      @apply w-[1.5em] fill-yellow;
+    }
+
+    #close {
+      @apply hidden;
+    }
+  }
+
+  &.active {
+    @apply max-md:h-[50%] max-md:bg-yellow/50;
+
+    nav {
+      @apply max-md:flex max-md:flex-col max-md:justify-end gap-y-8 max-md:top-1/2 max-md:-translate-y-1/2;
+
+      a {
+        @apply max-md:text-black max-md:text-2xl hover:text-yellow;
+      }
+    }
+
+    .action-button {
+      @apply max-md:block max-md:absolute max-md:left-1/2 max-md:-translate-x-1/2 max-md:bottom-12;
+
+      svg {
+        @apply hidden;
+      }
+
+      span {
+        @apply block;
+      }
+    }
+
+    .menu-button {
+      #burger {
+        @apply hidden;
+      }
+
+      #close {
+        @apply block;
       }
     }
   }
