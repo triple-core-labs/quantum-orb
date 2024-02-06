@@ -2,13 +2,13 @@
   @apply flex flex-col justify-start items-center gap-y-48 w-full;
 
   .opening {
-    @apply w-full flex justify-between items-center;
+    @apply w-full flex flex-col md:flex-row justify-start gap-x-8 gap-y-16 md:justify-between items-center;
 
     .left-part {
-      @apply w-3/5 flex flex-col justify-start items-start gap-y-8;
+      @apply w-full md:w-3/5 flex flex-col justify-start items-center md:items-start gap-y-8;
 
       h1 {
-        @apply text-pale;
+        @apply max-md:text-center text-pale;
 
         span {
           @apply text-yellow;
@@ -16,16 +16,20 @@
       }
 
       p {
-        @apply text-pale text-base;
+        @apply max-md:text-center text-pale text-base;
       }
     }
 
     .right-part {
-      @apply w-2/5 flex justify-center items-center;
+      @apply w-full md:w-2/5 flex justify-center items-center;
+
+      img {
+        @apply w-1/2 max-md:min-w-[280px] md:w-3/4;
+      }
     }
   }
 
   .steps {
-    @apply grid grid-cols-4 gap-32 px-16;
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-16 gap-y-32 px-0 md:px-16;
   }
 }
