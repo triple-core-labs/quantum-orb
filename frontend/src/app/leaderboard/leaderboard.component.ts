@@ -11,8 +11,8 @@ export class LeaderboardComponent implements OnInit {
   constructor() {
     // Mock leaderboard data (replace this with actual data fetching logic)
     this.leaderboardData = [
-      { rank: 1, address: 'Player 1', invitations: 25, points: 100 },
-      { rank: 2, address: 'Player 2', invitations: 25, points: 90 },
+      { rank: 1, address: 'TQrzzX7c8jWDkEZ6SK8EEg4GMmZhBQXakh', invitations: 25, points: 100600 },
+      { rank: 2, address: 'TQrzzX7c8jWDkEZ6SK8EEg4GMmZhBQXakh', invitations: 25, points: 1 },
     ];
   }
 
