@@ -1,0 +1,22 @@
+<div>
+    <h1>Leaderboard</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Address</th>
+          <th>Invitations</th>
+          <th>Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let player of leaderboardData">
+          <td>{{ player.rank }}</td>
+          <td>{{ player.address }}</td>
+          <td>{{ player.invitations }}</td>
+          <td>{{ player.points }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

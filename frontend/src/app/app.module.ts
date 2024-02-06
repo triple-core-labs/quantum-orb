@@ -5,6 +5,7 @@ import { HomepageComponent } from './homepage/homepage.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NavbarComponent } from './navbar/navbar.component';
 import { StepCardComponent } from './homepage/step-card/step-card.component';
+import { LeaderboardComponent } from './leaderboard/leaderboard.component';
 
 @NgModule({
   declarations: [
@@ -12,6 +13,7 @@ import { StepCardComponent } from './homepage/step-card/step-card.component';
     HomepageComponent,
     NavbarComponent,
     StepCardComponent,
+    LeaderboardComponent
   ],
   imports: [BrowserModule, AppRoutingModule],
   providers: [],
