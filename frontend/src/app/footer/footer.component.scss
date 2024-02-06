@@ -1,0 +1,32 @@
+:host {
+  @apply w-[calc(100%-4rem)] h-[70px] max-w-screen-limit flex justify-center items-start text-pale text-sm pt-4 fixed bottom-0 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-md z-50;
+
+  clip-path: polygon(
+    0 100%,
+    0 11px,
+    16.2% 11px,
+    17.7% 0,
+    85.7% 0,
+    87.2% 11px,
+    100% 11px,
+    100% 100%
+  );
+
+  &:after {
+    @apply content-[''] bg-yellow/30 w-full h-full absolute left-0 bottom-0;
+    clip-path: polygon(
+      0 11px,
+      16.2% 11px,
+      17.7% 0,
+      85.7% 0,
+      87.2% 11px,
+      100% 11px,
+      100% 12.5px,
+      calc(87.2% - 1px) 12.5px,
+      calc(85.7% - 1px) 1px,
+      calc(17.7% + 1px) 1px,
+      calc(16.2% + 1px) 12.5px,
+      0 12.5px
+    );
+  }
+}
