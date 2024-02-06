@@ -1,5 +1,5 @@
 :host {
-  @apply w-[calc(100%-4rem)] h-[93px] max-w-screen-limit flex justify-between pt-4 fixed top-0 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-md;
+  @apply w-[calc(100%-4rem)] h-[93px] max-w-screen-limit flex justify-between pt-4 fixed top-0 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-md z-50;
   clip-path: polygon(
     0 0,
     100% 0,
