@@ -1,15 +1,23 @@
 :host {
-  @apply relative flex flex-col justify-start items-start gap-y-8 text-pale;
+  @apply relative flex flex-col justify-between items-center md:items-start gap-y-8 text-pale;
 
-  .label {
-    @apply text-lg font-bold uppercase;
+  .textual {
+    @apply flex flex-col justify-start items-center md:items-start gap-y-4 md:gap-y-8;
+
+    .label {
+      @apply text-lg font-bold uppercase max-md:text-center;
+    }
+
+    .description {
+      @apply text-sm max-md:text-center;
+    }
   }
 
-  .description {
-    @apply text-sm;
+  img {
+    @apply w-full max-md:max-w-[300px];
   }
 
   .card-number {
-    @apply text-yellow text-lg border-pale border rounded-full text-center w-[40px] aspect-square p-3 absolute right-[calc(100%+1rem)] top-0;
+    @apply text-yellow text-lg border-pale/30 border rounded-full text-center w-[40px] aspect-square absolute right-1/2 max-md:translate-x-1/2 top-0 max-md:-translate-y-[calc(100%+1rem)] md:right-[calc(100%+0.5rem)] md:-top-[7px] flex justify-center items-center font-bold;
   }
 }

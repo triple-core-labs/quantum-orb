@@ -1,15 +1,7 @@
 :host {
-  @apply w-[90%] max-w-[1296px] flex flex-col py-48 justify-start items-center;
+  @apply w-full max-w-screen-limit px-8 md:px-16 flex flex-col py-48 justify-start items-center;
 
   .screen-outline {
     @apply fixed w-full h-full left-1/2 -translate-x-1/2 top-0;
-  }
-
-  .top-screen-outline {
-    @apply fixed w-[90%] max-w-[1296px] left-1/2 -translate-x-1/2 top-20;
-  }
-
-  .bottom-screen-outline {
-    @apply fixed w-[90%] max-w-[1296px] left-1/2 -translate-x-1/2 bottom-12;
   }
 }

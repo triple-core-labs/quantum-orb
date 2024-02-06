@@ -21,12 +21,29 @@ body {
 }
 
 @layer base {
+  *::-webkit-scrollbar {
+    width: 7px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    @apply bg-black;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    @apply bg-yellow;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    @apply bg-yellow/80;
+  }
+
   h1 {
     @apply text-6xl font-bold;
   }
 
   .action-button {
-    @apply bg-yellow px-4 py-2 text-black font-bold text-lg uppercase h-max;
+    @apply bg-yellow px-4 py-2 text-black font-bold text-lg uppercase h-max transition-all relative;
     clip-path: polygon(
       0 0,
       calc(100% - 15px) 0,
@@ -39,5 +56,25 @@ body {
       15px 100%,
       0 calc(100% - 15px)
     );
+
+    &:before {
+      @apply content-[''] w-[4px] h-0 absolute bg-red-500 right-0 bottom-0 transition-all;
+    }
+
+    &:hover {
+      @apply pr-8 before:h-full;
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 15px,
+        100% 100%,
+        calc(100% - 25px) 100%,
+        calc(100% - 25px) calc(100% - 5px),
+        calc(100% - 60px) calc(100% - 5px),
+        calc(100% - 60px) 100%,
+        15px 100%,
+        0 calc(100% - 15px)
+      );
+    }
   }
 }
