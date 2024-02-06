@@ -11,10 +11,10 @@
       </thead>
       <tbody>
         <tr *ngFor="let player of leaderboardData">
-          <td>{{ player.rank }}</td>
-          <td>{{ player.address }}</td>
-          <td>{{ player.invitations }}</td>
-          <td>{{ player.points }}</td>
+          <td class="user-rank" >{{ player.rank }}</td>
+          <td class="user-address">{{ player.address }}</td>
+          <td class="user-invitations">{{ player.invitations }}</td>
+          <td class="user-points">{{ player.points }}</td>
         </tr>
       </tbody>
     </table>
