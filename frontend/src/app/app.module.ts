@@ -7,6 +7,8 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { StepCardComponent } from './homepage/step-card/step-card.component';
 import { FooterComponent } from './footer/footer.component';
 import { CommonModule } from '@angular/common';
+import { OrbpageComponent } from './orbpage/orbpage.component';
+import { OrbComponent } from './orbpage/orb/orb.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +17,8 @@ import { CommonModule } from '@angular/common';
     NavbarComponent,
     StepCardComponent,
     FooterComponent,
+    OrbpageComponent,
+    OrbComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, CommonModule],
   providers: [],
