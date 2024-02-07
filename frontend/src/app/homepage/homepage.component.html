@@ -45,3 +45,31 @@
     [cardNumber]="4"
   ></step-card>
 </div>
+
+<div class="faq">
+  <p class="caption">FAQ</p>
+  <div class="questions">
+    <div
+      *ngFor="let question of questions; index as i"
+      class="question-wrapper"
+      [ngClass]="{ active: question.active }"
+      (click)="question.active = !question.active"
+    >
+      <p class="question">
+        <span>{{ i + 1 }}</span>
+        {{ question.question }}
+      </p>
+      <div class="answer-wrapper">
+        <p class="answer">
+          {{ question.answer }}
+        </p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+        <path
+          d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"
+        />
+      </svg>
+    </div>
+  </div>
+</div>

@@ -6,6 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { NavbarComponent } from './navbar/navbar.component';
 import { StepCardComponent } from './homepage/step-card/step-card.component';
 import { FooterComponent } from './footer/footer.component';
+import { CommonModule } from '@angular/common';
 import { OrbpageComponent } from './orbpage/orbpage.component';
 import { OrbComponent } from './orbpage/orb/orb.component';
 
@@ -19,7 +20,7 @@ import { OrbComponent } from './orbpage/orb/orb.component';
     OrbpageComponent,
     OrbComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule],
+  imports: [BrowserModule, AppRoutingModule, CommonModule],
   providers: [],
   bootstrap: [AppComponent],
 })
