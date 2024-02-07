@@ -6,6 +6,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { NavbarComponent } from './navbar/navbar.component';
 import { StepCardComponent } from './homepage/step-card/step-card.component';
 import { FooterComponent } from './footer/footer.component';
+import { OrbpageComponent } from './orbpage/orbpage.component';
+import { OrbComponent } from './orbpage/orb/orb.component';
 
 @NgModule({
   declarations: [
@@ -14,6 +16,8 @@ import { FooterComponent } from './footer/footer.component';
     NavbarComponent,
     StepCardComponent,
     FooterComponent,
+    OrbpageComponent,
+    OrbComponent,
   ],
   imports: [BrowserModule, AppRoutingModule],
   providers: [],
