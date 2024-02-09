@@ -10,6 +10,12 @@ import { FooterComponent } from './footer/footer.component';
 import { CommonModule } from '@angular/common';
 import { OrbpageComponent } from './orbpage/orbpage.component';
 import { OrbComponent } from './orbpage/orb/orb.component';
+import { NgxsModule } from '@ngxs/store';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { AppState } from './store/app/app.state';
+import { InvitationsAmountPipe } from './pipes/invitations-amount.pipe';
+import { ShortAddressPipe } from './pipes/short-address.pipe';
 
 @NgModule({
   declarations: [
@@ -22,7 +28,16 @@ import { OrbComponent } from './orbpage/orb/orb.component';
     OrbpageComponent,
     OrbComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, CommonModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    CommonModule,
+    InvitationsAmountPipe,
+    ShortAddressPipe,
+    NgxsModule.forRoot([AppState]),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
+    NgxsLoggerPluginModule.forRoot(),
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

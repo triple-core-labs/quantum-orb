@@ -1,22 +1,29 @@
-<div class="leaderboard">
-    <h1 class="title">Leaderboard</h1>
-    <table class="table">
-      <thead>
-        <tr>
-          <th class="rank">Rank</th>
-          <th class="address">Address</th>
-          <th class="invitations">Invitations</th>
-          <th class="points">Points</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let player of leaderboardData">
-          <td class="user-rank" >{{ player.rank }}</td>
-          <td class="user-address">{{ player.address }}</td>
-          <td class="user-invitations">{{ player.invitations }}</td>
-          <td class="user-points">{{ player.points }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  
+<h1>Leaderboard</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Position</th>
+      <th>Address</th>
+      <th>Invitations</th>
+      <th>Points</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="let user of users$ | async; index as i"
+      [ngClass]="{ active: user.address == (address$ | async) }"
+    >
+      <td>{{ i + 1 }}</td>
+      <td>
+        <ng-container *ngIf="innerWidth > 768; else shortAddress">{{
+          user.address
+        }}</ng-container>
+        <ng-template #shortAddress>{{
+          user.address | shortAddress
+        }}</ng-template>
+      </td>
+      <td>{{ user | invitationsAmount }}</td>
+      <td>{{ user.points }}</td>
+    </tr>
+  </tbody>
+</table>

@@ -8,13 +8,12 @@ const routes: Routes = [
   {
     path: 'home',
     component: HomepageComponent,
-    data: { title: 'Home' },
+    title: 'Home',
   },
   {
     path: 'leaderboard',
     component: LeaderboardComponent,
-    data: { title: 'Leaderboard' },
-    title: 'Home',
+    title: 'Leaderboard',
   },
   {
     path: 'orbs',

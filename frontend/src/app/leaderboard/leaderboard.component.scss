@@ -1,52 +1,34 @@
 :host {
-  @apply block bg-black;
+  @apply w-full flex flex-col gap-y-16 justify-start items-center;
 
-  .leaderboard {
-    @apply flex flex-col items-center gap-y-12 w-full;
+  h1 {
+    @apply w-full text-center text-pale uppercase max-md:text-4xl;
+  }
 
-    .title {
-      @apply flex justify-between items-center text-pale w-full text-3xl;
+  table {
+    @apply w-full;
+
+    th {
+      @apply uppercase text-yellow text-sm md:text-lg px-2;
     }
 
-    .table {
-      @apply w-full;
+    tr.active {
+      @apply relative bg-yellow/10 border-2 border-yellow;
 
-      th {
-        @apply text-lg text-center;
+      td {
+        @apply text-yellow;
       }
 
-      th.rank {
-        @apply w-16 text-lg; // 70px
+      &:after {
+        @apply content-['you'] max-md:hidden absolute left-4 top-1/2 -translate-y-1/2 uppercase text-yellow text-sm font-bold;
       }
+    }
 
-      th.address {
-        @apply w-96; // 420px
-      }
+    td {
+      @apply text-center text-pale px-2 py-4 text-sm;
 
-      th.invitations {
-        @apply w-36; // 140px
-      }
-
-      th.points {
-        @apply w-36; // 140px
-      }
-
-      thead {
-        @apply text-yellow font-bold;
-      }
-
-      td.user-rank {
-        @apply text-center text-lg text-pale font-bold; // 20px font size for rank
-      }
-
-      td.user-address,
-      td.user-invitations,
-      td.user-points {
-        @apply text-center text-base text-pale; // 16px font size for other entries
-      }
-
-      tr {
-        @apply mb-5; // 20px
+      &:first-of-type {
+        @apply font-bold;
       }
     }
   }
