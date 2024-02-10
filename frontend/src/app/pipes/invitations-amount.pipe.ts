@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectorRef,
+  Inject,
   Injector,
   Pipe,
   PipeTransform,
@@ -14,9 +15,9 @@ import { map } from 'rxjs';
 export class InvitationsAmountPipe implements PipeTransform {
   private asyncPipe: AsyncPipe;
 
-  constructor(private injector: Injector, private store: Store) {
-    this.asyncPipe = new AsyncPipe(injector.get(ChangeDetectorRef));
-  }
+  constructor(@Inject(ChangeDetectorRef) private cdr: ChangeDetectorRef, private store: Store) {
+    this.asyncPipe = new AsyncPipe(cdr);
+}
 
   transform(user: User) {
     return this.asyncPipe.transform(
