@@ -16,6 +16,12 @@ import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { AppState } from './store/app/app.state';
 import { InvitationsAmountPipe } from './pipes/invitations-amount.pipe';
 import { ShortAddressPipe } from './pipes/short-address.pipe';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { MatDialogModule } from '@angular/material/dialog';
+import { TwitterDialogComponent } from './orbpage/twitter-dialog/twitter-dialog.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -27,9 +33,15 @@ import { ShortAddressPipe } from './pipes/short-address.pipe';
     FooterComponent,
     OrbpageComponent,
     OrbComponent,
+    TwitterDialogComponent,
   ],
   imports: [
     BrowserModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatInputModule,
     AppRoutingModule,
     CommonModule,
     InvitationsAmountPipe,
@@ -39,5 +51,6 @@ import { ShortAddressPipe } from './pipes/short-address.pipe';
     NgxsLoggerPluginModule.forRoot(),
   ],
   bootstrap: [AppComponent],
+  providers: [provideAnimationsAsync()],
 })
 export class AppModule {}

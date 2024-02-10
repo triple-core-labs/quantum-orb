@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { TwitterDialogComponent } from '../twitter-dialog/twitter-dialog.component';
 
 @Component({
   selector: 'orb',
@@ -11,4 +13,13 @@ export class OrbComponent {
 
   @Input()
   price: number = 0;
+
+  constructor(public dialog: MatDialog) {}
+
+  openTwitterDialog() {
+    if (this.type !== 'twitter/x') return;
+    this.dialog.open(TwitterDialogComponent, {
+      autoFocus: false,
+    });
+  }
 }
