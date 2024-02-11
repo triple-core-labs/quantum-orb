@@ -1,23 +1,35 @@
+@use "@angular/material" as mat;
+
+@include mat.core();
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+$typography: mat.define-typography-config(
+  $font-family: "Tomorrow, 'Helvetica Neue', sans-serif",
+);
+
+$font-base-path: "/assets/fonts/";
+
+@include mat.all-component-typographies($typography);
+
 @font-face {
   font-family: "Tomorrow";
-  src: url("./assets/fonts/Tomorrow-Light.ttf");
+  src: url($font-base-path + "Tomorrow-Light.ttf");
   font-weight: normal;
 }
 
 @font-face {
   font-family: "Tomorrow";
-  src: url("./assets/fonts/Tomorrow-Bold.ttf");
+  src: url($font-base-path + "Tomorrow-Bold.ttf");
   font-weight: bold;
 }
 
 html,
 body {
   @apply h-full w-full m-0 bg-black relative flex flex-col justify-start items-center;
-  font-family: Tomorrow, "Helvetica Neue", sans-serif;
+  font-family: Tomorrow, "Helvetica Neue", sans-serif !important;
 }
 
 @layer base {
@@ -75,6 +87,55 @@ body {
         15px 100%,
         0 calc(100% - 15px)
       );
+    }
+  }
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.mat-mdc-dialog-surface {
+  @apply p-4 bg-black flex flex-col justify-start items-start gap-y-16 border-2 border-yellow rounded-none text-pale #{!important};
+
+  .caption {
+    @apply font-bold text-lg;
+  }
+
+  .list {
+    @apply w-full flex flex-col justify-start items-start gap-y-2;
+
+    a {
+      @apply text-yellow hover:underline;
+    }
+  }
+
+  .actions {
+    @apply w-full flex flex-col justify-start items-center gap-y-4;
+  }
+
+  mat-form-field {
+    @apply w-full #{!important};
+
+    .mat-mdc-text-field-wrapper {
+      @apply text-lg overflow-visible px-2 py-4 bg-yellow/10;
+
+      .mat-mdc-floating-label {
+        @apply text-yellow uppercase #{!important};
+      }
+
+      .mdc-line-ripple {
+        @apply hidden #{!important};
+      }
+    }
+
+    .mat-mdc-form-field-subscript-wrapper {
+      @apply hidden #{!important};
     }
   }
 }

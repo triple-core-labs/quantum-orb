@@ -53,4 +53,8 @@
       }
     }
   }
+
+  .action-button svg {
+    @apply inline-block w-[15px] relative bottom-1;
+  }
 }
