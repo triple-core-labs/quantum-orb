@@ -47,8 +47,6 @@ function assignParents(users: User[]): User[] {
       provide: APP_INITIALIZER,
       useFactory(store: Store) {
         return () => {
-          console.log('here');
-
           let generatedUsers = assignParents(generateUsersArray(30));
           let myAddress =
             generatedUsers[Math.floor(Math.random() * generatedUsers.length)]
