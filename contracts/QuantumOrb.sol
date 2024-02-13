@@ -126,7 +126,6 @@ contract QuantumOrb {
         emit OrbOpened(msg.sender, pointsEarned);
     }
 
-
     function openQuantumOrb() external payable {
         require(msg.value >= 0.0027 ether, "Insufficient ETH sent for Quantum Orb, 0.0027 ETH required");
         uint pointsEarned;
@@ -145,7 +144,7 @@ contract QuantumOrb {
         }
 
         addPoints(pointsEarned);
-        emit OrbOpened(msg.sender, 7001);
+        emit OrbOpened(msg.sender, pointsEarned);
     }
 
     function getPoints(address _user) external view returns (uint) {
