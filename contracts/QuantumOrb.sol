@@ -66,11 +66,11 @@ contract QuantumOrb {
 
     function getOrbRank() internal view returns (uint8) {
         uint randint = getRand() % 10000;
-        if (randint < 7900) {
+        if ((1050 <= randint) && (randint <= 8949)) {
             return 1;
-        } else if (randint < 9600) {
+        } else if ((400 <= randint) && (randint <= 9599)) {
             return 2;
-        } else if (randint < 9990) {
+        } else if ((10 <= randint) && (randint <= 9989)) {
             return 3;
         } else {
             return 4;
