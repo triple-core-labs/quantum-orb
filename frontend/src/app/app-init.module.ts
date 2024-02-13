@@ -24,6 +24,7 @@ function generateUsersArray(count: number): User[] {
       address: generateRandomString(25),
       points: Math.floor(Math.random() * 100),
       parent: '',
+      shared_points: Math.floor(Math.random() * 100),
     };
     users.push(newUser);
   }
