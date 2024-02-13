@@ -34,4 +34,3 @@ export class LeaderboardComponent implements OnInit {
     this.innerWidth = window.innerWidth;
   }
 }
-export { User };
