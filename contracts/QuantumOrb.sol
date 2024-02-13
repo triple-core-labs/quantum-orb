@@ -14,7 +14,7 @@ contract QuantumOrb {
         string x_link;
     }
 
-    event OrbOpened(address indexed user, uint256 pointsEarned);
+    event OrbOpened(address indexed user, uint pointsEarned);
     event MarkedAsPartner(address indexed user);
 
     constructor() {
@@ -55,16 +55,17 @@ contract QuantumOrb {
     }
 
     function setXLink(string memory _x_link) external {
+        address _user = msg.sender;
         require(bytes(_x_link).length > 0, "Invalid x_link");
-        require(bytes(users[msg.sender].x_link).length == 0, "x_link already set");
-        users[msg.sender].x_link = _x_link;
+        require(bytes(users[_user].x_link).length == 0, "x_link already set");
+        users[_user].x_link = _x_link;
 
         // Add 100 points to the user who set the x_link
         addPoints(100);
     }
 
     function getOrbRank() internal view returns (uint8) {
-        uint randint = uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender))) % 10000;
+        uint randint = getRand() % 10000;
         if (randint < 7900) {
             return 1;
         } else if (randint < 9600) {
@@ -76,6 +77,10 @@ contract QuantumOrb {
         }
     }
 
+    function getRand() internal view returns (uint) {
+        return uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender)));
+    }
+
     function openDailyOrb() external payable {
         require(users[msg.sender].lastOpenedDaily + 1 days <= block.timestamp, "You have already opened your daily orb");
 
@@ -85,17 +90,18 @@ contract QuantumOrb {
         uint8 rank = getOrbRank();
 
         if (rank == 1) {
-            pointsEarned = (uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender))) % 101) + 25; // Generate a random number between 25 and 125
+            pointsEarned = (getRand() % 101) + 25;
         } else if (rank == 2) {
-            pointsEarned = (uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender))) % 51) + 126; // Generate a random number between 126 and 176
+            pointsEarned = (getRand() % 51) + 126;
         } else if (rank == 3) {
-            pointsEarned = (uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender))) % 76) + 251; // Generate a random number between 251 and 326
+            pointsEarned = (getRand() % 76) + 251;
         } else {
-            pointsEarned = (uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender))) % 101) + 401; // Generate a random number between 401 and 501
+            pointsEarned = (getRand() % 101) + 401;
         }
 
         addPoints(pointsEarned);
-        emit OrbOpened(msg.sender, uint256(pointsEarned));
+
+        emit OrbOpened(msg.sender, pointsEarned);
     }
 
     function openGenesisOrb() external payable {
@@ -103,19 +109,21 @@ contract QuantumOrb {
         uint pointsEarned;
         
         uint8 rank = getOrbRank();
+        uint rand = getRand();
 
         if (rank == 1) {
-            pointsEarned = (uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender))) % 600) + 401;
+            pointsEarned = (rand % 600) + 401;
         } else if (rank == 2) {
-            pointsEarned = (uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender))) % 1000) + 1001;
+            pointsEarned = (rand % 1000) + 1001;
         } else if (rank == 3) {
-            pointsEarned = (uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender))) % 1500) + 2001;
+            pointsEarned = (rand % 1500) + 2001;
         } else {
-            pointsEarned = (uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender))) % 6499) + 3501;
+            pointsEarned = (rand % 6499) + 3501;
         }
 
         addPoints(pointsEarned);
-        emit OrbOpened(msg.sender, uint256(pointsEarned));
+
+        emit OrbOpened(msg.sender, pointsEarned);
     }
 
 
@@ -124,19 +132,16 @@ contract QuantumOrb {
         uint pointsEarned;
         
         uint8 rank = getOrbRank();
+        uint rand = getRand();
 
         if (rank == 1) {
-            // Generate a random number between 1001 and 2000
-            pointsEarned = (uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender))) % 1000) + 1001;
+            pointsEarned = (rand % 1000) + 1001;
         } else if (rank == 2) {
-            // Generate a random number between 2001 and 3500
-            pointsEarned = (uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender))) % 1500) + 2001;
+            pointsEarned = (rand % 1500) + 2001;
         } else if (rank == 3) {
-            // Generate a random number between 3501 and 7000
-            pointsEarned = (uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender))) % 3499) + 3501;
+            pointsEarned = (rand % 3499) + 3501;
         } else {
-            // Generate a random number between 7001 and 20000
-            pointsEarned = (uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender))) % 12999) + 7001;
+            pointsEarned = (rand % 12999) + 7001;
         }
 
         addPoints(pointsEarned);
