@@ -9,12 +9,14 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { AppState } from './store/app/app.state';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { AppInitializerModule } from './app-init.module';
 
 @NgModule({
   declarations: [AppComponent, NavbarComponent, FooterComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    AppInitializerModule,
     NgxsModule.forRoot([AppState]),
     NgxsReduxDevtoolsPluginModule.forRoot(),
     NgxsLoggerPluginModule.forRoot(),
