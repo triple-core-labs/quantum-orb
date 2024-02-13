@@ -4,11 +4,16 @@ import { Select, Store } from '@ngxs/store';
 import { SetAddress, SetUsers } from '../store/app/app.actions';
 import { AppSelectors } from '../store/app/app.selectors';
 import { Observable } from 'rxjs';
+import { ShortAddressPipe } from '../pipes/short-address.pipe';
+import { InvitationsAmountPipe } from '../pipes/invitations-amount.pipe';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'leaderboard',
   templateUrl: './leaderboard.component.html',
   styleUrl: './leaderboard.component.scss',
+  standalone: true,
+  imports: [ShortAddressPipe, InvitationsAmountPipe, CommonModule],
 })
 export class LeaderboardComponent implements OnInit {
   @Select(AppSelectors.users)
