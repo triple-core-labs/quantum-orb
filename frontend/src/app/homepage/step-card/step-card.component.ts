@@ -4,6 +4,8 @@ import { Component, Input } from '@angular/core';
   selector: 'step-card',
   templateUrl: './step-card.component.html',
   styleUrl: './step-card.component.scss',
+  standalone: true,
+  imports: [],
 })
 export class StepCardComponent {
   @Input()

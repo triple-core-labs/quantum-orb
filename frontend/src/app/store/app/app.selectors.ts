@@ -12,4 +12,11 @@ export class AppSelectors {
   static users({ users }: AppStateModel) {
     return users.sort((a, b) => b.points - a.points);
   }
+
+  @Selector([AppState])
+  static referrals({ address, users }: AppStateModel) {
+    return users
+      .filter((user) => user.parent === address)
+      .sort((a, b) => b.shared_points - a.shared_points);
+  }
 }
