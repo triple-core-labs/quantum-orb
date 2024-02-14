@@ -42,6 +42,10 @@ contract QuantumOrb {
         emit MarkedAsPartner(_user);
     }
 
+    function claimBalance() external onlyOwner {
+        payable(owner).transfer(address(this).balance);
+    }
+
     function addPoints(uint _points) internal {
         address _user = msg.sender;
         users[_user].points += _points;
