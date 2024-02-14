@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { StepCardComponent } from './step-card/step-card.component';
+import { CommonModule } from '@angular/common';
 
 interface Question {
   question: string;
@@ -10,6 +12,8 @@ interface Question {
   selector: 'homepage',
   templateUrl: './homepage.component.html',
   styleUrl: './homepage.component.scss',
+  standalone: true,
+  imports: [StepCardComponent, CommonModule],
 })
 export class HomepageComponent {
   questions: Question[] = [

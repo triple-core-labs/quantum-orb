@@ -1,0 +1,30 @@
+<h1 *ngIf="(referrals$ | async)?.length == 0; else referralsTable">
+  You don't have any referrals yet
+</h1>
+<ng-template #referralsTable>
+  <h1>Your referrals</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Position</th>
+        <th>Address</th>
+        <th>Shared Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let referral of referrals$ | async; index as i">
+        <td>{{ i + 1 }}</td>
+        <td>
+          <ng-container *ngIf="innerWidth > 768; else shortAddress">{{
+            referral.address
+          }}</ng-container>
+          <ng-template #shortAddress>{{
+            referral.address | shortAddress
+          }}</ng-template>
+        </td>
+        <td>{{ referral.shared_points }}</td>
+      </tr>
+    </tbody>
+  </table>
+</ng-template>
+<button class="action-button">copy invite link</button>
