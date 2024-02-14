@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { HomepageComponent } from './homepage/homepage.component';
 import { LeaderboardComponent } from './leaderboard/leaderboard.component'; // Import the missing 'LeaderboardComponent' class
 import { OrbpageComponent } from './orbpage/orbpage.component';
+import { ReferralsComponent } from './referrals/referrals.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,11 @@ const routes: Routes = [
     path: 'orbs',
     component: OrbpageComponent,
     title: 'Orbs',
+  },
+  {
+    path: 'referrals',
+    component: ReferralsComponent,
+    title: 'Referrals',
   },
   { path: '**', redirectTo: 'home' },
 ];
