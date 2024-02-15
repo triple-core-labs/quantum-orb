@@ -15,9 +15,9 @@
       <tr *ngFor="let referral of referrals$ | async; index as i">
         <td>{{ i + 1 }}</td>
         <td>
-          <ng-container *ngIf="innerWidth > 768; else shortAddress">{{
-            referral.address
-          }}</ng-container>
+          <ng-container *ngIf="innerWidth > 768; else shortAddress"
+            >0x{{ referral.address }}</ng-container
+          >
           <ng-template #shortAddress>{{
             referral.address | shortAddress
           }}</ng-template>

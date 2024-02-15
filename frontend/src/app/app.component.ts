@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Select } from '@ngxs/store';
+import { AppSelectors } from './store/app/app.selectors';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +9,6 @@ import { Component } from '@angular/core';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'frontend';
+  @Select(AppSelectors.points)
+  points$!: Observable<number>;
 }
