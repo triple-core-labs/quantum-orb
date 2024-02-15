@@ -1,4 +1,4 @@
-import { Contract } from 'ethers';
+import { Contract, ethers } from 'ethers';
 import { User } from '../../interfaces/user';
 
 export class FetchUsers {
@@ -24,4 +24,18 @@ export class SetContract {
 
 export class GetPoints {
   static readonly type = '[App] Get Points';
+}
+
+export class OpenDailyOrb {
+  static readonly type = '[App] Open Daily Orb';
+
+  constructor(public signer: ethers.providers.JsonRpcSigner) {}
+}
+
+export class OpenGenesisOrb {
+  static readonly type = '[App] Open Genesis Orb';
+}
+
+export class OpenQuantumOrb {
+  static readonly type = '[App] Open Quantum Orb';
 }

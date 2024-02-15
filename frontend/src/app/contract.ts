@@ -1,5 +1,11 @@
 import { Store } from '@ngxs/store';
-import { SetAddress, SetContract } from './store/app/app.actions';
+import {
+  OpenDailyOrb,
+  OpenGenesisOrb,
+  OpenQuantumOrb,
+  SetAddress,
+  SetContract,
+} from './store/app/app.actions';
 import { Contract, ethers } from 'ethers';
 import contractABI from '../abi.json';
 declare global {
@@ -71,7 +77,7 @@ export async function addChain() {
 
 export async function setContract(store: Store) {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider;
+  const signer = provider.getSigner();
   store.dispatch(
     new SetContract(
       new Contract(
@@ -81,4 +87,18 @@ export async function setContract(store: Store) {
       )
     )
   );
+}
+
+export async function openDailyOrb(store: Store) {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  store.dispatch(new OpenDailyOrb(signer));
+}
+
+export async function openGenesisOrb(store: Store) {
+  store.dispatch(new OpenGenesisOrb());
+}
+
+export async function openQuantumOrb(store: Store) {
+  store.dispatch(new OpenQuantumOrb());
 }

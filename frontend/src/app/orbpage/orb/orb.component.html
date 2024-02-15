@@ -1,5 +1,5 @@
 <p class="orb-name">{{ type }}</p>
-<div class="orb" (click)="openTwitterDialog()">
+<div class="orb" (click)="openOrb()">
   <img [src]="'/assets/images/orbs/' + type + '1.png'" class="top" />
   <img [src]="'/assets/images/orbs/' + type + '2.png'" class="bottom" />
   <span class="glow-wrapper">
@@ -12,7 +12,7 @@
     />
   </svg>
 </div>
-<button class="action-button" (click)="openTwitterDialog()">
+<button class="action-button" (click)="openOrb()">
   <!-- token logo to be added once created -->
   <ng-container *ngIf="price; else openText">
     {{ price }} eth
