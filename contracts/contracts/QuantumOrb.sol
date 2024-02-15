@@ -14,6 +14,7 @@ contract QuantumOrb {
         string x_link;
     }
 
+    event UserInitialized(address indexed user, address indexed parent);
     event OrbOpened(address indexed user, uint pointsEarned);
     event MarkedAsPartner(address indexed user);
 
@@ -34,6 +35,8 @@ contract QuantumOrb {
         } else {
             users[_user].parent = owner;
         }
+
+        emit UserInitialized(_user, _parent);
     }
 
     function markAsPartner(address _user) external onlyOwner {
