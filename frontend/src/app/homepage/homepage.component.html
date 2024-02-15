@@ -1,0 +1,79 @@
+<div class="opening">
+  <div class="left-part">
+    <h1>UNBOX YOUR <span>LUCK</span></h1>
+    <p>
+      Participate in everyday orb opening and maximize your chances of getting
+      airdrop
+    </p>
+    <button class="action-button">START NOW</button>
+  </div>
+  <div class="right-part">
+    <img
+      src="/assets/images/opening_orb.png"
+      alt="A split in half planet with glowing reward inside"
+    />
+  </div>
+</div>
+
+<div class="steps">
+  <step-card
+    [label]="'connect wallet'"
+    [description]="
+      'Connect your preferred wallet and start your quantum journey'
+    "
+    [img]="'/assets/images/card1.png'"
+    [cardNumber]="1"
+  ></step-card>
+  <step-card
+    [label]="'open orbs'"
+    [description]="
+      'Open different orbs, complete tasks and rank up in the leaderboad'
+    "
+    [img]="'/assets/images/card2.png'"
+    [cardNumber]="2"
+  ></step-card>
+  <step-card
+    [label]="'earn points'"
+    [description]="
+      'Earn points and get yourself to the top of the leaderboard to maximize your chances of getting airdrop'
+    "
+    [img]="'/assets/images/card3.png'"
+    [cardNumber]="3"
+  ></step-card>
+  <step-card
+    [label]="'invite friends'"
+    [description]="
+      'Invite friends using our referral programm and earn points for each of them'
+    "
+    [img]="'/assets/images/card4.png'"
+    [cardNumber]="4"
+  ></step-card>
+</div>
+
+<div class="faq">
+  <p class="caption">FAQ</p>
+  <div class="questions">
+    <div
+      *ngFor="let question of questions; index as i"
+      class="question-wrapper"
+      [ngClass]="{ active: question.active }"
+      (click)="question.active = !question.active"
+    >
+      <p class="question">
+        <span>{{ i + 1 }}</span>
+        {{ question.question }}
+      </p>
+      <div class="answer-wrapper">
+        <p class="answer">
+          {{ question.answer }}
+        </p>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+        <path
+          d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"
+        />
+      </svg>
+    </div>
+  </div>
+</div>
