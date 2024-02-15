@@ -1,0 +1,35 @@
+:host {
+  @apply w-full flex flex-col gap-y-16 justify-start items-center;
+
+  h1 {
+    @apply w-full text-center text-pale uppercase max-md:text-4xl;
+  }
+
+  table {
+    @apply w-full;
+
+    th {
+      @apply uppercase text-yellow text-sm md:text-lg px-2;
+    }
+
+    tr.active {
+      @apply relative bg-yellow/10 border-2 border-yellow;
+
+      td {
+        @apply text-yellow;
+      }
+
+      &:after {
+        @apply content-['you'] max-md:hidden absolute left-4 top-1/2 -translate-y-1/2 uppercase text-yellow text-sm font-bold;
+      }
+    }
+
+    td {
+      @apply text-center text-pale px-2 py-4 text-sm;
+
+      &:first-of-type {
+        @apply font-bold;
+      }
+    }
+  }
+}

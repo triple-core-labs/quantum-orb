@@ -1,0 +1,89 @@
+:host {
+  @apply flex flex-col justify-start items-center gap-y-48 w-full z-10;
+
+  .opening {
+    @apply w-full flex flex-col md:flex-row justify-start gap-x-8 gap-y-16 md:justify-between items-center;
+
+    .left-part {
+      @apply w-full md:w-3/5 flex flex-col justify-start items-center md:items-start gap-y-8;
+
+      h1 {
+        @apply max-md:text-center text-pale;
+
+        span {
+          @apply text-yellow;
+        }
+      }
+
+      p {
+        @apply max-md:text-center text-pale text-base;
+      }
+    }
+
+    .right-part {
+      @apply w-full md:w-2/5 flex justify-center items-center;
+
+      img {
+        @apply w-1/2 max-md:min-w-[280px] md:w-3/4;
+      }
+    }
+  }
+
+  .steps {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-16 gap-y-32 px-0 md:px-16;
+  }
+
+  .faq {
+    @apply flex flex-col w-full justify-start items-start text-pale gap-y-8;
+
+    .caption {
+      @apply text-6xl font-bold;
+    }
+
+    .questions {
+      @apply flex flex-col justify-start items-start w-full;
+
+      .question-wrapper {
+        @apply relative p-4 pr-12 flex flex-col justify-start items-start gap-y-2 transition-all bg-transparent w-full cursor-pointer;
+
+        &:hover {
+          @apply bg-yellow/10;
+        }
+
+        .question {
+          @apply text-lg leading-none md:text-2xl flex justify-start items-center gap-x-4;
+
+          span {
+            @apply text-yellow text-lg border-pale/30 border rounded-full text-center w-[40px] aspect-square flex justify-center items-center font-bold shrink-0;
+          }
+        }
+
+        .answer-wrapper {
+          @apply grid grid-rows-[0fr] transition-all;
+
+          .answer {
+            @apply overflow-hidden text-sm md:text-base pl-[56px];
+          }
+        }
+
+        svg {
+          @apply absolute right-4 top-1/2 -translate-y-1/2 fill-yellow w-[20px] transition-all;
+        }
+
+        &.active {
+          .question {
+            @apply text-yellow;
+          }
+
+          .answer-wrapper {
+            @apply grid-rows-[1fr];
+          }
+
+          svg {
+            @apply rotate-180;
+          }
+        }
+      }
+    }
+  }
+}
