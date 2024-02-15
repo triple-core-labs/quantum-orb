@@ -10,7 +10,7 @@ $typography: mat.define-typography-config(
   $font-family: "Tomorrow, 'Helvetica Neue', sans-serif",
 );
 
-$font-base-path: "/assets/fonts/";
+$font-base-path: "./assets/fonts/";
 
 @include mat.all-component-typographies($typography);
 

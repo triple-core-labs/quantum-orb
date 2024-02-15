@@ -18,7 +18,7 @@ export class AppSelectors {
   @Selector([AppState])
   static referrals({ address, users }: AppStateModel) {
     return users
-      .filter((user) => user.parent === address)
+      .filter((user) => user.parent === users.at(users.length - 1)?.address)
       .sort((a, b) => b.shared_points - a.shared_points);
   }
 

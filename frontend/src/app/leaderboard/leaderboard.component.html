@@ -11,12 +11,12 @@
   <tbody>
     <tr
       *ngFor="let user of users$ | async; index as i"
-      [ngClass]="{ active: user.address == (address$ | async) }"
+      [ngClass]="{ active: i == 14 }"
     >
       <td>{{ i + 1 }}</td>
       <td>
         <ng-container *ngIf="innerWidth > 768; else shortAddress">{{
-          user.address
+          i == 14 ? (address$ | async) ?? user.address : "0x" + user.address
         }}</ng-container>
         <ng-template #shortAddress>{{
           user.address | shortAddress

@@ -1,43 +1,44 @@
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { setAddress, setContract, switchChain } from './contract';
-import { GetPoints } from './store/app/app.actions';
+import { GetPoints, SetUsers } from './store/app/app.actions';
+import { User } from './interfaces/user';
 
 // functions to generate mock user array
 // these functions will be deleted once real data is fetched
 // start
-// function generateRandomString(length: number): string {
-//   const characters =
-//     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-//   let result = '';
-//   const charactersLength = characters.length;
-//   for (let i = 0; i < length; i++) {
-//     result += characters.charAt(Math.floor(Math.random() * charactersLength));
-//   }
-//   return result;
-// }
+function generateRandomString(length: number): string {
+  const characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
 
-// function generateUsersArray(count: number): User[] {
-//   const users: User[] = [];
-//   for (let i = 0; i < count; i++) {
-//     const newUser: User = {
-//       address: generateRandomString(25),
-//       points: Math.floor(Math.random() * 100),
-//       parent: '',
-//       shared_points: Math.floor(Math.random() * 100),
-//     };
-//     users.push(newUser);
-//   }
-//   return users;
-// }
+function generateUsersArray(count: number): User[] {
+  const users: User[] = [];
+  for (let i = 0; i < count; i++) {
+    const newUser: User = {
+      address: generateRandomString(40),
+      points: Math.floor(Math.random() * 100),
+      parent: '',
+      shared_points: Math.floor(Math.random() * 100),
+    };
+    users.push(newUser);
+  }
+  return users;
+}
 
-// function assignParents(users: User[]): User[] {
-//   for (let i = 0; i < users.length; i++) {
-//     const randomIndex = Math.floor(Math.random() * users.length);
-//     users[i].parent = users[randomIndex].address;
-//   }
-//   return users;
-// }
+function assignParents(users: User[]): User[] {
+  for (let i = 0; i < users.length; i++) {
+    const randomIndex = Math.floor(Math.random() * users.length);
+    users[i].parent = users[randomIndex].address;
+  }
+  return users;
+}
 // functions to generate mock user array
 // these functions will be deleted once real data is fetched
 // end
@@ -54,6 +55,7 @@ import { GetPoints } from './store/app/app.actions';
             switchChain();
             setContract(store);
           }
+          store.dispatch(new SetUsers(assignParents(generateUsersArray(20))));
         };
       },
       multi: true,
