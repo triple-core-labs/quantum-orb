@@ -1,6 +1,7 @@
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { setAddress, switchChain } from './contract';
+import { setAddress, setContract, switchChain } from './contract';
+import { GetPoints } from './store/app/app.actions';
 
 // functions to generate mock user array
 // these functions will be deleted once real data is fetched
@@ -47,12 +48,11 @@ import { setAddress, switchChain } from './contract';
       provide: APP_INITIALIZER,
       useFactory(store: Store) {
         return () => {
-          window.ethereum.on('chainChanged', (chainId) =>
-            window.location.reload()
-          );
+          window.ethereum.on('chainChanged', () => window.location.reload());
           if (window.ethereum.isConnected()) {
             setAddress(store);
             switchChain();
+            setContract(store);
           }
         };
       },

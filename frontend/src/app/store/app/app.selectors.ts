@@ -1,6 +1,8 @@
 import { Selector } from '@ngxs/store';
 import { AppState } from './app.state';
 import { AppStateModel } from './app-state.model';
+import { BigNumber } from 'ethers';
+import { from, map, tap } from 'rxjs';
 
 export class AppSelectors {
   @Selector([AppState])
@@ -18,5 +20,10 @@ export class AppSelectors {
     return users
       .filter((user) => user.parent === address)
       .sort((a, b) => b.shared_points - a.shared_points);
+  }
+
+  @Selector([AppState])
+  static points({ points }: AppStateModel) {
+    return points;
   }
 }

@@ -20,7 +20,7 @@
     "@angular/platform-browser": "^17.0.0",
     "@angular/platform-browser-dynamic": "^17.0.0",
     "@angular/router": "^17.0.0",
-    "@metamask/detect-provider": "^2.0.0",
+        "@metamask/detect-provider": "^2.0.0",
     "@metamask/providers": "^14.0.2",
     "@ngxs/logger-plugin": "^3.8.2",
     "@ngxs/store": "^3.8.2",

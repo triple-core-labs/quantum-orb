@@ -1,10 +1,9 @@
+import { Contract } from 'ethers';
 import { User } from '../../interfaces/user';
 
 export class FetchUsers {
   static readonly type = '[App] Fetch Users';
 }
-
-// will be deleted once users can be fetched
 export class SetUsers {
   static readonly type = '[App] Set Users';
 
@@ -16,4 +15,13 @@ export class SetAddress {
 
   constructor(public address: string) {}
 }
-// will be deleted once users can be fetched
+
+export class SetContract {
+  static readonly type = '[App] Set Contract';
+
+  constructor(public contract: Contract) {}
+}
+
+export class GetPoints {
+  static readonly type = '[App] Get Points';
+}

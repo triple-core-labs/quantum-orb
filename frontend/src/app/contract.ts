@@ -1,10 +1,10 @@
 import { Store } from '@ngxs/store';
-import { SetAddress } from './store/app/app.actions';
-import { MetaMaskInpageProvider } from '@metamask/providers';
-
+import { SetAddress, SetContract } from './store/app/app.actions';
+import { Contract, ethers } from 'ethers';
+import contractABI from '../abi.json';
 declare global {
   interface Window {
-    ethereum: MetaMaskInpageProvider;
+    ethereum: any;
   }
 }
 
@@ -24,7 +24,7 @@ export async function getAccount(store: Store) {
       store.dispatch(new SetAddress(accounts.at(0)));
       switchChain();
     })
-    .catch((err) => {
+    .catch((err: any) => {
       if (err.code === 4001) {
         console.log('Please connect to MetaMask.');
       } else if (err.code == 4902) {
@@ -41,7 +41,7 @@ export async function switchChain() {
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: '0xa0c71fd' }],
     })
-    .catch((err) => {
+    .catch((err: any) => {
       if (err.code == 4902) {
         addChain();
       }
@@ -67,4 +67,18 @@ export async function addChain() {
       ],
     })
     .then(() => switchChain());
+}
+
+export async function setContract(store: Store) {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider;
+  store.dispatch(
+    new SetContract(
+      new Contract(
+        '0x534373ddC9463910EEa7f163c5b4d32a65b9ec4A',
+        contractABI.abi,
+        signer
+      )
+    )
+  );
 }
