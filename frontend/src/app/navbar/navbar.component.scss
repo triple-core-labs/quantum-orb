@@ -61,6 +61,10 @@
     }
   }
 
+  .address {
+    @apply bg-yellow/10 border-2 border-yellow px-4 py-2 text-yellow flex justify-center items-center h-max text-sm gap-x-4 relative max-md:top-2;
+  }
+
   .menu-button {
     @apply flex items-start pt-3 md:hidden;
 

@@ -17,7 +17,11 @@
   <a routerLink="referrals" routerLinkActive="active">REFERRALS</a>
 </nav>
 
-<button class="action-button">
+<button
+  class="action-button"
+  (click)="connectWallet()"
+  *ngIf="(address$ | async) == ''; else addressButton"
+>
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
     <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
     <path
@@ -26,6 +30,12 @@
   </svg>
   <span>CONNECT WALLET</span>
 </button>
+
+<ng-template #addressButton>
+  <p class="address">
+    {{ address$ | async | shortAddress }}
+  </p>
+</ng-template>
 
 <button class="menu-button" (click)="toggleMenu()">
   <!-- menu icon -->
