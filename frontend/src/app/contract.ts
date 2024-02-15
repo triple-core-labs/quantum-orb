@@ -81,7 +81,7 @@ export async function setContract(store: Store) {
   store.dispatch(
     new SetContract(
       new Contract(
-        '0x534373ddC9463910EEa7f163c5b4d32a65b9ec4A',
+        '0x9c94e5D2F4024F74B591d806A7C7D64abB901f0c',
         contractABI.abi,
         signer
       )
