@@ -60,9 +60,9 @@ export async function addChain() {
       method: 'wallet_addEthereumChain',
       params: [
         {
-          chainId: '0xa0c71fd',
-          blockExplorerUrls: ['https://routescan.io'],
-          rpcUrls: ['https://sepolia.blast.io'],
+          chainId: 168587773,
+          blockExplorerUrls: ['https://testnet.blastscan.io'],
+          rpcUrls: ['https://rpc.ankr.com/blast_testnet_sepolia'],
           chainName: 'Blast Sepolia',
           nativeCurrency: {
             decimals: 18,
@@ -81,7 +81,7 @@ export async function setContract(store: Store) {
   store.dispatch(
     new SetContract(
       new Contract(
-        '0x534373ddC9463910EEa7f163c5b4d32a65b9ec4A',
+        '0x9c94e5D2F4024F74B591d806A7C7D64abB901f0c',
         contractABI.abi,
         signer
       )
