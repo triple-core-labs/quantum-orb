@@ -60,9 +60,9 @@ export async function addChain() {
       method: 'wallet_addEthereumChain',
       params: [
         {
-          chainId: '0xa0c71fd',
-          blockExplorerUrls: ['https://routescan.io'],
-          rpcUrls: ['https://sepolia.blast.io'],
+          chainId: 168587773,
+          blockExplorerUrls: ['https://testnet.blastscan.io'],
+          rpcUrls: ['https://rpc.ankr.com/blast_testnet_sepolia'],
           chainName: 'Blast Sepolia',
           nativeCurrency: {
             decimals: 18,
