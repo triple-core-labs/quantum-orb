@@ -7,8 +7,8 @@ import {
   afterAll
 } from "matchstick-as/assembly/index"
 import { Address, BigInt } from "@graphprotocol/graph-ts"
-import { ExampleEntity } from "../generated/schema"
-import { MarkedAsPartner } from "../generated/QuantumOrb/QuantumOrb"
+import { MarkedAsPartner } from "../generated/schema"
+import { MarkedAsPartner as MarkedAsPartnerEvent } from "../generated/QuantumOrb/QuantumOrb"
 import { handleMarkedAsPartner } from "../src/quantum-orb"
 import { createMarkedAsPartnerEvent } from "./quantum-orb-utils"
 
@@ -29,13 +29,13 @@ describe("Describe entity assertions", () => {
   // For more test scenarios, see:
   // https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
 
-  test("ExampleEntity created and stored", () => {
-    assert.entityCount("ExampleEntity", 1)
+  test("MarkedAsPartner created and stored", () => {
+    assert.entityCount("MarkedAsPartner", 1)
 
     // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
     assert.fieldEquals(
-      "ExampleEntity",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a",
+      "MarkedAsPartner",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
       "user",
       "0x0000000000000000000000000000000000000001"
     )

@@ -1,16 +1,5 @@
-type MarkedAsPartner @entity(immutable: true) {
+type ExampleEntity @entity {
   id: Bytes!
+  count: BigInt!
   user: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type OrbOpened @entity(immutable: true) {
-  id: Bytes!
-  user: Bytes! # address
-  pointsEarned: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
 }
