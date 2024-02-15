@@ -5,6 +5,7 @@
     "hardhat": "^2.20.0"
   },
   "dependencies": {
+    "@graphprotocol/graph-ts": "^0.32.0",
     "@nomicfoundation/hardhat-verify": "^2.0.4"
   }
 }
