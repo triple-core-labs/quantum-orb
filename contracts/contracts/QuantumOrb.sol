@@ -1,7 +1,57 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract QuantumOrb {
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
+enum YieldMode {
+    AUTOMATIC,
+    VOID,
+    CLAIMABLE
+}
+
+enum GasMode {
+    VOID,
+    CLAIMABLE 
+}
+
+interface IBlast{
+    // configure
+    function configureContract(address contractAddress, YieldMode _yield, GasMode gasMode, address governor) external;
+    function configure(YieldMode _yield, GasMode gasMode, address governor) external;
+
+    // base configuration options
+    function configureClaimableYield() external;
+    function configureClaimableYieldOnBehalf(address contractAddress) external;
+    function configureAutomaticYield() external;
+    function configureAutomaticYieldOnBehalf(address contractAddress) external;
+    function configureVoidYield() external;
+    function configureVoidYieldOnBehalf(address contractAddress) external;
+    function configureClaimableGas() external;
+    function configureClaimableGasOnBehalf(address contractAddress) external;
+    function configureVoidGas() external;
+    function configureVoidGasOnBehalf(address contractAddress) external;
+    function configureGovernor(address _governor) external;
+    function configureGovernorOnBehalf(address _newGovernor, address contractAddress) external;
+
+    // claim yield
+    function claimYield(address contractAddress, address recipientOfYield, uint256 amount) external returns (uint256);
+    function claimAllYield(address contractAddress, address recipientOfYield) external returns (uint256);
+
+    // claim gas
+    function claimAllGas(address contractAddress, address recipientOfGas) external returns (uint256);
+    function claimGasAtMinClaimRate(address contractAddress, address recipientOfGas, uint256 minClaimRateBips) external returns (uint256);
+    function claimMaxGas(address contractAddress, address recipientOfGas) external returns (uint256);
+    function claimGas(address contractAddress, address recipientOfGas, uint256 gasToClaim, uint256 gasSecondsToConsume) external returns (uint256);
+
+    // read functions
+    function readClaimableYield(address contractAddress) external view returns (uint256);
+    function readYieldConfiguration(address contractAddress) external view returns (uint8);
+    function readGasParams(address contractAddress) external view returns (uint256 etherSeconds, uint256 etherBalance, uint256 lastUpdated, GasMode);
+}
+
+contract QuantumOrb is Initializable {
+    IBlast public constant BLAST = IBlast(0x4300000000000000000000000000000000000002);
+
     address public owner;
     mapping(address => User) public users;
 
@@ -15,11 +65,14 @@ contract QuantumOrb {
     }
 
     event UserInitialized(address indexed user, address indexed parent);
-    event OrbOpened(address indexed user, uint pointsEarned);
-    event MarkedAsPartner(address indexed user);
+    event UserUpdated(address indexed user, uint points, uint referralPoints);
+    event UserXLinked(address indexed user, string x_link);
 
-    constructor() {
+    function initialize() public initializer {
         owner = msg.sender;
+        BLAST.configureAutomaticYield();
+        BLAST.configureClaimableGas();
+        BLAST.configureGovernor(owner);
     }
 
     modifier onlyOwner() {
@@ -42,11 +95,14 @@ contract QuantumOrb {
     function markAsPartner(address _user) external onlyOwner {
         require(!users[_user].partner, "User is already marked as partner");
         users[_user].partner = true;
-        emit MarkedAsPartner(_user);
     }
 
     function claimBalance() external onlyOwner {
         payable(owner).transfer(address(this).balance);
+    }
+
+    function claimGas() external onlyOwner returns (uint256) {
+        return BLAST.claimMaxGas(address(this), address(this));
     }
 
     function addPoints(uint _points) internal {
@@ -59,6 +115,8 @@ contract QuantumOrb {
         }
         users[_user].referralPoints += amount;
         users[parent].points += amount;
+
+        emit UserUpdated(_user, users[_user].points, users[_user].referralPoints);
     }
 
     function setXLink(string memory _x_link) external {
@@ -67,8 +125,8 @@ contract QuantumOrb {
         require(bytes(users[_user].x_link).length == 0, "x_link already set");
         users[_user].x_link = _x_link;
 
-        // Add 100 points to the user who set the x_link
-        addPoints(100);
+        emit UserXLinked(_user, _x_link);
+        addPoints(3000);
     }
 
     function getOrbRank() internal view returns (uint8) {
@@ -88,7 +146,7 @@ contract QuantumOrb {
         return uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender)));
     }
 
-    function openDailyOrb() external payable {
+    function openDailyOrb() external payable returns (uint) {
         require(users[msg.sender].lastOpenedDaily + 1 days <= block.timestamp, "You have already opened your daily orb");
 
         users[msg.sender].lastOpenedDaily = block.timestamp;
@@ -108,10 +166,10 @@ contract QuantumOrb {
 
         addPoints(pointsEarned);
 
-        emit OrbOpened(msg.sender, pointsEarned);
+        return pointsEarned;
     }
 
-    function openGenesisOrb() external payable {
+    function openGenesisOrb() external payable returns (uint) {
         require(msg.value >= 0.0015 ether, "Insufficient ETH sent for Genesis Orb, 0.0015 ETH required");
         uint pointsEarned;
         
@@ -130,10 +188,10 @@ contract QuantumOrb {
 
         addPoints(pointsEarned);
 
-        emit OrbOpened(msg.sender, pointsEarned);
+        return pointsEarned;
     }
 
-    function openQuantumOrb() external payable {
+    function openQuantumOrb() external payable returns (uint) {
         require(msg.value >= 0.0027 ether, "Insufficient ETH sent for Quantum Orb, 0.0027 ETH required");
         uint pointsEarned;
         
@@ -151,7 +209,8 @@ contract QuantumOrb {
         }
 
         addPoints(pointsEarned);
-        emit OrbOpened(msg.sender, pointsEarned);
+
+        return pointsEarned;
     }
 
     function getPoints(address _user) external view returns (uint) {
@@ -164,6 +223,18 @@ contract QuantumOrb {
 
     function getUserX(address _user) external view returns (string memory) {
         return users[_user].x_link;
+    }
+
+    function getUserParent(address _user) external view returns (address) {
+        return users[_user].parent;
+    }
+
+    function getUserPartnerStatus(address _user) external view returns (bool) {
+        return users[_user].partner;
+    }
+
+    function getUserLastOpenedDaily(address _user) external view returns (uint256) {
+        return users[_user].lastOpenedDaily;
     }
 
     receive() external payable {}
