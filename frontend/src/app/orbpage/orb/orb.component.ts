@@ -26,6 +26,7 @@ export class OrbComponent {
     else if (this.type == 'twitter/x')
       this.dialog.open(TwitterDialogComponent, {
         autoFocus: false,
+        panelClass: 'twitter-dialog',
       });
     else if (this.type == 'genesis') openGenesisOrb(this.store);
     else if (this.type == 'quantum') openQuantumOrb(this.store);

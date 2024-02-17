@@ -100,42 +100,82 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.mat-mdc-dialog-surface {
-  @apply p-4 bg-black flex flex-col justify-start items-start gap-y-16 border-2 border-yellow rounded-none text-pale #{!important};
+.twitter-dialog {
+  .mat-mdc-dialog-surface {
+    @apply p-4 bg-black flex flex-col justify-start items-start gap-y-16 border-2 border-yellow rounded-none text-pale #{!important};
 
-  .caption {
-    @apply font-bold text-lg;
-  }
-
-  .list {
-    @apply w-full flex flex-col justify-start items-start gap-y-2;
-
-    a {
-      @apply text-yellow hover:underline;
+    .caption {
+      @apply font-bold text-lg;
     }
-  }
 
-  .actions {
-    @apply w-full flex flex-col justify-start items-center gap-y-4;
-  }
+    .list {
+      @apply w-full flex flex-col justify-start items-start gap-y-2;
 
-  mat-form-field {
-    @apply w-full #{!important};
+      a {
+        @apply text-yellow hover:underline;
+      }
+    }
 
-    .mat-mdc-text-field-wrapper {
-      @apply text-lg overflow-visible px-2 py-4 bg-yellow/10;
+    .actions {
+      @apply w-full flex flex-col justify-start items-center gap-y-4;
+    }
 
-      .mat-mdc-floating-label {
-        @apply text-yellow uppercase #{!important};
+    mat-form-field {
+      @apply w-full #{!important};
+
+      .mat-mdc-text-field-wrapper {
+        @apply text-lg overflow-visible px-2 py-4 bg-yellow/10;
+
+        .mat-mdc-floating-label {
+          @apply text-yellow uppercase #{!important};
+        }
+
+        .mdc-line-ripple {
+          @apply hidden #{!important};
+        }
       }
 
-      .mdc-line-ripple {
+      .mat-mdc-form-field-subscript-wrapper {
         @apply hidden #{!important};
       }
     }
+  }
+}
 
-    .mat-mdc-form-field-subscript-wrapper {
-      @apply hidden #{!important};
+.orb-dialog {
+  .mat-mdc-dialog-surface {
+    @apply p-4 bg-black flex flex-col justify-start items-center border-2 border-yellow rounded-none text-pale #{!important};
+
+    .default-texts {
+      @apply flex flex-col justify-start items-center gap-y-4;
+
+      .caption {
+        @apply font-bold text-lg flex justify-center w-full items-center gap-x-2;
+      }
+
+      p {
+        @apply text-pale;
+      }
+    }
+
+    .win {
+      @apply flex flex-col justify-start items-center gap-y-8;
+
+      h4 {
+        @apply font-bold text-xl flex justify-center w-full items-center;
+      }
+
+      p {
+        @apply text-pale;
+
+        span {
+          @apply text-yellow flex justify-center items-center gap-x-1;
+
+          svg {
+            @apply h-[15px] w-[15px] fill-yellow;
+          }
+        }
+      }
     }
   }
 }

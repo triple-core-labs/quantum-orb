@@ -1,6 +1,6 @@
 import { Action, State, StateContext, Store } from '@ngxs/store';
 import { AppStateModel } from './app-state.model';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   GetPoints,
@@ -12,6 +12,8 @@ import {
   SetUsers,
 } from './app.actions';
 import { BigNumber, ethers } from 'ethers';
+import { MatDialog } from '@angular/material/dialog';
+import { UnboxingDialogComponent } from '../../orbpage/unboxing-dialog/unboxing-dialog.component';
 
 @State<AppStateModel>({
   name: 'App',
@@ -24,7 +26,11 @@ import { BigNumber, ethers } from 'ethers';
 })
 @Injectable()
 export class AppState {
-  constructor(private store: Store, private snackbar: MatSnackBar) {}
+  constructor(
+    private store: Store,
+    private dialog: MatDialog,
+    private zone: NgZone
+  ) {}
 
   @Action(SetAddress)
   setAddress(ctx: StateContext<AppStateModel>, { address }: SetAddress) {
@@ -72,9 +78,12 @@ export class AppState {
     await state.contract['openGenesisOrb']({
       value: ethers.utils.parseEther('0.0015'),
     }).then((response: any) => {
-      response.wait().then((response: any) => {
-        // response.events[0].args['pointsEarned'].toNumber();
-        this.store.dispatch(new GetPoints());
+      this.zone.run(() => {
+        this.dialog.open(UnboxingDialogComponent, {
+          disableClose: true,
+          panelClass: 'orb-dialog',
+          data: response,
+        });
       });
     });
   }
@@ -86,9 +95,12 @@ export class AppState {
     await state.contract['openQuantumOrb']({
       value: ethers.utils.parseEther('0.0027'),
     }).then((response: any) => {
-      response.wait().then((response: any) => {
-        // response.events[0].args['pointsEarned'].toNumber();
-        this.store.dispatch(new GetPoints());
+      this.zone.run(() => {
+        this.dialog.open(UnboxingDialogComponent, {
+          disableClose: true,
+          panelClass: 'orb-dialog',
+          data: response,
+        });
       });
     });
   }
