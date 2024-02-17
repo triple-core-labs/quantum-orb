@@ -3,6 +3,7 @@ import { AppStateModel } from './app-state.model';
 import { Injectable, NgZone } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
+  GetLastOpenedDaily,
   GetPoints,
   OpenDailyOrb,
   OpenGenesisOrb,
@@ -20,6 +21,7 @@ import { UnboxingDialogComponent } from '../../orbpage/unboxing-dialog/unboxing-
   defaults: {
     address: null,
     points: 0,
+    lastOpenedDaily: null,
     contract: null,
     users: [],
   },
@@ -36,6 +38,7 @@ export class AppState {
   setAddress(ctx: StateContext<AppStateModel>, { address }: SetAddress) {
     ctx.patchState({ address });
     this.store.dispatch(new GetPoints());
+    this.store.dispatch(new GetLastOpenedDaily());
   }
 
   @Action(SetUsers)
@@ -50,6 +53,7 @@ export class AppState {
   ) {
     ctx.patchState({ contract });
     this.store.dispatch(new GetPoints());
+    this.store.dispatch(new GetLastOpenedDaily());
   }
 
   @Action(GetPoints)
@@ -103,5 +107,14 @@ export class AppState {
         });
       });
     });
+  }
+
+  @Action(GetLastOpenedDaily)
+  async getLastOpenedDaily(ctx: StateContext<AppStateModel>) {
+    const state = ctx.getState();
+    if (!state.address || !state.contract) return;
+    await state.contract['getUserLastOpenedDaily'](state.address).then(
+      (response: any) => console.log(response)
+    );
   }
 }
