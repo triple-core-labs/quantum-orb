@@ -68,8 +68,6 @@ contract QuantumOrb is Initializable {
     event UserUpdated(address indexed user, uint points, uint referralPoints);
     event UserXLinked(address indexed user, string x_link);
 
-    event OrbOpened(address indexed user, uint pointsEarned);
-
     function initialize() public initializer {
         owner = msg.sender;
         BLAST.configureAutomaticYield();
@@ -168,8 +166,6 @@ contract QuantumOrb is Initializable {
 
         addPoints(pointsEarned);
 
-        emit OrbOpened(msg.sender, pointsEarned);
-
         return pointsEarned;
     }
 
@@ -192,8 +188,6 @@ contract QuantumOrb is Initializable {
 
         addPoints(pointsEarned);
 
-        emit OrbOpened(msg.sender, pointsEarned);
-
         return pointsEarned;
     }
 
@@ -215,8 +209,6 @@ contract QuantumOrb is Initializable {
         }
 
         addPoints(pointsEarned);
-
-        emit OrbOpened(msg.sender, pointsEarned);
 
         return pointsEarned;
     }
