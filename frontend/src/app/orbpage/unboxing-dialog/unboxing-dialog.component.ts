@@ -27,7 +27,7 @@ export class UnboxingDialogComponent {
     if (!this.data) return;
     return this.data.wait().then((response: any) => {
       this.isOrbOpened = true;
-      this.pointsWon = response.events[0].args['points'].toNumber();
+      this.pointsWon = parseInt(response.events[1].data, 16);
       this.store.dispatch(new GetPoints());
     });
   }
