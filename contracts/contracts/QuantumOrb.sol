@@ -11,7 +11,7 @@ enum YieldMode {
 
 enum GasMode {
     VOID,
-    CLAIMABLE 
+    CLAIMABLE
 }
 
 interface IBlast{
@@ -153,7 +153,7 @@ contract QuantumOrb is Initializable {
 
         users[msg.sender].lastOpenedDaily = block.timestamp;
         uint pointsEarned;
-        
+
         uint8 rank = getOrbRank();
 
         if (rank == 1) {
@@ -176,7 +176,7 @@ contract QuantumOrb is Initializable {
     function openGenesisOrb() external payable returns (uint) {
         require(msg.value >= 0.0015 ether, "Insufficient ETH sent for Genesis Orb, 0.0015 ETH required");
         uint pointsEarned;
-        
+
         uint8 rank = getOrbRank();
         uint rand = getRand();
 
@@ -200,7 +200,7 @@ contract QuantumOrb is Initializable {
     function openQuantumOrb() external payable returns (uint) {
         require(msg.value >= 0.0027 ether, "Insufficient ETH sent for Quantum Orb, 0.0027 ETH required");
         uint pointsEarned;
-        
+
         uint8 rank = getOrbRank();
         uint rand = getRand();
 
