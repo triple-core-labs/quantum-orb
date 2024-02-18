@@ -3,6 +3,7 @@ import { AppState } from './app.state';
 import { AppStateModel } from './app-state.model';
 import { BigNumber } from 'ethers';
 import { from, map, tap } from 'rxjs';
+import { add, differenceInSeconds } from 'date-fns';
 
 export class AppSelectors {
   @Selector([AppState])
@@ -25,5 +26,10 @@ export class AppSelectors {
   @Selector([AppState])
   static points({ points }: AppStateModel) {
     return points;
+  }
+
+  @Selector([AppState])
+  static lastOpenedDailyDate({ lastOpenedDaily }: AppStateModel) {
+    return lastOpenedDaily;
   }
 }
