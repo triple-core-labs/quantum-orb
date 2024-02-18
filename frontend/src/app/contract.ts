@@ -95,10 +95,6 @@ export async function openDailyOrb(store: Store) {
   store.dispatch(new OpenDailyOrb(signer));
 }
 
-export async function openGenesisOrb(store: Store) {
-  store.dispatch(new OpenGenesisOrb());
-}
-
 export async function openQuantumOrb(store: Store) {
   store.dispatch(new OpenQuantumOrb());
 }

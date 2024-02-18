@@ -4,7 +4,7 @@ import { User } from '../../interfaces/user';
 export interface AppStateModel {
   address: string | null;
   points: number;
-  lastOpenedDaily: any;
+  lastOpenedDaily: Date | null;
   contract: Contract | null;
   users: User[];
 }

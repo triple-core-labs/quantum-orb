@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
-import { GetPoints } from '../../store/app/app.actions';
+import { GetLastOpenedDaily, GetPoints } from '../../store/app/app.actions';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -29,6 +29,7 @@ export class UnboxingDialogComponent {
       this.isOrbOpened = true;
       this.pointsWon = parseInt(response.events[1].data, 16);
       this.store.dispatch(new GetPoints());
+      this.store.dispatch(new GetLastOpenedDaily());
     });
   }
 }

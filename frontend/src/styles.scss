@@ -88,6 +88,10 @@ body {
         0 calc(100% - 15px)
       );
     }
+
+    &:disabled {
+      @apply bg-neutral-400 pointer-events-none;
+    }
   }
 }
 

@@ -27,8 +27,12 @@
       }
     }
 
-    .eye {
-      @apply absolute w-[50px] left-1/2 top-1/2 -translate-x-1/2 fill-black/50 opacity-0 transition-all z-20;
+    &.disabled {
+      @apply pointer-events-none opacity-70 brightness-50;
+    }
+
+    .unlock-label {
+      @apply absolute left-1/2 top-1/4 -translate-x-1/2 text-yellow uppercase font-bold text-lg opacity-0 transition-all z-20;
     }
 
     &:hover {
@@ -48,7 +52,7 @@
         }
       }
 
-      .eye {
+      .unlock-label {
         @apply opacity-100;
       }
     }

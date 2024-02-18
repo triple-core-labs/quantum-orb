@@ -70,8 +70,13 @@ export class AppState {
     const state = ctx.getState();
     if (!state.address || !state.contract) return;
     await state.contract['openDailyOrb']().then((response: any) => {
-      // response.events[0].args['pointsEarned'].toNumber();
-      this.store.dispatch(new GetPoints());
+      this.zone.run(() => {
+        this.dialog.open(UnboxingDialogComponent, {
+          disableClose: true,
+          panelClass: 'orb-dialog',
+          data: response,
+        });
+      });
     });
   }
 
@@ -114,7 +119,10 @@ export class AppState {
     const state = ctx.getState();
     if (!state.address || !state.contract) return;
     await state.contract['getUserLastOpenedDaily'](state.address).then(
-      (response: any) => console.log(response)
+      (response: any) => {
+        const timestamp = response.toNumber();
+        ctx.patchState({ lastOpenedDaily: new Date(timestamp * 1000) });
+      }
     );
   }
 }
