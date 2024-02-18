@@ -1,0 +1,61 @@
+exclude: "(.tox)|(venv)|(frontend)|(.vscode)|(tests)"
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-xml
+      - id: check-toml
+      - id: requirements-txt-fixer
+      - id: check-merge-conflict
+      - id: check-json
+      - id: fix-encoding-pragma
+        args: [--remove]
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-symlinks
+      - id: detect-private-key
+      - id: name-tests-test
+        args: [--django]
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.0
+    hooks:
+      - id: pyupgrade
+        args: [--py310-plus]
+  - repo: https://github.com/psf/black
+    rev: 24.1.1
+    hooks:
+      - id: black
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        additional_dependencies:
+          - flake8-bugbear==23.2.13
+          - flake8-builtins==2.1.0
+          - flake8-comprehensions==3.10.1
+          - flake8-django @ git+https://github.com/rocioar/flake8-django.git@5a18a8308661e57689b0509bf39442778b2ee098
+          - flake8-docstrings==1.7.0
+          - flake8-eradicate @ git+https://github.com/wemake-services/flake8-eradicate.git@49841440a13d1b042682df8ce82b7b1964e8c0f7
+          - flake8-executable==2.1.3
+          - flake8-print==5.0.0
+          - flake8-return==1.2.0
+          - pep8-naming==0.13.3
+
+  - repo: https://github.com/adamchainz/django-upgrade
+    rev: 1.15.0
+    hooks:
+    -   id: django-upgrade
+        args: [--target-version, "4.2"]
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.14.1
+    hooks:
+      - id: commitizen
+      - id: commitizen-branch
+        stages: [push]
