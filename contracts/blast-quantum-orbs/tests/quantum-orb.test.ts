@@ -8,9 +8,9 @@ import {
 } from "matchstick-as/assembly/index"
 import { BigInt, Address } from "@graphprotocol/graph-ts"
 import { Initialized } from "../generated/schema"
-import { Initialized as InitializedEvent } from "../generated/QuantumOrb7FadC1/QuantumOrb7FadC1"
-import { handleInitialized } from "../src/quantum-orb-7-fad-c-1"
-import { createInitializedEvent } from "./quantum-orb-7-fad-c-1-utils"
+import { Initialized as InitializedEvent } from "../generated/QuantumOrb/QuantumOrb"
+import { handleInitialized } from "../src/quantum-orb"
+import { createInitializedEvent } from "./quantum-orb-utils"
 
 // Tests structure (matchstick-as >=0.5.0)
 // https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0

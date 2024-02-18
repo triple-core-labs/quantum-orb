@@ -2,10 +2,11 @@ import { newMockEvent } from "matchstick-as"
 import { ethereum, BigInt, Address } from "@graphprotocol/graph-ts"
 import {
   Initialized,
+  OrbOpened,
   UserInitialized,
   UserUpdated,
   UserXLinked
-} from "../generated/QuantumOrb7FadC1/QuantumOrb7FadC1"
+} from "../generated/QuantumOrb/QuantumOrb"
 
 export function createInitializedEvent(version: BigInt): Initialized {
   let initializedEvent = changetype<Initialized>(newMockEvent())
@@ -20,6 +21,27 @@ export function createInitializedEvent(version: BigInt): Initialized {
   )
 
   return initializedEvent
+}
+
+export function createOrbOpenedEvent(
+  user: Address,
+  pointsEarned: BigInt
+): OrbOpened {
+  let orbOpenedEvent = changetype<OrbOpened>(newMockEvent())
+
+  orbOpenedEvent.parameters = new Array()
+
+  orbOpenedEvent.parameters.push(
+    new ethereum.EventParam("user", ethereum.Value.fromAddress(user))
+  )
+  orbOpenedEvent.parameters.push(
+    new ethereum.EventParam(
+      "pointsEarned",
+      ethereum.Value.fromUnsignedBigInt(pointsEarned)
+    )
+  )
+
+  return orbOpenedEvent
 }
 
 export function createUserInitializedEvent(
