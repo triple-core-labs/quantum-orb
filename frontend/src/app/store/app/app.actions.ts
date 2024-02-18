@@ -39,3 +39,7 @@ export class OpenGenesisOrb {
 export class OpenQuantumOrb {
   static readonly type = '[App] Open Quantum Orb';
 }
+
+export class GetLastOpenedDaily {
+  static readonly type = '[App] Get Last Opened Daily Timestamp';
+}
