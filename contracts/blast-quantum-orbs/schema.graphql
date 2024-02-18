@@ -42,3 +42,7 @@ type UserXLinked @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+type User @entity {
+  id: ID!
+  points: BigInt!
+}
