@@ -8,7 +8,8 @@ import {
   Initialized,
   UserInitialized,
   UserUpdated,
-  UserXLinked
+  UserXLinked,
+  User
 } from "../generated/schema"
 
 export function handleInitialized(event: InitializedEvent): void {
@@ -50,6 +51,15 @@ export function handleUserUpdated(event: UserUpdatedEvent): void {
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
 
+  let user = User.load(event.params.user.toHex())
+
+  if (user == null) {
+    user = new User(event.params.user.toHex())
+  }
+
+  user.points = event.params.points
+
+  user.save()
   entity.save()
 }
 

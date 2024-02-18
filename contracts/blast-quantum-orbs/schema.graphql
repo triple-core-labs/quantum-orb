@@ -33,3 +33,15 @@ type UserXLinked @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+type OrbOpened @entity(immutable: true) {
+  id: Bytes!
+  user: Bytes! # address
+  pointsEarned: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+type User @entity {
+  id: ID!
+  points: BigInt!
+}

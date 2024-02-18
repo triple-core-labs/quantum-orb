@@ -33,3 +33,23 @@ dataSources:
         - event: UserXLinked(indexed address,string)
           handler: handleUserXLinked
       file: ./src/quantum-orb-7-fad-c-1.ts
+  - kind: ethereum
+    name: QuantumOrb9E2E76
+    network: blast-testnet
+    source:
+      address: "0x79b8bA2704d35Cba5362d7D7439D0716BD9E2E76"
+      abi: QuantumOrb9E2E76
+      startBlock: 1792852
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - OrbOpened
+      abis:
+        - name: QuantumOrb9E2E76
+          file: ./abis/QuantumOrb9E2E76.json
+      eventHandlers:
+        - event: OrbOpened(indexed address,uint256)
+          handler: handleOrbOpened
+      file: ./src/quantum-orb-9-e-2-e-76.ts
