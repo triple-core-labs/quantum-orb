@@ -1,4 +1,4 @@
-from leaderboard.models import BlastAddress
+from backend.leaderboard.models import BlastAddress
 
 def getTop(user_id: str) -> dict:
     # get the top 20 addresses by points

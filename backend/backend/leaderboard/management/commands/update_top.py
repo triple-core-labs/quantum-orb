@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
-from leaderboard.subgraph import queryTop
-from leaderboard.models import BlastAddress
+from backend.leaderboard.subgraph import queryTop
+from backend.leaderboard.models import BlastAddress
 
 class Command(BaseCommand):
     help = 'Update top BlastAddresses'

@@ -1,7 +1,7 @@
 import requests
 import json
 from django.conf import settings
-from leaderboard.methods import getTop, getRank
+from backend.leaderboard.methods import getTop, getRank
 
 # Lowercase the user ID before passing it to the query
 def lowercaseUserId(func):

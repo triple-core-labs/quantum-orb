@@ -18,7 +18,7 @@ from django.urls import path
 # urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from leaderboard.views import BlastAddressViewSet, LeaderboardView
+from backend.leaderboard.views import BlastAddressViewSet, LeaderboardView
 
 router = DefaultRouter()
 router.register(r'blastaddress', BlastAddressViewSet)
