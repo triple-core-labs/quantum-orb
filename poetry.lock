@@ -7,6 +7,20 @@ optional = false
 python-versions = ">=3.8"
 
 [[package]]
+name = "asgiref"
+version = "3.7.2"
+description = "ASGI specs, helper code, and adapters"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+typing-extensions = {version = ">=4", markers = "python_version < \"3.11\""}
+
+[package.extras]
+tests = ["pytest", "pytest-asyncio", "mypy (>=0.800)"]
+
+[[package]]
 name = "blinker"
 version = "1.7.0"
 description = "Fast, simple object-to-object and broadcast signaling"
@@ -113,6 +127,23 @@ description = "Distribution utilities"
 category = "main"
 optional = false
 python-versions = "*"
+
+[[package]]
+name = "django"
+version = "5.0.2"
+description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
+category = "main"
+optional = false
+python-versions = ">=3.10"
+
+[package.dependencies]
+asgiref = ">=3.7.0,<4"
+sqlparse = ">=0.3.1"
+tzdata = {version = "*", markers = "sys_platform == \"win32\""}
+
+[package.extras]
+argon2 = ["argon2-cffi (>=19.1.0)"]
+bcrypt = ["bcrypt"]
 
 [[package]]
 name = "filelock"
@@ -462,6 +493,19 @@ cryptography = ">=2.0"
 jeepney = ">=0.6"
 
 [[package]]
+name = "sqlparse"
+version = "0.4.4"
+description = "A non-validating SQL parser."
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.extras]
+dev = ["flake8", "build"]
+doc = ["sphinx"]
+test = ["pytest", "pytest-cov"]
+
+[[package]]
 name = "tweepy"
 version = "4.14.0"
 description = "Twitter library for Python"
@@ -500,6 +544,14 @@ description = "Backported and Experimental Type Hints for Python 3.8+"
 category = "main"
 optional = false
 python-versions = ">=3.8"
+
+[[package]]
+name = "tzdata"
+version = "2024.1"
+description = "Provider of IANA time zone data"
+category = "main"
+optional = false
+python-versions = ">=2"
 
 [[package]]
 name = "urllib3"
@@ -561,10 +613,11 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "d7c7636134386fd66598cb7afe7203b2d5f70062465bb66a11b00fcb80fb6b8e"
+content-hash = "4f3de9845ca6456d7bc0224edf90c6bdb2f62ef6b2cc7c08f611a6d2ac7d8bee"
 
 [metadata.files]
 annotated-types = []
+asgiref = []
 blinker = []
 cachecontrol = []
 certifi = []
@@ -575,6 +628,7 @@ click = []
 colorama = []
 cryptography = []
 distlib = []
+django = []
 filelock = []
 flask = []
 identify = []
@@ -604,9 +658,11 @@ pyyaml = []
 requests = []
 requests-oauthlib = []
 secretstorage = []
+sqlparse = []
 tweepy = []
 twitterapi = []
 typing-extensions = []
+tzdata = []
 urllib3 = []
 virtualenv = []
 werkzeug = []
