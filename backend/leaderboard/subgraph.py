@@ -58,7 +58,7 @@ def getUserPoints(user_id: str) -> int | dict:
 
 
 @lowercaseUserId
-def getCurrent(user_id: str) -> dict:
+def getCurrent(user_id: str) -> list[dict]:
     try:
         points = getUserPoints(user_id)
         if isinstance(points, dict):
@@ -70,8 +70,6 @@ def getCurrent(user_id: str) -> dict:
                         id
                         points
                     }
-                }
-                {
                     usersWithLessPoints: users(where: { points_lt: %s }, orderBy: points, orderDirection: desc, first: 5) {
                         id
                         points
@@ -79,25 +77,23 @@ def getCurrent(user_id: str) -> dict:
                 }
             """ % (points, points)
         }).json()['data']
-        result = {
-            "current": [
-                ({
-                    "address": user["id"],
-                    "points": user["points"],
-                    "rank": getRank(user["id"])
-                } for user in others["usersWithMorePoints"]),
-                {
-                    "address": user_id,
-                    "points": points,
-                    "rank": -1
-                },
-                ({
-                    "address": user["id"],
-                    "points": user["points"],
-                    "rank": getRank(user["id"])
-                } for user in others["usersWithLessPoints"])
-            ]
-        }
+        return [
+            *[{
+                "address": user["id"],
+                "points": user["points"],
+                "rank": getRank(user["id"])
+            } for user in others["usersWithMorePoints"]],
+            {
+                "address": user_id,
+                "points": points,
+                "rank": getRank(user_id)
+            },
+            *[{
+                "address": user["id"],
+                "points": user["points"],
+                "rank": getRank(user["id"])
+            } for user in others["usersWithLessPoints"]]
+        ]
     except (KeyError, IndexError, requests.exceptions.RequestException, TypeError, ValueError, AttributeError, json.JSONDecodeError) as e:
         return {
             "status": "error",
@@ -108,9 +104,12 @@ def getCurrent(user_id: str) -> dict:
 @lowercaseUserId
 def getLeaderboard(user_id: str) -> dict:
     try:
+        current = getCurrent(user_id)
+        print(current)
+        top = getTop(current[0]["address"])
         return {
-            "top": getTop(user_id),
-            "current": getCurrent(user_id),
+            "top": top,
+            "current": current,
         }
     except (KeyError, IndexError, requests.exceptions.RequestException, TypeError, ValueError, AttributeError, json.JSONDecodeError) as e:
         return {

@@ -15,7 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+# urls.py
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from leaderboard.views import BlastAddressViewSet, LeaderboardView
+
+router = DefaultRouter()
+router.register(r'blastaddress', BlastAddressViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include(router.urls)),
+    path('leaderboard/', LeaderboardView.as_view(), name='leaderboard'),
 ]

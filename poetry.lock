@@ -146,6 +146,18 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "djangorestframework"
+version = "3.14.0"
+description = "Web APIs for Django, made easy."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+django = ">=3.0"
+pytz = "*"
+
+[[package]]
 name = "filelock"
 version = "3.13.1"
 description = "A platform independent file lock."
@@ -432,6 +444,14 @@ python-versions = ">=3.8"
 cli = ["click (>=5.0)"]
 
 [[package]]
+name = "pytz"
+version = "2024.1"
+description = "World timezone definitions, modern and historical"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "pywin32-ctypes"
 version = "0.2.2"
 description = "A (partial) reimplementation of pywin32 using ctypes/cffi"
@@ -613,7 +633,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "4f3de9845ca6456d7bc0224edf90c6bdb2f62ef6b2cc7c08f611a6d2ac7d8bee"
+content-hash = "ebb11baa7ad5340b347af6d6b9f6df21d453d29b94a0a447b64ca9a2abfeb193"
 
 [metadata.files]
 annotated-types = []
@@ -629,6 +649,7 @@ colorama = []
 cryptography = []
 distlib = []
 django = []
+djangorestframework = []
 filelock = []
 flask = []
 identify = []
@@ -653,6 +674,7 @@ pydantic = []
 pydantic-core = []
 pydantic-settings = []
 python-dotenv = []
+pytz = []
 pywin32-ctypes = []
 pyyaml = []
 requests = []
