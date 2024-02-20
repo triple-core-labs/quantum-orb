@@ -15,22 +15,16 @@ import { map } from 'rxjs';
 export class InvitationsAmountPipe implements PipeTransform {
   private asyncPipe: AsyncPipe;
 
-  constructor(@Inject(ChangeDetectorRef) private cdr: ChangeDetectorRef, private store: Store) {
+  constructor(
+    @Inject(ChangeDetectorRef) private cdr: ChangeDetectorRef,
+    private store: Store
+  ) {
     this.asyncPipe = new AsyncPipe(cdr);
-}
+  }
 
   transform(user: User) {
     return this.asyncPipe.transform(
-      this.store
-        .select(AppSelectors.users)
-        .pipe(
-          map(
-            (users) =>
-              users.filter(
-                (filteredUser) => filteredUser.parent == user.address
-              ).length
-          )
-        )
+      this.store.select(AppSelectors.users).pipe(map((users) => users))
     );
   }
 
