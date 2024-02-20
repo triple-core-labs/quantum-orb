@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-mt@gtc02jq!51ur5n(t*x(t*24xjinf5tde#eon4lvd4a)i!ys
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['quantum-orb.up.railway.app']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
