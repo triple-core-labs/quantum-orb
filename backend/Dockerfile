@@ -20,4 +20,5 @@ COPY . /backend/
 EXPOSE 8000
 
 # run gunicorn main:app
+RUN python manage.py migrate
 CMD ["gunicorn", "backend.wsgi:application"]
