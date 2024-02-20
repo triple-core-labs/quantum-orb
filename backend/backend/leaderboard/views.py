@@ -25,7 +25,7 @@ class LeaderboardView(APIView):
             return Response(serializer.errors, status=400)
 
 
-@api_view(["POST"])
+@api_view(['GET'])
 def update_top_endpoint(request):
     call_command("update_top")
     return Response({"message": "Update top command triggered"})
