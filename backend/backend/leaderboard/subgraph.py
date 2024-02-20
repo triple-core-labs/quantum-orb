@@ -1,12 +1,16 @@
-import requests
 import json
+
+import requests
 from django.conf import settings
-from backend.leaderboard.methods import getTop, getRank
+
+from backend.leaderboard.methods import getRank, getTop
+
 
 # Lowercase the user ID before passing it to the query
 def lowercaseUserId(func):
     def wrapper(user_id: str, *args, **kwargs):
         return func(user_id.lower(), *args, **kwargs)
+
     return wrapper
 
 
@@ -22,16 +26,26 @@ def queryTop():
                     points
                 }
             }
-            """ % (i * 1000)
+            """ % (
+                i * 1000
+            )
 
-            response = requests.post(settings.SUBGRAPH_API_URL, json={'query': query})
-            data.extend(response.json()['data']['users'])
+            response = requests.post(settings.SUBGRAPH_API_URL, json={"query": query})
+            data.extend(response.json()["data"]["users"])
         return data
-    except (KeyError, IndexError, requests.exceptions.RequestException, TypeError, ValueError, AttributeError, json.JSONDecodeError) as e:
+    except (
+        KeyError,
+        IndexError,
+        requests.exceptions.RequestException,
+        TypeError,
+        ValueError,
+        AttributeError,
+        json.JSONDecodeError,
+    ) as e:
         return {
             "status": "error",
             "message": "An error occurred while fetching the top users. Please try again.",
-            "error": str(e)
+            "error": str(e),
         }
 
 
@@ -39,21 +53,32 @@ def queryTop():
 def getUserPoints(user_id: str) -> int | dict:
     user_id = user_id.lower()
     try:
-        query = """
+        query = (
+            """
             {
                 users(where: { id: "%s" }) {
                     points
                 }
             }
-        """ % user_id
-        return requests.post(settings.SUBGRAPH_API_URL, json={
-            'query': query
-        }).json()['data']['users'][0]['points']
-    except (KeyError, IndexError, requests.exceptions.RequestException, TypeError, ValueError, AttributeError, json.JSONDecodeError) as e:
+        """
+            % user_id
+        )
+        return requests.post(settings.SUBGRAPH_API_URL, json={"query": query}).json()[
+            "data"
+        ]["users"][0]["points"]
+    except (
+        KeyError,
+        IndexError,
+        requests.exceptions.RequestException,
+        TypeError,
+        ValueError,
+        AttributeError,
+        json.JSONDecodeError,
+    ) as e:
         return {
             "status": "error",
             "message": "An error occurred while fetching the user's points. Please check the user ID and try again.",
-            "error": str(e)
+            "error": str(e),
         }
 
 
@@ -63,43 +88,59 @@ def getCurrent(user_id: str) -> list[dict]:
         points = getUserPoints(user_id)
         if isinstance(points, dict):
             return points
-        others = requests.post(settings.SUBGRAPH_API_URL, json={
-            'query': """
-                {
-                    usersWithMorePoints: users(where: { points_gt: %s }, orderBy: points, orderDirection: asc, first: 5) {
+        others = requests.post(
+            settings.SUBGRAPH_API_URL,
+            json={
+                "query": """
+                {{
+                    usersWithMorePoints: users(where: {{ points_gt: {} }}, orderBy: points, orderDirection: asc, first: 5) {{
                         id
                         points
-                    }
-                    usersWithLessPoints: users(where: { points_lt: %s }, orderBy: points, orderDirection: desc, first: 5) {
+                    }}
+                    usersWithLessPoints: users(where: {{ points_lt: {} }}, orderBy: points, orderDirection: desc, first: 5) {{
                         id
                         points
-                    }
-                }
-            """ % (points, points)
-        }).json()['data']
-        return [
-            *[{
-                "address": user["id"],
-                "points": user["points"],
-                "rank": getRank(user["id"])
-            } for user in others["usersWithMorePoints"]],
-            {
-                "address": user_id,
-                "points": points,
-                "rank": getRank(user_id)
+                    }}
+                }}
+            """.format(
+                    points, points
+                )
             },
-            *[{
-                "address": user["id"],
-                "points": user["points"],
-                "rank": getRank(user["id"])
-            } for user in others["usersWithLessPoints"]]
+        ).json()["data"]
+        return [
+            *[
+                {
+                    "address": user["id"],
+                    "points": user["points"],
+                    "rank": getRank(user["id"]),
+                }
+                for user in others["usersWithMorePoints"]
+            ],
+            {"address": user_id, "points": points, "rank": getRank(user_id)},
+            *[
+                {
+                    "address": user["id"],
+                    "points": user["points"],
+                    "rank": getRank(user["id"]),
+                }
+                for user in others["usersWithLessPoints"]
+            ],
         ]
-    except (KeyError, IndexError, requests.exceptions.RequestException, TypeError, ValueError, AttributeError, json.JSONDecodeError) as e:
+    except (
+        KeyError,
+        IndexError,
+        requests.exceptions.RequestException,
+        TypeError,
+        ValueError,
+        AttributeError,
+        json.JSONDecodeError,
+    ) as e:
         return {
             "status": "error",
             "message": "An error occurred while fetching the bottom users. Please try again.",
-            "error": str(e)
+            "error": str(e),
         }
+
 
 @lowercaseUserId
 def getLeaderboard(user_id: str) -> dict:
@@ -111,11 +152,19 @@ def getLeaderboard(user_id: str) -> dict:
             "top": top,
             "current": current,
         }
-    except (KeyError, IndexError, requests.exceptions.RequestException, TypeError, ValueError, AttributeError, json.JSONDecodeError) as e:
+    except (
+        KeyError,
+        IndexError,
+        requests.exceptions.RequestException,
+        TypeError,
+        ValueError,
+        AttributeError,
+        json.JSONDecodeError,
+    ) as e:
         return {
             "status": "error",
             "message": "An error occurred while fetching the leaderboard. Please try again.",
-            "error": str(e)
+            "error": str(e),
         }
 
 

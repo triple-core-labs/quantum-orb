@@ -13,19 +13,26 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
-from django.urls import path
+
 # urls.py
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from backend.leaderboard.views import BlastAddressViewSet, LeaderboardView
+
+from backend.leaderboard.views import (
+    BlastAddressViewSet,
+    LeaderboardView,
+    update_top_endpoint,
+)
 
 router = DefaultRouter()
-router.register(r'blastaddress', BlastAddressViewSet)
+router.register(r"blastaddress", BlastAddressViewSet)
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include(router.urls)),
-    path('leaderboard/', LeaderboardView.as_view(), name='leaderboard'),
+    path("admin/", admin.site.urls),
+    path("", include(router.urls)),
+    path("leaderboard/", LeaderboardView.as_view(), name="leaderboard"),
+    path("update_top/", update_top_endpoint, name="update_top"),
 ]
