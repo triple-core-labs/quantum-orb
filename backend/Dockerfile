@@ -19,5 +19,5 @@ COPY . /backend/
 # Expose the port the app runs in
 EXPOSE 8000
 
-# Define the command to run the app
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi:application"]
+# run gunicorn main:app
+CMD ["gunicorn", "main:app"]
