@@ -20,4 +20,4 @@ COPY . /backend/
 EXPOSE 8000
 
 # run gunicorn main:app
-CMD ["gunicorn", "main:app"]
+CMD ["gunicorn", "backend.wsgi:application"]
