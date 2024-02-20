@@ -1,5 +1,5 @@
 :host {
-  @apply w-full md:w-[calc(100%-4rem)] h-[70px] max-w-screen-limit flex justify-center items-start text-pale text-sm pt-4 fixed bottom-0 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-md z-50;
+  @apply w-full md:w-[calc(100%-4rem)] h-[70px] max-w-screen-limit flex justify-center items-center space-x-8 text-pale text-sm pt-4 fixed bottom-0 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-md z-50;
 
   clip-path: polygon(
     0 100%,
