@@ -10,7 +10,7 @@ WORKDIR /backend
 
 # Install dependencies
 COPY requirements.txt /backend/
-RUN pip install --upgrade pip setuptools
+RUN pip install --upgrade pip setuptools gunicorn
 RUN pip install -r requirements.txt
 
 # Copy project
