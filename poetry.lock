@@ -633,7 +633,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "ebb11baa7ad5340b347af6d6b9f6df21d453d29b94a0a447b64ca9a2abfeb193"
+content-hash = "2b15292ac1fa7d91fd32c711a8b44219a50130e350c1b4c335d5375db978deae"
 
 [metadata.files]
 annotated-types = []
