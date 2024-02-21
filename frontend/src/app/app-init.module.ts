@@ -14,7 +14,7 @@ import { FetchUsers } from './store/app/app.actions';
             setAddress(store);
             switchChain();
             setContract(store);
-          }
+          } else setAddress(store);
           store.dispatch(new FetchUsers());
         };
       },
