@@ -6,5 +6,5 @@ export interface AppStateModel {
   points: number;
   lastOpenedDaily: Date | null;
   contract: Contract | null;
-  users: User[];
+  leaderboard: User[];
 }
