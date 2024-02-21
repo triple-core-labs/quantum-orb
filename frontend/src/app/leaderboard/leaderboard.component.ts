@@ -15,8 +15,8 @@ import { CommonModule } from '@angular/common';
   imports: [ShortAddressPipe, InvitationsAmountPipe, CommonModule],
 })
 export class LeaderboardComponent implements OnInit {
-  @Select(AppSelectors.users)
-  users$!: Observable<User[]>;
+  @Select(AppSelectors.leaderboard)
+  leaderboard$!: Observable<User[]>;
 
   @Select(AppSelectors.address)
   address$!: Observable<string>;

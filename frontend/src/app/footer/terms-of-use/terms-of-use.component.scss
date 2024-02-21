@@ -1,0 +1,12 @@
+:host {
+  @apply w-full flex flex-col justify-start items-start text-pale;
+
+  h1 {
+    @apply w-full text-center text-pale uppercase max-md:text-4xl mb-4;
+  }
+
+  h2{
+      @apply mt-6 mb-2;
+  }
+
+}

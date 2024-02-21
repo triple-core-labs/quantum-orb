@@ -28,7 +28,7 @@ async function markAsPartner(userAddress: string) {
 }
 
 async function openDailyOrb() {
-    const points = await QuantumOrb.openDailyOrb({ value: ethers.utils.parseEther("0.001") });
+    const points = await QuantumOrb.openDailyOrb();
     return points;
 }
 

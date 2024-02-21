@@ -4,25 +4,25 @@
     <tr>
       <th>Position</th>
       <th>Address</th>
-      <th>Invitations</th>
+      <!-- <th>Invitations</th> -->
       <th>Points</th>
     </tr>
   </thead>
   <tbody>
     <tr
-      *ngFor="let user of users$ | async; index as i"
-      [ngClass]="{ active: i == 14 }"
+      *ngFor="let user of leaderboard$ | async"
+      [ngClass]="{ active: user.address === (address$ | async) }"
     >
-      <td>{{ i + 1 }}</td>
+      <td>{{ user.rank }}</td>
       <td>
         <ng-container *ngIf="innerWidth > 768; else shortAddress">{{
-          i == 14 ? (address$ | async) ?? user.address : "0x" + user.address
+          user.address
         }}</ng-container>
         <ng-template #shortAddress>{{
           user.address | shortAddress
         }}</ng-template>
       </td>
-      <td>{{ user | invitationsAmount }}</td>
+      <!-- <td>{{ user | invitationsAmount }}</td> -->
       <td>{{ user.points }}</td>
     </tr>
   </tbody>
