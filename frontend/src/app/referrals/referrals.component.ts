@@ -14,8 +14,8 @@ import { ShortAddressPipe } from '../pipes/short-address.pipe';
   imports: [CommonModule, ShortAddressPipe],
 })
 export class ReferralsComponent implements OnInit {
-  @Select(AppSelectors.referrals)
-  referrals$!: Observable<User[]>;
+  // @Select(AppSelectors.referrals)
+  // referrals$!: Observable<User[]>;
 
   @HostListener('window:resize', ['$event'])
   onResize() {
