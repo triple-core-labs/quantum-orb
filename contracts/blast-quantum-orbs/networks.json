@@ -1,0 +1,8 @@
+{
+  "blast-testnet": {
+    "QuantumOrb": {
+      "address": "0x9c94e5D2F4024F74B591d806A7C7D64abB901f0c",
+      "startBlock": 1792852
+    }
+  }
+}

@@ -1,8 +1,8 @@
 import { Action, State, StateContext, Store } from '@ngxs/store';
 import { AppStateModel } from './app-state.model';
 import { Injectable, NgZone } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import {
+  FetchUsers,
   GetLastOpenedDaily,
   GetPoints,
   OpenDailyOrb,
@@ -10,11 +10,12 @@ import {
   OpenQuantumOrb,
   SetAddress,
   SetContract,
-  SetUsers,
 } from './app.actions';
 import { BigNumber, ethers } from 'ethers';
 import { MatDialog } from '@angular/material/dialog';
 import { UnboxingDialogComponent } from '../../orbpage/unboxing-dialog/unboxing-dialog.component';
+import { HttpClient } from '@angular/common/http';
+import { User } from '../../interfaces/user';
 
 @State<AppStateModel>({
   name: 'App',
@@ -31,19 +32,25 @@ export class AppState {
   constructor(
     private store: Store,
     private dialog: MatDialog,
-    private zone: NgZone
+    private zone: NgZone,
+    private http: HttpClient
   ) {}
 
   @Action(SetAddress)
   setAddress(ctx: StateContext<AppStateModel>, { address }: SetAddress) {
     ctx.patchState({ address });
-    this.store.dispatch(new GetPoints());
-    this.store.dispatch(new GetLastOpenedDaily());
+    this.store.dispatch([
+      new GetPoints(),
+      new GetLastOpenedDaily(),
+      new FetchUsers(),
+    ]);
   }
 
-  @Action(SetUsers)
-  setUsers(ctx: StateContext<AppStateModel>, { users }: SetUsers) {
-    ctx.patchState({ users });
+  @Action(FetchUsers)
+  fetchUsers(ctx: StateContext<AppStateModel>) {
+    this.http
+      .get<User[]>('https://quantum-orb.up.railway.app/blastaddress/')
+      .subscribe((response) => ctx.patchState({ users: response }));
   }
 
   @Action(SetContract)
@@ -52,8 +59,11 @@ export class AppState {
     { contract }: SetContract
   ) {
     ctx.patchState({ contract });
-    this.store.dispatch(new GetPoints());
-    this.store.dispatch(new GetLastOpenedDaily());
+    this.store.dispatch([
+      new GetPoints(),
+      new GetLastOpenedDaily(),
+      new FetchUsers(),
+    ]);
   }
 
   @Action(GetPoints)

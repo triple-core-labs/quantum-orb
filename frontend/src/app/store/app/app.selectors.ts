@@ -16,12 +16,12 @@ export class AppSelectors {
     return users.sort((a, b) => b.points - a.points);
   }
 
-  @Selector([AppState])
-  static referrals({ address, users }: AppStateModel) {
-    return users
-      .filter((user) => user.parent === users.at(users.length - 1)?.address)
-      .sort((a, b) => b.shared_points - a.shared_points);
-  }
+  // @Selector([AppState])
+  // static referrals({ address, users }: AppStateModel) {
+  //   return users
+  //     .filter((user) => user.parent === users.at(users.length - 1)?.address)
+  //     .sort((a, b) => b.shared_points - a.shared_points);
+  // }
 
   @Selector([AppState])
   static points({ points }: AppStateModel) {
