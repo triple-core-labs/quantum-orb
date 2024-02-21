@@ -20,7 +20,7 @@ export class HomepageComponent {
     {
       question: 'What is Quantum Orbs?',
       answer:
-        'Quantum Orbs is a gamblify project built on the layer 2 blockchain Blast. It offers users the opportunity to participate in a unique gaming experience by opening orbs and winning quantum points, which are essential for increasing your leaderboard ranking.',
+        'Quantum Orbs is a GambleFi project built on the layer 2 blockchain Blast. It offers users the opportunity to participate in a unique gaming experience by opening orbs and winning quantum points, which are essential for increasing your leaderboard ranking.',
       active: false,
     },
     {
@@ -51,14 +51,14 @@ export class HomepageComponent {
     {
       question: 'How can I contact customer support?',
       answer:
-        'For any inquiries or assistance, please reach out to our customer support team at support@quantumorbs.com.',
+        'For any inquiries or assistance, please reach out to our customer support team at quantum-orbs@gmail.com.',
       active: false,
     },
     {
       question:
         'Where can I find updates and announcements about Quantum Orbs?',
       answer:
-        'Stay informed about the latest updates, announcements, and developments by following our official Twitter.',
+        "Stay informed about the latest updates, announcements, and developments by following our official Twitter/X - @QuantumOrbs. You can also follow our developer's team - @egenston_ @fortisai @dmpahuba for more insights.",
       active: false,
     },
   ];
