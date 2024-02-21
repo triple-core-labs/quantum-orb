@@ -10,11 +10,9 @@ import { FetchUsers } from './store/app/app.actions';
       useFactory(store: Store) {
         return () => {
           window.ethereum.on('chainChanged', () => window.location.reload());
-          if (window.ethereum.isConnected()) {
-            setAddress(store);
-            switchChain();
-            setContract(store);
-          } else setAddress(store);
+          setAddress(store);
+          switchChain();
+          setContract(store);
           store.dispatch(new FetchUsers());
         };
       },
