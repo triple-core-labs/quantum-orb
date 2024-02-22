@@ -265,27 +265,27 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
-name = "django-background-tasks"
-version = "1.2.5"
+name = "django-cors-headers"
+version = "4.3.1"
+description = "django-cors-headers is a Django application for handling the server headers required for Cross-Origin Resource Sharing (CORS)."
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+asgiref = ">=3.6"
+Django = ">=3.2"
+
+[[package]]
+name = "django4-background-tasks"
+version = "1.2.9"
 description = "Database backed asynchronous task queue"
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-django-compat = ">=1.0.13"
 six = "*"
-
-[[package]]
-name = "django-compat"
-version = "1.0.15"
-description = "For- and backwards compatibility layer for Django 1.4, 1.7, 1.8, 1.9, 1.10, and 1.11"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-six = ">=1.10.0"
 
 [[package]]
 name = "djangorestframework"
@@ -865,7 +865,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "8e043e72cc81a4220c377078514b81566e362c2543e664cac5ae2fb2abb8e750"
+content-hash = "bb2cae01e77b9070b2e08133c3f9a4e6ea6b2b893147536902ad68fbd75d6cca"
 
 [metadata.files]
 amqp = []
@@ -888,8 +888,8 @@ colorama = []
 cryptography = []
 distlib = []
 django = []
-django-background-tasks = []
-django-compat = []
+django-cors-headers = []
+django4-background-tasks = []
 djangorestframework = []
 filelock = []
 flask = []
