@@ -10,8 +10,6 @@ https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/
 import os
 
 from django.core.wsgi import get_wsgi_application
-from django.core.signals import ready
-from django.dispatch import receiver
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 
