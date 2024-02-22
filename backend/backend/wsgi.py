@@ -10,7 +10,14 @@ https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/
 import os
 
 from django.core.wsgi import get_wsgi_application
+from background_task.models import Task
+from leaderboard.tasks import update_top_blast_addresses
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
+
+# Check if the task is already scheduled
+if not Task.objects.filter(task_name='leaderboard.tasks.update_top_blast_addresses').exists():
+    # If not, schedule the task
+    update_top_blast_addresses(repeat=60)
 
 application = get_wsgi_application()

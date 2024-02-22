@@ -9,7 +9,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         res = queryTop()
-        print(res)
         for user in res:
             BlastAddress.objects.update_or_create(
                 address=user["id"],
