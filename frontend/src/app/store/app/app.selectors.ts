@@ -12,8 +12,8 @@ export class AppSelectors {
   }
 
   @Selector([AppState])
-  static users({ users }: AppStateModel) {
-    return users.sort((a, b) => b.points - a.points);
+  static leaderboard({ leaderboard }: AppStateModel) {
+    return leaderboard;
   }
 
   // @Selector([AppState])

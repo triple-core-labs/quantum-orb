@@ -24,7 +24,7 @@ export class InvitationsAmountPipe implements PipeTransform {
 
   transform(user: User) {
     return this.asyncPipe.transform(
-      this.store.select(AppSelectors.users).pipe(map((users) => users))
+      this.store.select(AppSelectors.leaderboard).pipe(map((users) => users))
     );
   }
 

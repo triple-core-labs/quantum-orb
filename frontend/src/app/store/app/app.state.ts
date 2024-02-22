@@ -17,6 +17,11 @@ import { UnboxingDialogComponent } from '../../orbpage/unboxing-dialog/unboxing-
 import { HttpClient } from '@angular/common/http';
 import { User } from '../../interfaces/user';
 
+export interface LeaderboardReponse {
+  top: User[];
+  current: User[];
+}
+
 @State<AppStateModel>({
   name: 'App',
   defaults: {
@@ -24,7 +29,7 @@ import { User } from '../../interfaces/user';
     points: 0,
     lastOpenedDaily: null,
     contract: null,
-    users: [],
+    leaderboard: [],
   },
 })
 @Injectable()
@@ -48,9 +53,17 @@ export class AppState {
 
   @Action(FetchUsers)
   fetchUsers(ctx: StateContext<AppStateModel>) {
+    const state = ctx.getState();
+    if (!state.address) return;
     this.http
-      .get<User[]>('https://quantum-orb.up.railway.app/blastaddress/')
-      .subscribe((response) => ctx.patchState({ users: response }));
+      .get<LeaderboardReponse>(
+        `https://quantum-orb.up.railway.app/leaderboard/?address=${state.address}`
+      )
+      .subscribe((response: LeaderboardReponse) => {
+        const leaderboard = response.top.concat(response.current);
+
+        ctx.patchState({ leaderboard });
+      });
   }
 
   @Action(SetContract)
