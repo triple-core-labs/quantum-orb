@@ -111,16 +111,16 @@ def getCurrent(user_id: str) -> list[dict]:
             *[
                 {
                     "address": user["id"],
-                    "points": user["points"],
+                    "points": int(user["points"]),
                     "rank": getRank(user["id"]),
                 }
-                for user in others["usersWithMorePoints"]
+                for user in others["usersWithMorePoints"][::-1]
             ],
             {"address": user_id, "points": points, "rank": getRank(user_id)},
             *[
                 {
                     "address": user["id"],
-                    "points": user["points"],
+                    "points": int(user["points"]),
                     "rank": getRank(user["id"]),
                 }
                 for user in others["usersWithLessPoints"]
@@ -166,8 +166,3 @@ def getLeaderboard(user_id: str) -> dict:
             "message": "An error occurred while fetching the leaderboard. Please try again.",
             "error": str(e),
         }
-
-
-if __name__ == "__main__":
-    address = "0x8BB280551540171E4ee400E2B35cC6d8079Ef114"
-    print(getLeaderboard(address))
