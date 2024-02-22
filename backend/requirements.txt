@@ -17,8 +17,8 @@ click==8.1.7; python_full_version >= "3.6.2" and python_full_version < "4.0.0" a
 colorama==0.4.6; python_version >= "3.8" and python_full_version < "3.0.0" and platform_system == "Windows" or platform_system == "Windows" and python_version >= "3.8" and python_full_version >= "3.7.0"
 cryptography==42.0.4; sys_platform == "linux" and python_version >= "3.8"
 distlib==0.3.8; python_version >= "3.9"
-django-background-tasks==1.2.5
-django-compat==1.0.15
+django-cors-headers==4.3.1; python_version >= "3.8"
+django4-background-tasks==1.2.9
 django==5.0.2; python_version >= "3.10"
 djangorestframework==3.14.0; python_version >= "3.6"
 filelock==3.13.1; python_version >= "3.9"
