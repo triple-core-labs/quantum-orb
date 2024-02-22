@@ -20,7 +20,7 @@ application = get_wsgi_application()
 @receiver(request_started)
 def schedule_task(sender, **kwargs):
     from background_task.models import Task
-    from leaderboard.tasks import update_top_blast_addresses
+    from backend.leaderboard.tasks import update_top_blast_addresses
 
     # Check if the task is already scheduled
     if not Task.objects.filter(task_name='leaderboard.tasks.update_top_blast_addresses').exists():
