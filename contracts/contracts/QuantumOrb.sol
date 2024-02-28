@@ -199,6 +199,65 @@ contract QuantumOrb is
         _unpause();
     }
 
+    // ------------------------------------------------------------- gameplay
+
+    /// @notice Pay for an orb and commit to the block whose hash will decide it.
+    /// @param referrer Bound permanently on the caller first open. Pass the
+    ///        zero address for none.
+    function openOrb(OrbType orbType, address referrer)
+        external
+        payable
+        whenNotPaused
+    {
+        User storage u = users[msg.sender];
+        if (pending[msg.sender].exists) revert OpenAlreadyPending();
+
+        OrbConfig storage c = _orbConfig[orbType];
+        if (!c.enabled) revert OrbDisabled();
+        if (msg.value != c.price) {
+            revert IncorrectPayment(c.price, msg.value);
+        }
+
+        if (!u.registered) {
+            u.registered = true;
+            u.referrer = _validatedReferrer(referrer);
+            emit UserRegistered(msg.sender, u.referrer);
+        }
+
+        uint64 prevDailyOpen = u.lastDailyOpen;
+        if (orbType == OrbType.DAILY) {
+            uint64 readyAt = prevDailyOpen == 0 ? 0 : prevDailyOpen + 1 days;
+            if (block.timestamp < readyAt) revert DailyNotReady(readyAt);
+            // Consumed at commit time so an unrevealed orb cannot be used to
+            // farm extra daily attempts. reclaimOrb restores it.
+            u.lastDailyOpen = uint64(block.timestamp);
+        }
+
+        pending[msg.sender] = Pending({
+            commitBlock: uint64(block.number),
+            paid: uint96(msg.value),
+            prevDailyOpen: prevDailyOpen,
+            orbType: orbType,
+            exists: true
+        });
+
+        emit OrbCommitted(msg.sender, orbType, uint64(block.number));
+    }
+
+    /// @notice Resolve a committed orb. Filled in by the reveal task.
+    function revealOrb(address user) external nonReentrant {
+        Pending memory p = pending[user];
+        if (!p.exists) revert NoPendingOpen();
+        uint64 readyAt = p.commitBlock + REVEAL_DELAY;
+        // Strictly greater: blockhash(block.number) is zero in the EVM, so a
+        // reveal landing in readyAt itself would draw a degenerate seed.
+        if (block.number <= readyAt) revert RevealTooEarly(readyAt);
+        if (block.number > p.commitBlock + REVEAL_WINDOW) {
+            revert RevealWindowClosed();
+        }
+        delete pending[user];
+    }
+
     // ----------------------------------------------------------- view calls
 
     function orbConfig(OrbType orbType)
@@ -238,6 +297,17 @@ contract QuantumOrb is
         c.maxPoints = maxPoints;
 
         emit OrbConfigChanged(orbType, price, enabled);
+    }
+
+    function _validatedReferrer(address referrer)
+        internal
+        view
+        returns (address)
+    {
+        if (referrer == address(0)) return address(0);
+        if (referrer == msg.sender) revert InvalidReferrer();
+        if (users[referrer].referrer == msg.sender) revert InvalidReferrer();
+        return referrer;
     }
 
     /// @dev Reserved so later upgrades can add storage without shifting layout.
