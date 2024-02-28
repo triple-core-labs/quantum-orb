@@ -1,241 +1,245 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.24;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {Initializable} from
+    "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {Ownable2StepUpgradeable} from
+    "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
+import {PausableUpgradeable} from
+    "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
+import {IBlast} from "./interfaces/IBlast.sol";
 
-enum YieldMode {
-    AUTOMATIC,
-    VOID,
-    CLAIMABLE
-}
+/// @title QuantumOrb
+/// @notice Points game on Blast. Players open one free orb per day and may buy
+///         higher tiers. Outcomes are decided by commit-reveal over a future
+///         block hash so that neither the player nor the operator can predict
+///         or reverse a result at payment time.
+contract QuantumOrb is
+    Initializable,
+    Ownable2StepUpgradeable,
+    PausableUpgradeable
+{
+    // ---------------------------------------------------------------- types
 
-enum GasMode {
-    VOID,
-    CLAIMABLE
-}
-
-interface IBlast{
-    // configure
-    function configureContract(address contractAddress, YieldMode _yield, GasMode gasMode, address governor) external;
-    function configure(YieldMode _yield, GasMode gasMode, address governor) external;
-
-    // base configuration options
-    function configureClaimableYield() external;
-    function configureClaimableYieldOnBehalf(address contractAddress) external;
-    function configureAutomaticYield() external;
-    function configureAutomaticYieldOnBehalf(address contractAddress) external;
-    function configureVoidYield() external;
-    function configureVoidYieldOnBehalf(address contractAddress) external;
-    function configureClaimableGas() external;
-    function configureClaimableGasOnBehalf(address contractAddress) external;
-    function configureVoidGas() external;
-    function configureVoidGasOnBehalf(address contractAddress) external;
-    function configureGovernor(address _governor) external;
-    function configureGovernorOnBehalf(address _newGovernor, address contractAddress) external;
-
-    // claim yield
-    function claimYield(address contractAddress, address recipientOfYield, uint256 amount) external returns (uint256);
-    function claimAllYield(address contractAddress, address recipientOfYield) external returns (uint256);
-
-    // claim gas
-    function claimAllGas(address contractAddress, address recipientOfGas) external returns (uint256);
-    function claimGasAtMinClaimRate(address contractAddress, address recipientOfGas, uint256 minClaimRateBips) external returns (uint256);
-    function claimMaxGas(address contractAddress, address recipientOfGas) external returns (uint256);
-    function claimGas(address contractAddress, address recipientOfGas, uint256 gasToClaim, uint256 gasSecondsToConsume) external returns (uint256);
-
-    // read functions
-    function readClaimableYield(address contractAddress) external view returns (uint256);
-    function readYieldConfiguration(address contractAddress) external view returns (uint8);
-    function readGasParams(address contractAddress) external view returns (uint256 etherSeconds, uint256 etherBalance, uint256 lastUpdated, GasMode);
-}
-
-contract QuantumOrb is Initializable {
-    IBlast public constant BLAST = IBlast(0x4300000000000000000000000000000000000002);
-
-    address public owner;
-    mapping(address => User) public users;
+    enum OrbType {
+        DAILY,
+        GENESIS,
+        QUANTUM
+    }
 
     struct User {
-        bool partner;
-        address parent;
-        uint points;
-        uint referralPoints;
-        uint256 lastOpenedDaily;
-        string x_link;
+        address referrer;
+        uint128 points;
+        uint128 referralPoints;
+        uint64 lastDailyOpen;
+        bool isPartner;
+        bool registered;
     }
 
-    event UserInitialized(address indexed user, address indexed parent);
-    event UserUpdated(address indexed user, uint points, uint referralPoints);
-    event UserXLinked(address indexed user, string x_link);
+    struct Pending {
+        uint64 commitBlock;
+        uint96 paid;
+        uint64 prevDailyOpen;
+        OrbType orbType;
+        bool exists;
+    }
 
-    function initialize() public initializer {
-        owner = msg.sender;
+    struct OrbConfig {
+        uint96 price;
+        bool enabled;
+        uint32[4] minPoints;
+        uint32[4] maxPoints;
+    }
+
+    // ------------------------------------------------------------ constants
+
+    IBlast public constant BLAST =
+        IBlast(0x4300000000000000000000000000000000000002);
+
+    uint64 public constant REVEAL_DELAY = 2;
+    uint64 public constant REVEAL_WINDOW = 250;
+
+    uint256 private constant REFERRAL_BPS = 1000; // 10%
+    uint256 private constant PARTNER_MULTIPLIER = 2;
+
+    uint8 public constant REASON_SELF_OPEN = 0;
+    uint8 public constant REASON_REFERRAL_BONUS = 1;
+
+    ///  ERC-7201 namespaced slot for the reentrancy flag, so it can never
+    ///      collide with the layout above and needs no constructor.
+    ///      OpenZeppelin 5.6 dropped ReentrancyGuardUpgradeable, and its
+    ///      non-upgradeable ReentrancyGuard seeds its slot in a constructor,
+    ///      which the upgrades validator rejects. Slot value 0 (a fresh proxy)
+    ///      reads as "not entered", which is the behaviour we want.
+    ///      keccak256(abi.encode(uint256(keccak256("quantumorb.storage.reentrancy")) - 1)) & ~0xff
+    bytes32 private constant _REENTRANCY_SLOT =
+        0xd6982fbb754be841f61a32b3138c7b1d697694b99d84369af28769527ab47600;
+
+    uint256 private constant _NOT_ENTERED = 1;
+    uint256 private constant _ENTERED = 2;
+
+    // -------------------------------------------------------------- storage
+
+    mapping(address => User) public users;
+    mapping(address => Pending) public pending;
+    mapping(OrbType => OrbConfig) internal _orbConfig;
+
+    // --------------------------------------------------------------- events
+
+    event UserRegistered(address indexed user, address indexed referrer);
+    event OrbCommitted(
+        address indexed user, OrbType orbType, uint64 commitBlock
+    );
+    event OrbOpened(
+        address indexed user, OrbType orbType, uint8 rank, uint256 points
+    );
+    event OrbExpired(address indexed user, OrbType orbType, uint256 refunded);
+    event PointsCredited(
+        address indexed user,
+        uint256 points,
+        uint256 referralPoints,
+        uint8 reason
+    );
+    event OrbConfigChanged(OrbType orbType, uint96 price, bool enabled);
+    event PartnerChanged(address indexed user, bool isPartner);
+
+    // --------------------------------------------------------------- errors
+
+    error InvalidPointsRange();
+    error OrbDisabled();
+    error IncorrectPayment(uint256 expected, uint256 received);
+    error DailyNotReady(uint64 availableAt);
+    error OpenAlreadyPending();
+    error NoPendingOpen();
+    error RevealTooEarly(uint64 readyAtBlock);
+    error RevealWindowClosed();
+    error RevealWindowOpen();
+    error InvalidReferrer();
+    error TransferFailed();
+    error ReentrantCall();
+
+    // ------------------------------------------------------------ modifiers
+
+    modifier nonReentrant() {
+        bytes32 slot = _REENTRANCY_SLOT;
+        uint256 status;
+        assembly {
+            status := sload(slot)
+        }
+        if (status == _ENTERED) revert ReentrantCall();
+        assembly {
+            sstore(slot, _ENTERED)
+        }
+        _;
+        assembly {
+            sstore(slot, _NOT_ENTERED)
+        }
+    }
+
+    // ---------------------------------------------------------- constructor
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize() external initializer {
+        __Ownable_init(msg.sender);
+        __Pausable_init();
+
         BLAST.configureAutomaticYield();
         BLAST.configureClaimableGas();
-        BLAST.configureGovernor(owner);
+        BLAST.configureGovernor(msg.sender);
+
+        _setOrbConfig(
+            OrbType.DAILY,
+            0,
+            true,
+            [uint32(25), 126, 251, 401],
+            [uint32(125), 176, 326, 501]
+        );
+        _setOrbConfig(
+            OrbType.GENESIS,
+            0.0015 ether,
+            true,
+            [uint32(401), 1001, 2001, 3501],
+            [uint32(1000), 2000, 3500, 9999]
+        );
+        _setOrbConfig(
+            OrbType.QUANTUM,
+            0.0027 ether,
+            true,
+            [uint32(1001), 2001, 3501, 7001],
+            [uint32(2000), 3500, 6999, 19999]
+        );
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only contract owner can call this function");
-        _;
+    // ---------------------------------------------------------------- admin
+
+    function setOrbConfig(
+        OrbType orbType,
+        uint96 price,
+        bool enabled,
+        uint32[4] calldata minPoints,
+        uint32[4] calldata maxPoints
+    ) external onlyOwner {
+        _setOrbConfig(orbType, price, enabled, minPoints, maxPoints);
     }
 
-    function initializeUser(address _parent) external {
-        address _user = msg.sender;
-        users[_user].partner = false;
-        if (_parent != address(0)) {
-            users[_user].parent = _parent;
-        } else {
-            users[_user].parent = owner;
+    function setPartner(address user, bool isPartner) external onlyOwner {
+        users[user].isPartner = isPartner;
+        emit PartnerChanged(user, isPartner);
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+
+    // ----------------------------------------------------------- view calls
+
+    function orbConfig(OrbType orbType)
+        external
+        view
+        returns (uint96 price, bool enabled)
+    {
+        OrbConfig storage c = _orbConfig[orbType];
+        return (c.price, c.enabled);
+    }
+
+    function getOrbPoints(OrbType orbType)
+        external
+        view
+        returns (uint32[4] memory minPoints, uint32[4] memory maxPoints)
+    {
+        OrbConfig storage c = _orbConfig[orbType];
+        return (c.minPoints, c.maxPoints);
+    }
+
+    // ------------------------------------------------------------ internals
+
+    function _setOrbConfig(
+        OrbType orbType,
+        uint96 price,
+        bool enabled,
+        uint32[4] memory minPoints,
+        uint32[4] memory maxPoints
+    ) internal {
+        for (uint256 i = 0; i < 4; ++i) {
+            if (minPoints[i] > maxPoints[i]) revert InvalidPointsRange();
         }
+        OrbConfig storage c = _orbConfig[orbType];
+        c.price = price;
+        c.enabled = enabled;
+        c.minPoints = minPoints;
+        c.maxPoints = maxPoints;
 
-        emit UserInitialized(_user, _parent);
+        emit OrbConfigChanged(orbType, price, enabled);
     }
 
-    function markAsPartner(address _user) external onlyOwner {
-        require(!users[_user].partner, "User is already marked as partner");
-        users[_user].partner = true;
-    }
-
-    function claimBalance() external onlyOwner {
-        payable(owner).transfer(address(this).balance);
-    }
-
-    function claimGas() external onlyOwner returns (uint256) {
-        return BLAST.claimMaxGas(address(this), address(this));
-    }
-
-    function addPoints(uint _points) internal {
-        address _user = msg.sender;
-        users[_user].points += _points;
-        address parent = users[_user].parent;
-        uint amount = (10 * _points) / 100;
-        if (users[parent].partner) {
-            amount *= 2;
-        }
-        users[_user].referralPoints += amount;
-        users[parent].points += amount;
-
-        emit UserUpdated(_user, users[_user].points, users[_user].referralPoints);
-    }
-
-    function setXLink(string memory _x_link) external {
-        address _user = msg.sender;
-        require(bytes(_x_link).length > 0, "Invalid x_link");
-        require(bytes(users[_user].x_link).length == 0, "x_link already set");
-        users[_user].x_link = _x_link;
-
-        emit UserXLinked(_user, _x_link);
-        addPoints(3000);
-    }
-
-    function getOrbRank() internal view returns (uint8) {
-        uint randint = getRand() % 10000;
-        if ((1050 <= randint) && (randint <= 8949)) {
-            return 1;
-        } else if ((400 <= randint) && (randint <= 9599)) {
-            return 2;
-        } else if ((10 <= randint) && (randint <= 9989)) {
-            return 3;
-        } else {
-            return 4;
-        }
-    }
-
-    function getRand() internal view returns (uint) {
-        return uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender)));
-    }
-
-    function openDailyOrb() external payable returns (uint) {
-        require(users[msg.sender].lastOpenedDaily + 1 days <= block.timestamp, "You have already opened your daily orb");
-
-        users[msg.sender].lastOpenedDaily = block.timestamp;
-        uint pointsEarned;
-
-        uint8 rank = getOrbRank();
-
-        if (rank == 1) {
-            pointsEarned = (getRand() % 101) + 25;
-        } else if (rank == 2) {
-            pointsEarned = (getRand() % 51) + 126;
-        } else if (rank == 3) {
-            pointsEarned = (getRand() % 76) + 251;
-        } else {
-            pointsEarned = (getRand() % 101) + 401;
-        }
-
-        addPoints(pointsEarned);
-
-        return pointsEarned;
-    }
-
-    function openGenesisOrb() external payable returns (uint) {
-        require(msg.value >= 0.0015 ether, "Insufficient ETH sent for Genesis Orb, 0.0015 ETH required");
-        uint pointsEarned;
-
-        uint8 rank = getOrbRank();
-        uint rand = getRand();
-
-        if (rank == 1) {
-            pointsEarned = (rand % 600) + 401;
-        } else if (rank == 2) {
-            pointsEarned = (rand % 1000) + 1001;
-        } else if (rank == 3) {
-            pointsEarned = (rand % 1500) + 2001;
-        } else {
-            pointsEarned = (rand % 6499) + 3501;
-        }
-
-        addPoints(pointsEarned);
-
-        return pointsEarned;
-    }
-
-    function openQuantumOrb() external payable returns (uint) {
-        require(msg.value >= 0.0027 ether, "Insufficient ETH sent for Quantum Orb, 0.0027 ETH required");
-        uint pointsEarned;
-
-        uint8 rank = getOrbRank();
-        uint rand = getRand();
-
-        if (rank == 1) {
-            pointsEarned = (rand % 1000) + 1001;
-        } else if (rank == 2) {
-            pointsEarned = (rand % 1500) + 2001;
-        } else if (rank == 3) {
-            pointsEarned = (rand % 3499) + 3501;
-        } else {
-            pointsEarned = (rand % 12999) + 7001;
-        }
-
-        addPoints(pointsEarned);
-
-        return pointsEarned;
-    }
-
-    function getPoints(address _user) external view returns (uint) {
-        return users[_user].points;
-    }
-
-    function getReferralPoints(address _user) external view returns (uint) {
-        return users[_user].referralPoints;
-    }
-
-    function getUserX(address _user) external view returns (string memory) {
-        return users[_user].x_link;
-    }
-
-    function getUserParent(address _user) external view returns (address) {
-        return users[_user].parent;
-    }
-
-    function getUserPartnerStatus(address _user) external view returns (bool) {
-        return users[_user].partner;
-    }
-
-    function getUserLastOpenedDaily(address _user) external view returns (uint256) {
-        return users[_user].lastOpenedDaily;
-    }
-
-    receive() external payable {}
+    /// @dev Reserved so later upgrades can add storage without shifting layout.
+    uint256[45] private __gap;
 }
