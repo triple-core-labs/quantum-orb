@@ -244,10 +244,12 @@ contract QuantumOrb is
         emit OrbCommitted(msg.sender, orbType, uint64(block.number));
     }
 
-    /// @notice Resolve a committed orb. Filled in by the reveal task.
+    /// @notice Resolve a committed orb. Callable by anyone: normally the
+    ///         relayer, but the player can always reveal their own.
     function revealOrb(address user) external nonReentrant {
         Pending memory p = pending[user];
         if (!p.exists) revert NoPendingOpen();
+
         uint64 readyAt = p.commitBlock + REVEAL_DELAY;
         // Strictly greater: blockhash(block.number) is zero in the EVM, so a
         // reveal landing in readyAt itself would draw a degenerate seed.
@@ -255,7 +257,34 @@ contract QuantumOrb is
         if (block.number > p.commitBlock + REVEAL_WINDOW) {
             revert RevealWindowClosed();
         }
+
         delete pending[user];
+
+        uint256 seed = _seed(user, p.commitBlock);
+        uint8 rank = _rank(seed);
+        uint256 points = _pointsFor(seed, p.orbType, rank);
+
+        User storage u = users[user];
+        u.points += uint128(points);
+        emit OrbOpened(user, p.orbType, rank, points);
+        emit PointsCredited(user, u.points, u.referralPoints, REASON_SELF_OPEN);
+
+        address referrer = u.referrer;
+        if (referrer != address(0)) {
+            uint256 bonus = (points * REFERRAL_BPS) / 10_000;
+            if (users[referrer].isPartner) bonus *= PARTNER_MULTIPLIER;
+
+            User storage r = users[referrer];
+            r.points += uint128(bonus);
+            r.referralPoints += uint128(bonus);
+
+            // Emitted separately so the indexer sees the referrer new
+            // totals. The previous contract credited the referrer silently,
+            // which is why referral points never reached the leaderboard.
+            emit PointsCredited(
+                referrer, r.points, r.referralPoints, REASON_REFERRAL_BONUS
+            );
+        }
     }
 
     // ----------------------------------------------------------- view calls
@@ -297,6 +326,45 @@ contract QuantumOrb is
         c.maxPoints = maxPoints;
 
         emit OrbConfigChanged(orbType, price, enabled);
+    }
+
+    /// @dev The only place entropy enters the contract. Swapping to a VRF
+    ///      replaces this function and the reveal trigger, nothing else.
+    function _seed(address user, uint64 commitBlock)
+        internal
+        view
+        returns (uint256)
+    {
+        return uint256(
+            keccak256(
+                abi.encodePacked(
+                    blockhash(commitBlock + REVEAL_DELAY), user, commitBlock
+                )
+            )
+        );
+    }
+
+    function _rank(uint256 seed) internal pure returns (uint8) {
+        uint256 roll = seed % 10_000;
+        if (roll < 20) return 4;
+        if (roll < 800) return 3;
+        if (roll < 2100) return 2;
+        return 1;
+    }
+
+    function _pointsFor(uint256 seed, OrbType orbType, uint8 rank)
+        internal
+        view
+        returns (uint256)
+    {
+        OrbConfig storage c = _orbConfig[orbType];
+        uint256 lo = c.minPoints[rank - 1];
+        uint256 hi = c.maxPoints[rank - 1];
+
+        // Derived from a second hash so rank and points are independent draws.
+        // The previous contract reused one value for both.
+        uint256 roll = uint256(keccak256(abi.encodePacked(seed, "points")));
+        return lo + (roll % (hi - lo + 1));
     }
 
     function _validatedReferrer(address referrer)
