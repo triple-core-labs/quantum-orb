@@ -287,6 +287,33 @@ contract QuantumOrb is
         }
     }
 
+    /// @notice Recover a payment for an orb nobody revealed in time.
+    /// @dev blockhash is unavailable beyond 256 blocks, so an orb past
+    ///      REVEAL_WINDOW can never be resolved. Without this path the payment
+    ///      and the player ability to open another orb would both be stuck.
+    function reclaimOrb() external nonReentrant {
+        Pending memory p = pending[msg.sender];
+        if (!p.exists) revert NoPendingOpen();
+        if (block.number <= p.commitBlock + REVEAL_WINDOW) {
+            revert RevealWindowOpen();
+        }
+
+        delete pending[msg.sender];
+
+        if (p.orbType == OrbType.DAILY) {
+            // The cooldown was consumed at commit time; give it back rather
+            // than charging the player for an infrastructure failure.
+            users[msg.sender].lastDailyOpen = p.prevDailyOpen;
+        }
+
+        emit OrbExpired(msg.sender, p.orbType, p.paid);
+
+        if (p.paid > 0) {
+            (bool ok,) = payable(msg.sender).call{value: p.paid}("");
+            if (!ok) revert TransferFailed();
+        }
+    }
+
     // ----------------------------------------------------------- view calls
 
     function orbConfig(OrbType orbType)
