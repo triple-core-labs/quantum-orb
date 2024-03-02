@@ -102,6 +102,7 @@ contract QuantumOrb is
     );
     event OrbConfigChanged(OrbType orbType, uint96 price, bool enabled);
     event PartnerChanged(address indexed user, bool isPartner);
+    event Withdrawn(address indexed to, uint256 amount);
 
     // --------------------------------------------------------------- errors
 
@@ -117,6 +118,7 @@ contract QuantumOrb is
     error InvalidReferrer();
     error TransferFailed();
     error ReentrantCall();
+    error InsufficientBalance();
 
     // ------------------------------------------------------------ modifiers
 
@@ -313,6 +315,28 @@ contract QuantumOrb is
             if (!ok) revert TransferFailed();
         }
     }
+
+    // -------------------------------------------------------------- treasury
+
+    function withdraw(address payable to, uint256 amount)
+        external
+        onlyOwner
+        nonReentrant
+    {
+        if (amount > address(this).balance) revert InsufficientBalance();
+        emit Withdrawn(to, amount);
+
+        // call, not transfer: the 2300-gas stipend fails for multisig and
+        // smart-contract wallets.
+        (bool ok,) = to.call{value: amount}("");
+        if (!ok) revert TransferFailed();
+    }
+
+    function claimGas() external onlyOwner returns (uint256) {
+        return BLAST.claimMaxGas(address(this), address(this));
+    }
+
+    receive() external payable {}
 
     // ----------------------------------------------------------- view calls
 
