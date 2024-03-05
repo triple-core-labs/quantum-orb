@@ -1,0 +1,48 @@
+name: contracts
+
+on:
+  push:
+    paths:
+      - "contracts/**"
+      - ".github/workflows/contracts.yml"
+  pull_request:
+    paths:
+      - "contracts/**"
+      - ".github/workflows/contracts.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: contracts
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: contracts/package-lock.json
+
+      - run: npm ci
+
+      - name: Compile
+        run: npm run compile
+
+      - name: Test
+        run: npm test
+
+      # Guards the failure that broke the previous version: an event changed in
+      # the contract without the artifact its consumers read following along.
+      - name: Verify the exported ABI is current
+        run: |
+          npm run export-abi
+          git diff --exit-code abi/QuantumOrb.json
+
+      - name: Coverage
+        run: npm run coverage
+
+      - name: Enforce the coverage floor
+        run: npm run check-coverage
