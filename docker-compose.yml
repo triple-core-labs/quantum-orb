@@ -1,0 +1,59 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: quantumorb
+      POSTGRES_PASSWORD: quantumorb
+      POSTGRES_DB: quantumorb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quantumorb"]
+      interval: 5s
+      retries: 10
+
+  web:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file: [./backend/.env]
+    environment:
+      DATABASE_URL: postgres://quantumorb:quantumorb@db:5432/quantumorb
+    volumes:
+      # The exported ABI is the single source of truth, mounted read-only.
+      - ./contracts/abi:/app/contracts/abi:ro
+      - ./backend/backend:/app/backend
+    ports: ["8000:8000"]
+    depends_on:
+      db: { condition: service_healthy }
+
+  indexer:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file: [./backend/.env]
+    environment:
+      DATABASE_URL: postgres://quantumorb:quantumorb@db:5432/quantumorb
+    volumes:
+      - ./contracts/abi:/app/contracts/abi:ro
+      - ./backend/backend:/app/backend
+    command: ["python", "manage.py", "index_events"]
+    depends_on:
+      db: { condition: service_healthy }
+
+  relayer:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file: [./backend/.env]
+    environment:
+      DATABASE_URL: postgres://quantumorb:quantumorb@db:5432/quantumorb
+    volumes:
+      - ./contracts/abi:/app/contracts/abi:ro
+      - ./backend/backend:/app/backend
+    command: ["python", "manage.py", "relay_reveals"]
+    depends_on:
+      db: { condition: service_healthy }
+
+volumes:
+  pgdata:
