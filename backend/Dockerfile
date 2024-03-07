@@ -1,24 +1,27 @@
-# Use an official Python runtime as a parent image
-FROM python:3.10-slim-buster
+FROM python:3.12-slim-bookworm
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    POETRY_VIRTUALENVS_CREATE=false
 
-# Set work directory
-WORKDIR /backend
+WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt /backend/
-RUN pip install --upgrade pip setuptools gunicorn
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir poetry==1.8.5
 
-# Copy project
-COPY . /backend/
+# Dependency layer: cached until pyproject or the lock changes.
+COPY pyproject.toml poetry.lock* /app/
+RUN poetry install --no-interaction --no-root
 
-# Expose the port the app runs in
+COPY backend /app/backend
+COPY manage.py entrypoint.sh /app/
+RUN chmod +x /app/entrypoint.sh
+
+# Non-root: nothing here needs to write to the image.
+RUN useradd --create-home --uid 10001 appuser && chown -R appuser /app
+USER appuser
+
 EXPOSE 8000
 
-# run gunicorn main:app
-RUN python manage.py migrate
-CMD ["gunicorn", "backend.wsgi:application"]
+ENTRYPOINT ["/app/entrypoint.sh"]
+# --bind 0.0.0.0 or the published port reaches nothing.
+CMD ["gunicorn", "backend.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
