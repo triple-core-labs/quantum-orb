@@ -35,8 +35,7 @@ def load_abi() -> list:
     missing = EVENT_NAMES - declared
     if missing:
         raise RuntimeError(
-            f"ABI at {path} is missing events the indexer needs: "
-            f"{sorted(missing)}"
+            f"ABI at {path} is missing events the indexer needs: " f"{sorted(missing)}"
         )
     return abi
 

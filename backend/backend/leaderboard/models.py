@@ -35,9 +35,7 @@ class Player(models.Model):
 class OrbOpen(models.Model):
     tx_hash = models.CharField(max_length=66)
     log_index = models.IntegerField()
-    player = models.ForeignKey(
-        Player, on_delete=models.CASCADE, related_name="opens"
-    )
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="opens")
     orb_type = models.IntegerField(choices=OrbType.choices)
     rank = models.SmallIntegerField()
     points = models.BigIntegerField()

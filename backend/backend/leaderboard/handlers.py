@@ -63,9 +63,7 @@ def handle_orb_opened(ev: dict) -> None:
 
 
 def handle_orb_expired(ev: dict) -> None:
-    PendingOrb.objects.filter(
-        player__address=ev["args"]["user"].lower()
-    ).delete()
+    PendingOrb.objects.filter(player__address=ev["args"]["user"].lower()).delete()
 
 
 def handle_points_credited(ev: dict) -> None:

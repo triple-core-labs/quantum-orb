@@ -94,9 +94,7 @@ def test_pending_returns_null_when_there_is_none(api):
 
 def test_pending_describes_a_committed_orb(api):
     alice = Player.objects.create(address=ALICE)
-    PendingOrb.objects.create(
-        player=alice, orb_type=OrbType.QUANTUM, commit_block=42
-    )
+    PendingOrb.objects.create(player=alice, orb_type=OrbType.QUANTUM, commit_block=42)
 
     body = api.get(f"/api/players/{ALICE}/pending").json()["pending"]
 

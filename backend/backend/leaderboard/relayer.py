@@ -25,9 +25,9 @@ class RelayerError(RuntimeError):
 
 def due_orbs(head: int, reveal_delay: int):
     """Orbs whose reveal block is strictly in the past."""
-    return PendingOrb.objects.filter(
-        commit_block__lt=head - reveal_delay
-    ).order_by("commit_block")
+    return PendingOrb.objects.filter(commit_block__lt=head - reveal_delay).order_by(
+        "commit_block"
+    )
 
 
 def is_already_revealed(error: Exception) -> bool:
@@ -66,9 +66,7 @@ def reveal(contract, account, address: str) -> str | None:
 
 def run_forever(contract, web3, account) -> None:
     if not acquire_singleton_lock():
-        raise RelayerError(
-            "another relayer holds the lock; run exactly one instance"
-        )
+        raise RelayerError("another relayer holds the lock; run exactly one instance")
 
     reveal_delay = contract.functions.REVEAL_DELAY().call()
     reveal_window = contract.functions.REVEAL_WINDOW().call()

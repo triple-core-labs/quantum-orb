@@ -45,9 +45,7 @@ def window_around(address: str, size: int = 5) -> list[dict]:
     address = address.lower()
     ordered = list(ranked_players())
 
-    position = next(
-        (i for i, p in enumerate(ordered) if p.address == address), None
-    )
+    position = next((i for i, p in enumerate(ordered) if p.address == address), None)
     if position is None:
         return []
 

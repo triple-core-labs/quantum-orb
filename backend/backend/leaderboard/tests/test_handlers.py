@@ -26,9 +26,7 @@ def test_user_registered_creates_a_player():
 
 
 def test_user_registered_lowercases_the_address():
-    apply_event(
-        event("UserRegistered", {"user": ALICE.upper(), "referrer": None})
-    )
+    apply_event(event("UserRegistered", {"user": ALICE.upper(), "referrer": None}))
     assert Player.objects.filter(address=ALICE).exists()
 
 
@@ -50,9 +48,7 @@ def test_orb_committed_creates_a_pending_row():
 
 def test_orb_opened_records_the_open_and_clears_pending():
     apply_event(event("UserRegistered", {"user": ALICE, "referrer": None}))
-    apply_event(
-        event("OrbCommitted", {"user": ALICE, "orbType": 0, "commitBlock": 5})
-    )
+    apply_event(event("OrbCommitted", {"user": ALICE, "orbType": 0, "commitBlock": 5}))
     apply_event(
         event(
             "OrbOpened",
@@ -119,9 +115,7 @@ def test_points_credited_does_not_erase_the_referrer():
 
 def test_orb_expired_clears_pending():
     apply_event(event("UserRegistered", {"user": ALICE, "referrer": None}))
-    apply_event(
-        event("OrbCommitted", {"user": ALICE, "orbType": 1, "commitBlock": 5})
-    )
+    apply_event(event("OrbCommitted", {"user": ALICE, "orbType": 1, "commitBlock": 5}))
     apply_event(
         event(
             "OrbExpired",

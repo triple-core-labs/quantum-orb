@@ -51,13 +51,9 @@ def test_orb_open_is_unique_per_log_entry():
 
 def test_pending_orb_is_one_per_player():
     p = Player.objects.create(address="0xa")
-    PendingOrb.objects.create(
-        player=p, orb_type=OrbType.GENESIS, commit_block=10
-    )
+    PendingOrb.objects.create(player=p, orb_type=OrbType.GENESIS, commit_block=10)
     with pytest.raises(IntegrityError):
-        PendingOrb.objects.create(
-            player=p, orb_type=OrbType.DAILY, commit_block=11
-        )
+        PendingOrb.objects.create(player=p, orb_type=OrbType.DAILY, commit_block=11)
 
 
 def test_indexer_state_is_a_singleton():

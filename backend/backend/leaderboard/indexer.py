@@ -31,9 +31,7 @@ def scan_range(contract, from_block: int, to_block: int) -> list[dict]:
     events: list[dict] = []
     for name in sorted(EVENT_NAMES):
         event_type = getattr(contract.events, name)
-        for raw in event_type().get_logs(
-            from_block=from_block, to_block=to_block
-        ):
+        for raw in event_type().get_logs(from_block=from_block, to_block=to_block):
             events.append(
                 {
                     "event": name,

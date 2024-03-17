@@ -76,9 +76,7 @@ def leaderboard(request):
     return Response(
         {
             "top": top(limit=TOP_SIZE),
-            "around": window_around(address, size=WINDOW_SIZE)
-            if address
-            else [],
+            "around": window_around(address, size=WINDOW_SIZE) if address else [],
         }
     )
 
