@@ -34,6 +34,9 @@ filterwarnings = [
 [tool.ruff]
 line-length = 88
 target-version = "py312"
+# Django writes migrations; they are generated artefacts, not authored code,
+# and reformatting them to fit a line limit risks breaking them.
+extend-exclude = ["**/migrations/**"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "T20"]

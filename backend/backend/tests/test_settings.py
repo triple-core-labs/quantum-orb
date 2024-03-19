@@ -34,9 +34,7 @@ def test_cors_middleware_precedes_common_middleware():
     from backend import settings
 
     cors = settings.MIDDLEWARE.index("corsheaders.middleware.CorsMiddleware")
-    common = settings.MIDDLEWARE.index(
-        "django.middleware.common.CommonMiddleware"
-    )
+    common = settings.MIDDLEWARE.index("django.middleware.common.CommonMiddleware")
     assert cors < common, "CorsMiddleware must run before CommonMiddleware"
 
 

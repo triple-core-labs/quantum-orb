@@ -23,6 +23,7 @@ services:
       # The exported ABI is the single source of truth, mounted read-only.
       - ./contracts/abi:/app/contracts/abi:ro
       - ./backend/backend:/app/backend
+      - ./backend/pyproject.toml:/app/pyproject.toml:ro
     ports: ["8000:8000"]
     depends_on:
       db: { condition: service_healthy }
@@ -37,6 +38,7 @@ services:
     volumes:
       - ./contracts/abi:/app/contracts/abi:ro
       - ./backend/backend:/app/backend
+      - ./backend/pyproject.toml:/app/pyproject.toml:ro
     command: ["python", "manage.py", "index_events"]
     depends_on:
       db: { condition: service_healthy }
@@ -51,6 +53,7 @@ services:
     volumes:
       - ./contracts/abi:/app/contracts/abi:ro
       - ./backend/backend:/app/backend
+      - ./backend/pyproject.toml:/app/pyproject.toml:ro
     command: ["python", "manage.py", "relay_reveals"]
     depends_on:
       db: { condition: service_healthy }

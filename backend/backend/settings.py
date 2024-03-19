@@ -119,10 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {
-        "NAME": "django.contrib.auth.password_validation."
-        "NumericPasswordValidator"
-    },
+    {"NAME": "django.contrib.auth.password_validation." "NumericPasswordValidator"},
 ]
 
 LANGUAGE_CODE = "en-us"
@@ -155,8 +152,6 @@ LOGGING = {
     "formatters": {
         "plain": {"format": "%(asctime)s %(levelname)s %(name)s %(message)s"}
     },
-    "handlers": {
-        "console": {"class": "logging.StreamHandler", "formatter": "plain"}
-    },
+    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "plain"}},
     "root": {"handlers": ["console"], "level": "INFO"},
 }
