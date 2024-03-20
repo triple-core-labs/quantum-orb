@@ -16,6 +16,11 @@ from backend.leaderboard.models import PendingOrb
 log = logging.getLogger(__name__)
 
 POLL_SECONDS = 3
+
+# A revealed orb keeps its pending row until the indexer sees OrbOpened, a
+# few seconds later. Without this, every poll in that gap re-estimates a
+# reveal that will revert.
+SUBMIT_COOLDOWN_BLOCKS = 10
 ADVISORY_LOCK_KEY = 0x510B0BB5  # arbitrary, stable
 
 
@@ -28,6 +33,15 @@ def due_orbs(head: int, reveal_delay: int):
     return PendingOrb.objects.filter(commit_block__lt=head - reveal_delay).order_by(
         "commit_block"
     )
+
+
+def to_submit(head: int, reveal_delay: int, submitted: dict[str, int]):
+    """Due orbs we have not submitted a reveal for in the last few blocks."""
+    for orb in due_orbs(head, reveal_delay):
+        last = submitted.get(orb.player_id)
+        if last is not None and head - last < SUBMIT_COOLDOWN_BLOCKS:
+            continue
+        yield orb
 
 
 def is_already_revealed(error: Exception) -> bool:
@@ -72,11 +86,12 @@ def run_forever(contract, web3, account) -> None:
     reveal_window = contract.functions.REVEAL_WINDOW().call()
     log.info("relayer started as %s", account.address)
 
+    submitted: dict[str, int] = {}
     backoff = POLL_SECONDS
     while True:
         try:
             head = web3.eth.block_number
-            for orb in due_orbs(head, reveal_delay):
+            for orb in to_submit(head, reveal_delay, submitted):
                 age = head - orb.commit_block
                 if age > reveal_window:
                     # Past rescue; the player reclaims their payment instead.
@@ -93,6 +108,7 @@ def run_forever(contract, web3, account) -> None:
                         age,
                         reveal_window,
                     )
+                submitted[orb.player_id] = head
                 reveal(contract, account, orb.player_id)
             backoff = POLL_SECONDS
         except RelayerError as exc:

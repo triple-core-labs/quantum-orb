@@ -43,3 +43,28 @@ def test_already_revealed_recognises_the_contract_error():
     assert is_already_revealed(Exception("execution reverted: NoPendingOpen"))
     assert is_already_revealed(Exception("NoPendingOpen()"))
     assert not is_already_revealed(Exception("insufficient funds for gas"))
+
+
+def test_recently_submitted_orbs_are_skipped():
+    from backend.leaderboard.relayer import SUBMIT_COOLDOWN_BLOCKS, to_submit
+
+    pending(ALICE, commit_block=100)
+    submitted: dict[str, int] = {}
+
+    first = list(to_submit(head=103, reveal_delay=2, submitted=submitted))
+    assert len(first) == 1
+
+    submitted[ALICE] = 103
+    # The pending row survives until the indexer sees OrbOpened; without a
+    # cooldown the relayer re-estimates the same reveal on every poll.
+    again = list(to_submit(head=104, reveal_delay=2, submitted=submitted))
+    assert again == []
+
+    later = list(
+        to_submit(
+            head=103 + SUBMIT_COOLDOWN_BLOCKS,
+            reveal_delay=2,
+            submitted=submitted,
+        )
+    )
+    assert len(later) == 1
