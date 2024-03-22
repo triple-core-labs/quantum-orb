@@ -12,7 +12,25 @@ services:
       interval: 5s
       retries: 10
 
+  migrate:
+    image: quantum-orb-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file: [./backend/.env]
+    environment:
+      DATABASE_URL: postgres://quantumorb:quantumorb@db:5432/quantumorb
+    volumes:
+      - ./contracts/abi:/app/contracts/abi:ro
+      - ./backend/backend:/app/backend
+      - ./backend/pyproject.toml:/app/pyproject.toml:ro
+    command: ["python", "manage.py", "migrate", "--noinput"]
+    depends_on:
+      db: { condition: service_healthy }
+    restart: "no"
+
   web:
+    image: quantum-orb-backend
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -26,9 +44,10 @@ services:
       - ./backend/pyproject.toml:/app/pyproject.toml:ro
     ports: ["8000:8000"]
     depends_on:
-      db: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
 
   indexer:
+    image: quantum-orb-backend
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -41,9 +60,10 @@ services:
       - ./backend/pyproject.toml:/app/pyproject.toml:ro
     command: ["python", "manage.py", "index_events"]
     depends_on:
-      db: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
 
   relayer:
+    image: quantum-orb-backend
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -56,7 +76,7 @@ services:
       - ./backend/pyproject.toml:/app/pyproject.toml:ro
     command: ["python", "manage.py", "relay_reveals"]
     depends_on:
-      db: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
 
 volumes:
   pgdata:
