@@ -1,11 +1,3 @@
-/**
- * Opens one orb on the local node, so the full path can be watched:
- * commit -> relayer reveals -> indexer records -> API serves the points.
- *
- *   npx hardhat run scripts/play-local.ts --network localhost
- *   PLAYER_INDEX=2 ORB=genesis REFERRER_INDEX=1 npx hardhat run \
- *     scripts/play-local.ts --network localhost
- */
 import { ethers } from "hardhat";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";

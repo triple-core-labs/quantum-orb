@@ -10,17 +10,14 @@ import {PausableUpgradeable} from
 import {IBlast} from "./interfaces/IBlast.sol";
 
 /// @title QuantumOrb
-/// @notice Points game on Blast. Players open one free orb per day and may buy
-///         higher tiers. Outcomes are decided by commit-reveal over a future
-///         block hash so that neither the player nor the operator can predict
-///         or reverse a result at payment time.
+/// @notice Points game on Blast. One free orb a day, higher tiers for sale.
+///         An orb is paid for in one block and decided by the hash of a later
+///         one, so its outcome cannot be predicted or reverted at payment time.
 contract QuantumOrb is
     Initializable,
     Ownable2StepUpgradeable,
     PausableUpgradeable
 {
-    // ---------------------------------------------------------------- types
-
     enum OrbType {
         DAILY,
         GENESIS,
@@ -51,40 +48,34 @@ contract QuantumOrb is
         uint32[4] maxPoints;
     }
 
-    // ------------------------------------------------------------ constants
-
     IBlast public constant BLAST =
         IBlast(0x4300000000000000000000000000000000000002);
 
     uint64 public constant REVEAL_DELAY = 2;
     uint64 public constant REVEAL_WINDOW = 250;
 
-    uint256 private constant REFERRAL_BPS = 1000; // 10%
+    uint256 private constant REFERRAL_BPS = 1000;
+    uint256 private constant BPS_DENOMINATOR = 10_000;
     uint256 private constant PARTNER_MULTIPLIER = 2;
+
+    uint256 private constant ROLL_SPACE = 10_000;
+    uint256 private constant RANK_4_ROLLS = 20;
+    uint256 private constant RANK_3_ROLLS = 800;
+    uint256 private constant RANK_2_ROLLS = 2100;
 
     uint8 public constant REASON_SELF_OPEN = 0;
     uint8 public constant REASON_REFERRAL_BONUS = 1;
 
-    ///  ERC-7201 namespaced slot for the reentrancy flag, so it can never
-    ///      collide with the layout above and needs no constructor.
-    ///      OpenZeppelin 5.6 dropped ReentrancyGuardUpgradeable, and its
-    ///      non-upgradeable ReentrancyGuard seeds its slot in a constructor,
-    ///      which the upgrades validator rejects. Slot value 0 (a fresh proxy)
-    ///      reads as "not entered", which is the behaviour we want.
-    ///      keccak256(abi.encode(uint256(keccak256("quantumorb.storage.reentrancy")) - 1)) & ~0xff
-    bytes32 private constant _REENTRANCY_SLOT =
-        0xd6982fbb754be841f61a32b3138c7b1d697694b99d84369af28769527ab47600;
+    bytes32 private constant _REENTRANCY_SLOT = keccak256(
+        abi.encode(uint256(keccak256("quantumorb.storage.reentrancy")) - 1)
+    ) & ~bytes32(uint256(0xff));
 
     uint256 private constant _NOT_ENTERED = 1;
     uint256 private constant _ENTERED = 2;
 
-    // -------------------------------------------------------------- storage
-
     mapping(address => User) public users;
     mapping(address => Pending) public pending;
     mapping(OrbType => OrbConfig) internal _orbConfig;
-
-    // --------------------------------------------------------------- events
 
     event UserRegistered(address indexed user, address indexed referrer);
     event OrbCommitted(
@@ -104,23 +95,19 @@ contract QuantumOrb is
     event PartnerChanged(address indexed user, bool isPartner);
     event Withdrawn(address indexed to, uint256 amount);
 
-    // --------------------------------------------------------------- errors
-
     error InvalidPointsRange();
     error OrbDisabled();
     error IncorrectPayment(uint256 expected, uint256 received);
     error DailyNotReady(uint64 availableAt);
     error OpenAlreadyPending();
     error NoPendingOpen();
-    error RevealTooEarly(uint64 readyAtBlock);
+    error RevealTooEarly(uint64 firstRevealBlock);
     error RevealWindowClosed();
     error RevealWindowOpen();
     error InvalidReferrer();
     error TransferFailed();
     error ReentrantCall();
     error InsufficientBalance();
-
-    // ------------------------------------------------------------ modifiers
 
     modifier nonReentrant() {
         bytes32 slot = _REENTRANCY_SLOT;
@@ -137,8 +124,6 @@ contract QuantumOrb is
             sstore(slot, _NOT_ENTERED)
         }
     }
-
-    // ---------------------------------------------------------- constructor
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -176,8 +161,6 @@ contract QuantumOrb is
         );
     }
 
-    // ---------------------------------------------------------------- admin
-
     function setOrbConfig(
         OrbType orbType,
         uint96 price,
@@ -201,10 +184,7 @@ contract QuantumOrb is
         _unpause();
     }
 
-    // ------------------------------------------------------------- gameplay
-
-    /// @notice Pay for an orb and commit to the block whose hash will decide it.
-    /// @param referrer Bound permanently on the caller first open. Pass the
+    /// @param referrer Bound permanently on the caller's first open. Pass the
     ///        zero address for none.
     function openOrb(OrbType orbType, address referrer)
         external
@@ -228,11 +208,7 @@ contract QuantumOrb is
 
         uint64 prevDailyOpen = u.lastDailyOpen;
         if (orbType == OrbType.DAILY) {
-            uint64 readyAt = prevDailyOpen == 0 ? 0 : prevDailyOpen + 1 days;
-            if (block.timestamp < readyAt) revert DailyNotReady(readyAt);
-            // Consumed at commit time so an unrevealed orb cannot be used to
-            // farm extra daily attempts. reclaimOrb restores it.
-            u.lastDailyOpen = uint64(block.timestamp);
+            _consumeDailyAllowance(u, prevDailyOpen);
         }
 
         pending[msg.sender] = Pending({
@@ -247,15 +223,15 @@ contract QuantumOrb is
     }
 
     /// @notice Resolve a committed orb. Callable by anyone: normally the
-    ///         relayer, but the player can always reveal their own.
+    ///         relayer, but a player can always reveal their own.
     function revealOrb(address user) external nonReentrant {
         Pending memory p = pending[user];
         if (!p.exists) revert NoPendingOpen();
 
-        uint64 readyAt = p.commitBlock + REVEAL_DELAY;
-        // Strictly greater: blockhash(block.number) is zero in the EVM, so a
-        // reveal landing in readyAt itself would draw a degenerate seed.
-        if (block.number <= readyAt) revert RevealTooEarly(readyAt);
+        uint64 firstRevealBlock = p.commitBlock + REVEAL_DELAY + 1;
+        if (block.number < firstRevealBlock) {
+            revert RevealTooEarly(firstRevealBlock);
+        }
         if (block.number > p.commitBlock + REVEAL_WINDOW) {
             revert RevealWindowClosed();
         }
@@ -273,26 +249,11 @@ contract QuantumOrb is
 
         address referrer = u.referrer;
         if (referrer != address(0)) {
-            uint256 bonus = (points * REFERRAL_BPS) / 10_000;
-            if (users[referrer].isPartner) bonus *= PARTNER_MULTIPLIER;
-
-            User storage r = users[referrer];
-            r.points += uint128(bonus);
-            r.referralPoints += uint128(bonus);
-
-            // Emitted separately so the indexer sees the referrer new
-            // totals. The previous contract credited the referrer silently,
-            // which is why referral points never reached the leaderboard.
-            emit PointsCredited(
-                referrer, r.points, r.referralPoints, REASON_REFERRAL_BONUS
-            );
+            _creditReferrer(referrer, points);
         }
     }
 
-    /// @notice Recover a payment for an orb nobody revealed in time.
-    /// @dev blockhash is unavailable beyond 256 blocks, so an orb past
-    ///      REVEAL_WINDOW can never be resolved. Without this path the payment
-    ///      and the player ability to open another orb would both be stuck.
+    /// @notice Recover the payment for an orb nobody revealed in time.
     function reclaimOrb() external nonReentrant {
         Pending memory p = pending[msg.sender];
         if (!p.exists) revert NoPendingOpen();
@@ -303,9 +264,7 @@ contract QuantumOrb is
         delete pending[msg.sender];
 
         if (p.orbType == OrbType.DAILY) {
-            // The cooldown was consumed at commit time; give it back rather
-            // than charging the player for an infrastructure failure.
-            users[msg.sender].lastDailyOpen = p.prevDailyOpen;
+            _restoreDailyAllowance(users[msg.sender], p.prevDailyOpen);
         }
 
         emit OrbExpired(msg.sender, p.orbType, p.paid);
@@ -316,8 +275,6 @@ contract QuantumOrb is
         }
     }
 
-    // -------------------------------------------------------------- treasury
-
     function withdraw(address payable to, uint256 amount)
         external
         onlyOwner
@@ -326,8 +283,6 @@ contract QuantumOrb is
         if (amount > address(this).balance) revert InsufficientBalance();
         emit Withdrawn(to, amount);
 
-        // call, not transfer: the 2300-gas stipend fails for multisig and
-        // smart-contract wallets.
         (bool ok,) = to.call{value: amount}("");
         if (!ok) revert TransferFailed();
     }
@@ -337,8 +292,6 @@ contract QuantumOrb is
     }
 
     receive() external payable {}
-
-    // ----------------------------------------------------------- view calls
 
     function orbConfig(OrbType orbType)
         external
@@ -357,8 +310,6 @@ contract QuantumOrb is
         OrbConfig storage c = _orbConfig[orbType];
         return (c.minPoints, c.maxPoints);
     }
-
-    // ------------------------------------------------------------ internals
 
     function _setOrbConfig(
         OrbType orbType,
@@ -379,8 +330,33 @@ contract QuantumOrb is
         emit OrbConfigChanged(orbType, price, enabled);
     }
 
-    /// @dev The only place entropy enters the contract. Swapping to a VRF
-    ///      replaces this function and the reveal trigger, nothing else.
+    function _consumeDailyAllowance(User storage u, uint64 prevDailyOpen)
+        internal
+    {
+        uint64 readyAt = prevDailyOpen == 0 ? 0 : prevDailyOpen + 1 days;
+        if (block.timestamp < readyAt) revert DailyNotReady(readyAt);
+        u.lastDailyOpen = uint64(block.timestamp);
+    }
+
+    function _restoreDailyAllowance(User storage u, uint64 prevDailyOpen)
+        internal
+    {
+        u.lastDailyOpen = prevDailyOpen;
+    }
+
+    function _creditReferrer(address referrer, uint256 points) internal {
+        uint256 bonus = (points * REFERRAL_BPS) / BPS_DENOMINATOR;
+        if (users[referrer].isPartner) bonus *= PARTNER_MULTIPLIER;
+
+        User storage r = users[referrer];
+        r.points += uint128(bonus);
+        r.referralPoints += uint128(bonus);
+
+        emit PointsCredited(
+            referrer, r.points, r.referralPoints, REASON_REFERRAL_BONUS
+        );
+    }
+
     function _seed(address user, uint64 commitBlock)
         internal
         view
@@ -396,10 +372,10 @@ contract QuantumOrb is
     }
 
     function _rank(uint256 seed) internal pure returns (uint8) {
-        uint256 roll = seed % 10_000;
-        if (roll < 20) return 4;
-        if (roll < 800) return 3;
-        if (roll < 2100) return 2;
+        uint256 roll = seed % ROLL_SPACE;
+        if (roll < RANK_4_ROLLS) return 4;
+        if (roll < RANK_3_ROLLS) return 3;
+        if (roll < RANK_2_ROLLS) return 2;
         return 1;
     }
 
@@ -412,10 +388,12 @@ contract QuantumOrb is
         uint256 lo = c.minPoints[rank - 1];
         uint256 hi = c.maxPoints[rank - 1];
 
-        // Derived from a second hash so rank and points are independent draws.
-        // The previous contract reused one value for both.
-        uint256 roll = uint256(keccak256(abi.encodePacked(seed, "points")));
+        uint256 roll = _independentRoll(seed);
         return lo + (roll % (hi - lo + 1));
+    }
+
+    function _independentRoll(uint256 seed) internal pure returns (uint256) {
+        return uint256(keccak256(abi.encodePacked(seed, "points")));
     }
 
     function _validatedReferrer(address referrer)
@@ -429,6 +407,5 @@ contract QuantumOrb is
         return referrer;
     }
 
-    /// @dev Reserved so later upgrades can add storage without shifting layout.
     uint256[45] private __gap;
 }

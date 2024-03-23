@@ -17,11 +17,6 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
-    hardhat: {
-      // Blast produces blocks on a fixed cadence; mining one block per
-      // transaction keeps commit/reveal block arithmetic predictable in tests.
-      mining: { auto: true },
-    },
     blastSepolia: {
       url: RPC_URL,
       chainId: 168587773,

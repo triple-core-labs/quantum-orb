@@ -1,5 +1,3 @@
-// Fails the build when QuantumOrb.sol drops below the agreed coverage floor.
-// solidity-coverage prints a table but does not enforce anything on its own.
 const { readFileSync } = require("node:fs");
 const { join } = require("node:path");
 

@@ -79,7 +79,6 @@ describe("QuantumOrb — treasury", () => {
   it("hands ownership over in two steps", async () => {
     const { orb, owner, treasury } = await deploy();
     await orb.transferOwnership(treasury.address);
-    // Still the old owner until the new one accepts.
     expect(await orb.owner()).to.equal(owner.address);
 
     await orb.connect(treasury).acceptOwnership();

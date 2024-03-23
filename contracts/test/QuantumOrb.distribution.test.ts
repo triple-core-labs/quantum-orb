@@ -23,9 +23,7 @@ describe("QuantumOrb — rank distribution", () => {
 
   it("produces the configured probabilities across all 10000 rolls", async () => {
     const h = await harness();
-    // Exhaustive over every residue class, so the assertion is exact rather
-    // than statistical. Tallied on-chain to keep it to a single call.
-    const tally = await h.counts();
+    const tally = await h.countsByRank();
 
     expect(tally[0]).to.equal(7900n); // rank 1 — 79.00%
     expect(tally[1]).to.equal(1300n); // rank 2 — 13.00%

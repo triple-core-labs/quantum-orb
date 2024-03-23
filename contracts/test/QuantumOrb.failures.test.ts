@@ -76,15 +76,13 @@ describe("QuantumOrb — failure paths", () => {
     ).to.be.revertedWithCustomError(orb, "TransferFailed");
   });
 
-  it("blocks a re-entrant reclaim", async () => {
+  it("blocks a re-entrant reclaim and keeps the payment", async () => {
     const { orb } = await deploy();
     const receiver = await withReceiver(orb, "ReentrantReceiver");
 
     await receiver.open(GENESIS, { value: GENESIS_PRICE });
     await mine(REVEAL_WINDOW + 1);
 
-    // The guard reverts the inner call, which makes the outer refund transfer
-    // fail; the payment stays with the contract rather than being paid twice.
     await expect(receiver.reclaim()).to.be.revertedWithCustomError(
       orb,
       "TransferFailed",

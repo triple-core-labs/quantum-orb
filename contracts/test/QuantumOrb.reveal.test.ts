@@ -36,7 +36,6 @@ describe("QuantumOrb — revealOrb", () => {
 
   it("reverts before the reveal delay", async () => {
     const { orb, alice } = await deploy();
-    // Automine puts this reveal in commitBlock + 1, one short of the guard.
     await orb.connect(alice).openOrb(DAILY, ZERO);
     await expect(orb.revealOrb(alice.address)).to.be.revertedWithCustomError(
       orb,
