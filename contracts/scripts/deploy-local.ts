@@ -1,27 +1,13 @@
-/**
- * Deploys QuantumOrb to the local Hardhat node and wires the backend to it.
- *
- * Testnet ETH is not needed for development: the local node hands out funded
- * accounts, so the whole stack - contract, indexer, relayer, frontend - runs
- * end to end without a faucet.
- *
- *   npx hardhat run scripts/deploy-local.ts --network localhost
- */
 import { ethers, network, upgrades } from "hardhat";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const BACKEND_ENV = join(__dirname, "..", "..", "backend", ".env");
 
-// Containers reach the host node through Docker Desktop's alias.
 const RPC_FOR_CONTAINERS = "http://host.docker.internal:8545";
 
 const BLAST_PRECOMPILE = "0x4300000000000000000000000000000000000002";
 
-/**
- * The Blast precompile only exists on Blast. Without it initialize() reverts
- * with FailedCall(), so the local node gets the same MockBlast the tests use.
- */
 async function installMockBlast(): Promise<void> {
   if ((await ethers.provider.getCode(BLAST_PRECOMPILE)) !== "0x") return;
 
@@ -91,8 +77,8 @@ async function main() {
   writeFileSync(BACKEND_ENV, env);
 
   console.log("");
-  console.log("backend/.env updated. Bring the stack up with:");
-  console.log("  docker compose up -d");
+  console.log("backend/.env updated. Restart the stack against it with:");
+  console.log("  docker compose up -d --force-recreate");
 }
 
 main().catch((error) => {
