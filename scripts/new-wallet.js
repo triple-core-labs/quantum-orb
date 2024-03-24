@@ -1,11 +1,3 @@
-// Generates a throwaway wallet straight into an .env file.
-// The private key is never printed: only the address, which is what you need
-// in order to fund the wallet.
-//
-//   node scripts/new-wallet.js relayer    -> RELAYER_PRIVATE_KEY  in backend/.env
-//   node scripts/new-wallet.js deployer   -> DEPLOYER_PRIVATE_KEY in contracts/.env
-//
-// Testnet only. Rotate before either touches anything of value.
 const { ethers } = require("../contracts/node_modules/ethers");
 const { readFileSync, writeFileSync, existsSync } = require("node:fs");
 const { join } = require("node:path");
