@@ -1,8 +1,4 @@
-"""Apply contract events to the database.
-
-Every handler is idempotent: the indexer re-reads a trailing window on each
-cycle to absorb reorgs, so the same log may arrive more than once.
-"""
+"""Idempotent application of contract events to the database."""
 
 import logging
 
@@ -67,13 +63,18 @@ def handle_orb_expired(ev: dict) -> None:
 
 
 def handle_points_credited(ev: dict) -> None:
-    # The event carries the running totals straight from contract storage, so
-    # assignment is correct and replay-safe where accumulation would not be.
-    # Only these two fields are touched: a player's referrer is set by
-    # UserRegistered and must survive.
-    player = _player(ev["args"]["user"])
-    player.points = ev["args"]["points"]
-    player.referral_points = ev["args"]["referralPoints"]
+    _set_authoritative_totals(
+        _player(ev["args"]["user"]),
+        points=ev["args"]["points"],
+        referral_points=ev["args"]["referralPoints"],
+    )
+
+
+def _set_authoritative_totals(
+    player: Player, *, points: int, referral_points: int
+) -> None:
+    player.points = points
+    player.referral_points = referral_points
     player.save(update_fields=["points", "referral_points"])
 
 

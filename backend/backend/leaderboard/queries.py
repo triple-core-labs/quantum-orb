@@ -1,9 +1,4 @@
-"""Leaderboard reads.
-
-Ranks come from one window function over the whole table. The previous
-implementation issued a COUNT per user, so an eleven-row leaderboard cost
-twenty-two round trips.
-"""
+"""Leaderboard reads, ranked by one window function over the table."""
 
 from django.db.models import F, Window
 from django.db.models.functions import Rank

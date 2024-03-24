@@ -1,9 +1,4 @@
-"""Submit revealOrb for orbs whose commit block is old enough.
-
-The player can always reveal their own orb, so the relayer is a convenience,
-not a trust dependency: it cannot change an outcome, only when one is settled.
-If it stays down past REVEAL_WINDOW the player reclaims their payment instead.
-"""
+"""Submit revealOrb for orbs whose commit block is old enough."""
 
 import logging
 import time
@@ -17,11 +12,8 @@ log = logging.getLogger(__name__)
 
 POLL_SECONDS = 3
 
-# A revealed orb keeps its pending row until the indexer sees OrbOpened, a
-# few seconds later. Without this, every poll in that gap re-estimates a
-# reveal that will revert.
 SUBMIT_COOLDOWN_BLOCKS = 10
-ADVISORY_LOCK_KEY = 0x510B0BB5  # arbitrary, stable
+ADVISORY_LOCK_KEY = 0x510B0BB5
 
 
 class RelayerError(RuntimeError):
@@ -71,7 +63,7 @@ def reveal(contract, account, address: str) -> str | None:
         signed = account.sign_transaction(tx)
         tx_hash = web3.eth.send_raw_transaction(signed.raw_transaction)
         return tx_hash.hex()
-    except Exception as exc:  # noqa: BLE001 - classified immediately below
+    except Exception as exc:  # noqa: BLE001
         if is_already_revealed(exc):
             log.info("reveal for %s already settled elsewhere", address)
             return None
@@ -94,7 +86,6 @@ def run_forever(contract, web3, account) -> None:
             for orb in to_submit(head, reveal_delay, submitted):
                 age = head - orb.commit_block
                 if age > reveal_window:
-                    # Past rescue; the player reclaims their payment instead.
                     log.error(
                         "orb for %s expired unrevealed at age %s blocks",
                         orb.player_id,

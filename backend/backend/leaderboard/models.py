@@ -10,7 +10,6 @@ class OrbType(models.IntegerChoices):
 
 
 class Player(models.Model):
-    # Lowercase hex. Checksums are a presentation concern.
     address = models.CharField(max_length=42, primary_key=True)
     points = models.BigIntegerField(default=0)
     referral_points = models.BigIntegerField(default=0)
@@ -43,7 +42,6 @@ class OrbOpen(models.Model):
     block_timestamp = models.BigIntegerField()
 
     class Meta:
-        # Idempotency key: replaying a block range re-inserts nothing.
         constraints = [
             models.UniqueConstraint(
                 fields=["tx_hash", "log_index"], name="unique_log_entry"
@@ -62,7 +60,7 @@ class PendingOrb(models.Model):
 
 
 class IndexerState(models.Model):
-    """Single row. Tracks how far the indexer has read."""
+    """Single row tracking how far the indexer has read."""
 
     singleton_id = models.PositiveSmallIntegerField(primary_key=True, default=1)
     last_processed_block = models.BigIntegerField(default=0)

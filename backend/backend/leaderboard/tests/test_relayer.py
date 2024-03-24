@@ -23,8 +23,6 @@ def test_an_orb_is_not_due_before_the_delay():
 
 def test_an_orb_is_not_due_in_the_delay_block_itself():
     pending(ALICE, commit_block=100)
-    # The contract's guard is strict, because blockhash of the current block
-    # is zero; reveal is legal from commitBlock + delay + 1.
     assert list(due_orbs(head=102, reveal_delay=2)) == []
 
 
@@ -55,8 +53,6 @@ def test_recently_submitted_orbs_are_skipped():
     assert len(first) == 1
 
     submitted[ALICE] = 103
-    # The pending row survives until the indexer sees OrbOpened; without a
-    # cooldown the relayer re-estimates the same reveal on every poll.
     again = list(to_submit(head=104, reveal_delay=2, submitted=submitted))
     assert again == []
 

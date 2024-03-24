@@ -1,9 +1,4 @@
-"""Access to the QuantumOrb contract.
-
-The ABI is read from the artifact the contract build exports. The backend
-never keeps its own copy: three hand-maintained copies are what let the
-subgraph drift into indexing an event the contract had stopped declaring.
-"""
+"""Access to the QuantumOrb contract, using the exported build artifact."""
 
 import json
 from functools import lru_cache

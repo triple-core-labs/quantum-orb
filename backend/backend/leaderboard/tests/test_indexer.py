@@ -9,7 +9,7 @@ ALICE = "0x00000000000000000000000000000000000000a1"
 
 
 class FakeChain:
-    """Stands in for a web3 contract. Records the ranges it was asked for."""
+    """Web3 contract stand-in that records the ranges it was asked for."""
 
     def __init__(self, events_by_block=None):
         self.events_by_block = events_by_block or {}
@@ -73,7 +73,6 @@ def test_rescans_a_trailing_window_for_reorgs(settings):
     process_once(None, head=1100, scan=chain.scan)
 
     second_from, _ = chain.requested_ranges[1]
-    # Overlaps the already-indexed tail rather than starting at 1001.
     assert second_from == 1000 - REORG_WINDOW + 1
 
 

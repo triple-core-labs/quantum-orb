@@ -1,9 +1,4 @@
-"""Read-only leaderboard API.
-
-There are no write endpoints. The previous version exposed a ModelViewSet with
-no permission classes, so anyone could create, edit or delete leaderboard rows,
-and an unauthenticated GET that triggered five thousand subgraph queries.
-"""
+"""Read-only leaderboard API."""
 
 import logging
 from functools import lru_cache
@@ -31,11 +26,7 @@ def _bad_address(value: str) -> bool:
 
 @lru_cache(maxsize=1)
 def _chain_constants() -> dict:
-    """Read prices and reveal timing from the contract once per process.
-
-    They are owner-settable but change rarely, and /api/config sits on the
-    frontend's boot path - an RPC round trip per page load is not worth it.
-    """
+    """Read prices and reveal timing from the contract once per process."""
     contract = get_contract()
     orbs = {}
     for orb_type in (0, 1, 2):
@@ -60,8 +51,6 @@ def config(request):
     try:
         body.update(_chain_constants())
     except Exception:  # noqa: BLE001
-        # The page must still boot when the RPC is unreachable; the client
-        # falls back to reading prices from the contract itself.
         log.warning("could not read chain constants for /api/config")
     return Response(body)
 
@@ -114,7 +103,6 @@ def player_referrals(request, address: str):
                 {
                     "address": r.address,
                     "points": r.points,
-                    # What the referrer earned from this player.
                     "earned": r.points * REFERRAL_BPS // 10_000,
                 }
                 for r in referrals

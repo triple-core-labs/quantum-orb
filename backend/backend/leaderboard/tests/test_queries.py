@@ -27,7 +27,7 @@ def test_top_respects_the_limit():
     assert len(top(limit=20)) == 20
 
 
-def test_tied_scores_share_a_rank():
+def test_tied_scores_share_a_rank_and_leave_a_gap():
     make("0xa", 50)
     make("0xb", 50)
     make("0xc", 10)
@@ -35,7 +35,6 @@ def test_tied_scores_share_a_rank():
     ranks = {r["address"]: r["rank"] for r in top(limit=3)}
 
     assert ranks["0xa"] == ranks["0xb"] == 1
-    # RANK leaves a gap after a tie, so the next player is third.
     assert ranks["0xc"] == 3
 
 
@@ -62,8 +61,6 @@ def test_window_includes_the_player_and_neighbours():
 
 
 def test_window_does_not_truncate_at_the_player():
-    # The previous getTop broke out of its loop on the requested address,
-    # cutting the list short instead of centring on it.
     for i in range(10):
         make(f"0x{i:02x}", i * 10)
 

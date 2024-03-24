@@ -24,7 +24,6 @@ def test_config_exposes_chain_settings(api, settings):
 
 
 def test_config_survives_an_unreachable_rpc(api, settings):
-    # The page must still boot when the chain is unreachable.
     settings.RPC_URL = "http://127.0.0.1:1"
     assert api.get("/api/config").status_code == 200
 
@@ -50,8 +49,6 @@ def test_leaderboard_includes_a_window_for_a_known_address(api):
 
 def test_leaderboard_rejects_a_malformed_address(api):
     response = api.get("/api/leaderboard?address=not-an-address")
-    # The previous API returned 200 with an error object in the body, which
-    # the frontend could not tell from success.
     assert response.status_code == 400
 
 
@@ -103,6 +100,5 @@ def test_pending_describes_a_committed_orb(api):
 
 
 def test_there_are_no_write_endpoints(api):
-    # BlastAddressViewSet used to accept unauthenticated POST and DELETE.
     assert api.post("/api/leaderboard", {}).status_code in (403, 405)
     assert api.delete(f"/api/players/{ALICE}").status_code in (403, 404, 405)

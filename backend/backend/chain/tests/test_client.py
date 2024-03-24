@@ -16,8 +16,6 @@ def test_load_abi_rejects_an_abi_without_orb_opened(tmp_path, settings):
     stripped.write_text(json.dumps({"abi": [{"type": "event", "name": "Nope"}]}))
     settings.CONTRACT_ABI_PATH = stripped
 
-    # The previous version shipped a subgraph indexing an OrbOpened event the
-    # contract no longer declared. Fail loudly instead.
     with pytest.raises(RuntimeError, match="OrbOpened"):
         load_abi()
 

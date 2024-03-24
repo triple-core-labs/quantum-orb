@@ -96,8 +96,6 @@ def test_points_credited_replays_without_doubling():
     )
     apply_event(payload)
     apply_event(payload)
-    # The event carries running totals from contract storage, so applying it
-    # twice must not accumulate.
     assert Player.objects.get(address=ALICE).points == 100
 
 

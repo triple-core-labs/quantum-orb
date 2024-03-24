@@ -1,10 +1,4 @@
-"""Read contract logs into the database.
-
-The cursor always trails the chain head by settings.CONFIRMATIONS blocks, and
-each cycle re-reads REORG_WINDOW blocks it has already seen. Handlers are
-idempotent, so the overlap costs nothing and repairs a shallow reorg without
-special-case code.
-"""
+"""Read contract logs into the database."""
 
 import logging
 import time
@@ -17,7 +11,6 @@ from backend.leaderboard.models import IndexerState
 
 log = logging.getLogger(__name__)
 
-# Blast reorgs are shallow; twelve blocks is roughly half a minute of history.
 REORG_WINDOW = 12
 
 MAX_BLOCKS_PER_SCAN = 2_000
@@ -48,11 +41,7 @@ def scan_range(contract, from_block: int, to_block: int) -> list[dict]:
 
 
 def process_once(contract, head: int, scan=None) -> int:
-    """Index one window. Returns the new cursor position.
-
-    `scan` is injected by tests; by default it is scan_range bound to the
-    contract, so callers pass a two-argument (from_block, to_block) callable.
-    """
+    """Index one window. Returns the new cursor position."""
     if scan is None:
         scan = partial(scan_range, contract)
 

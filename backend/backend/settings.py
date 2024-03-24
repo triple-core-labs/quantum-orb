@@ -1,8 +1,4 @@
-"""Django settings for the Quantum Orb backend.
-
-Every value that differs between environments comes from the environment.
-Nothing in this file is a working production secret.
-"""
+"""Django settings. Every environment-specific value comes from the environment."""
 
 import os
 from pathlib import Path
@@ -32,11 +28,7 @@ def env_bool(name: str, default: bool = False) -> bool:
 
 
 def env_int(name: str, default: int) -> int:
-    """An env var set to an empty string is absent, not zero.
-
-    A .env copied from .env.example has every key present and blank, so
-    os.environ.get(name, "0") returns "" and int() raises.
-    """
+    """Read an integer, treating a blank variable as absent."""
     raw = os.environ.get(name, "").strip()
     return int(raw) if raw else default
 
@@ -64,8 +56,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    # Above CommonMiddleware: below it, the headers are not applied to
-    # responses CommonMiddleware short-circuits.
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -131,7 +121,6 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# ------------------------------------------------------------------- chain
 
 RPC_URL = os.environ.get("RPC_URL") or "https://sepolia.blast.io"
 CHAIN_ID = env_int("CHAIN_ID", 168587773)
@@ -141,7 +130,6 @@ CONTRACT_ABI_PATH = Path(
     os.environ.get("CONTRACT_ABI_PATH", "/app/contracts/abi/QuantumOrb.json")
 )
 
-# Blocks to stay behind head, so a shallow reorg never reaches indexed data.
 CONFIRMATIONS = env_int("CONFIRMATIONS", 3)
 
 RELAYER_PRIVATE_KEY = os.environ.get("RELAYER_PRIVATE_KEY", "")
