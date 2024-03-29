@@ -1,9 +1,6 @@
-import { Selector } from '@ngxs/store';
-import { AppState } from './app.state';
-import { AppStateModel } from './app-state.model';
-import { BigNumber } from 'ethers';
-import { from, map, tap } from 'rxjs';
-import { add, differenceInSeconds } from 'date-fns';
+import { Selector } from "@ngxs/store";
+import { AppState } from "./app.state";
+import { AppStateModel } from "./app-state.model";
 
 export class AppSelectors {
   @Selector([AppState])
@@ -12,24 +9,32 @@ export class AppSelectors {
   }
 
   @Selector([AppState])
+  static orbStatus({ orbStatus }: AppStateModel) {
+    return orbStatus;
+  }
+
+  @Selector([AppState])
   static leaderboard({ leaderboard }: AppStateModel) {
     return leaderboard;
   }
 
-  // @Selector([AppState])
-  // static referrals({ address, users }: AppStateModel) {
-  //   return users
-  //     .filter((user) => user.parent === users.at(users.length - 1)?.address)
-  //     .sort((a, b) => b.shared_points - a.shared_points);
-  // }
+  @Selector([AppState])
+  static around({ around }: AppStateModel) {
+    return around;
+  }
+
+  @Selector([AppState])
+  static referrals({ referrals }: AppStateModel) {
+    return referrals;
+  }
+
+  @Selector([AppState])
+  static referralCount({ referralCount }: AppStateModel) {
+    return referralCount;
+  }
 
   @Selector([AppState])
   static points({ points }: AppStateModel) {
     return points;
-  }
-
-  @Selector([AppState])
-  static lastOpenedDailyDate({ lastOpenedDaily }: AppStateModel) {
-    return lastOpenedDaily;
   }
 }

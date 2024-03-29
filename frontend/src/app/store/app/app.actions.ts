@@ -1,40 +1,34 @@
-import { Contract, ethers } from 'ethers';
-import { User } from '../../interfaces/user';
+import { OrbType } from "../../contract/orb-type";
 
-export class FetchUsers {
-  static readonly type = '[App] Fetch Users';
+export class Connect {
+  static readonly type = "[App] Connect";
 }
 
-export class SetAddress {
-  static readonly type = '[App] Set Address';
-
+export class RestoreSession {
+  static readonly type = "[App] Restore Session";
   constructor(public address: string) {}
 }
 
-export class SetContract {
-  static readonly type = '[App] Set Contract';
-
-  constructor(public contract: Contract) {}
+export class OpenOrb {
+  static readonly type = "[App] Open Orb";
+  constructor(
+    public orbType: OrbType,
+    public priceWei: bigint,
+  ) {}
 }
 
-export class GetPoints {
-  static readonly type = '[App] Get Points';
+export class ReclaimOrb {
+  static readonly type = "[App] Reclaim Orb";
 }
 
-export class OpenDailyOrb {
-  static readonly type = '[App] Open Daily Orb';
-
-  constructor(public signer: ethers.providers.JsonRpcSigner) {}
+export class LoadLeaderboard {
+  static readonly type = "[App] Load Leaderboard";
 }
 
-export class OpenGenesisOrb {
-  static readonly type = '[App] Open Genesis Orb';
+export class LoadReferrals {
+  static readonly type = "[App] Load Referrals";
 }
 
-export class OpenQuantumOrb {
-  static readonly type = '[App] Open Quantum Orb';
-}
-
-export class GetLastOpenedDaily {
-  static readonly type = '[App] Get Last Opened Daily Timestamp';
+export class DismissOutcome {
+  static readonly type = "[App] Dismiss Outcome";
 }
