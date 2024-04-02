@@ -1,35 +1,42 @@
-import { Component, DestroyRef, ElementRef, OnInit } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
-import { AppSelectors } from '../store/app/app.selectors';
-import { Observable, subscribeOn } from 'rxjs';
-import { getAccount } from '../contract';
-import { BigNumber } from 'ethers';
+import { Component, computed, inject } from "@angular/core";
+import { RouterLink, RouterLinkActive } from "@angular/router";
+import { Store } from "@ngxs/store";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { AppSelectors } from "../store/app/app.selectors";
+import { Connect } from "../store/app/app.actions";
+import { WalletService } from "../wallet/wallet.service";
+import { ShortAddressPipe } from "../pipes/short-address.pipe";
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss',
+  selector: "app-navbar",
+  standalone: true,
+  imports: [RouterLink, RouterLinkActive, ShortAddressPipe],
+  templateUrl: "./navbar.component.html",
+  styleUrl: "./navbar.component.scss",
 })
 export class NavbarComponent {
-  @Select(AppSelectors.address)
-  address$!: Observable<string | null>;
+  private readonly store = inject(Store);
+  private readonly wallet = inject(WalletService);
 
-  @Select(AppSelectors.points)
-  points$!: Observable<number>;
+  readonly address = toSignal(this.store.select(AppSelectors.address), {
+    initialValue: null,
+  });
 
-  points: number = 0;
+  readonly walletAvailable = this.wallet.available;
 
-  constructor(
-    private elRef: ElementRef,
-    private store: Store,
-    private destroyRef: DestroyRef
-  ) {}
+  readonly label = computed(() => {
+    if (!this.walletAvailable) return "No wallet found";
+    return this.address() ? "" : "Connect wallet";
+  });
 
-  toggleMenu(): void {
-    this.elRef.nativeElement.classList.toggle('active');
+  connect(): void {
+    if (!this.walletAvailable) return;
+    this.store.dispatch(new Connect());
   }
 
-  connectWallet(): void {
-    getAccount(this.store);
+  toggleMenu(event: Event): void {
+    (event.currentTarget as HTMLElement)
+      .closest("app-navbar")
+      ?.classList.toggle("active");
   }
 }
