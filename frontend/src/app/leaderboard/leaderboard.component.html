@@ -1,29 +1,45 @@
 <h1>Leaderboard</h1>
-<table>
-  <thead>
-    <tr>
-      <th>Position</th>
-      <th>Address</th>
-      <!-- <th>Invitations</th> -->
-      <th>Points</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr
-      *ngFor="let user of leaderboard$ | async"
-      [ngClass]="{ active: user.address === (address$ | async) }"
-    >
-      <td>{{ user.rank }}</td>
-      <td>
-        <ng-container *ngIf="innerWidth > 768; else shortAddress">{{
-          user.address
-        }}</ng-container>
-        <ng-template #shortAddress>{{
-          user.address | shortAddress
-        }}</ng-template>
-      </td>
-      <!-- <td>{{ user | invitationsAmount }}</td> -->
-      <td>{{ user.points }}</td>
-    </tr>
-  </tbody>
-</table>
+
+@if (isEmpty()) {
+  <p class="empty">No orbs opened yet. Be the first.</p>
+} @else {
+  <table class="board">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Player</th>
+        <th scope="col" class="board__points">Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of top(); track row.address) {
+        <tr [class.board__row--you]="isYou(row.address)">
+          <td>{{ row.rank }}</td>
+          <td>
+            <span class="board__full">{{ row.address }}</span>
+            <span class="board__short">{{ row.address | shortAddress }}</span>
+          </td>
+          <td class="board__points">{{ row.points }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (around().length) {
+    <h2>Around you</h2>
+    <table class="board">
+      <tbody>
+        @for (row of around(); track row.address) {
+          <tr [class.board__row--you]="isYou(row.address)">
+            <td>{{ row.rank }}</td>
+            <td>
+              <span class="board__full">{{ row.address }}</span>
+              <span class="board__short">{{ row.address | shortAddress }}</span>
+            </td>
+            <td class="board__points">{{ row.points }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+}

@@ -1,36 +1,37 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { User } from '../interfaces/user';
-import { Select } from '@ngxs/store';
-import { AppSelectors } from '../store/app/app.selectors';
-import { Observable } from 'rxjs';
-import { ShortAddressPipe } from '../pipes/short-address.pipe';
-import { InvitationsAmountPipe } from '../pipes/invitations-amount.pipe';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, computed, inject } from "@angular/core";
+import { Store } from "@ngxs/store";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { AppSelectors } from "../store/app/app.selectors";
+import { LoadLeaderboard } from "../store/app/app.actions";
+import { ShortAddressPipe } from "../pipes/short-address.pipe";
 
 @Component({
-  selector: 'leaderboard',
-  templateUrl: './leaderboard.component.html',
-  styleUrl: './leaderboard.component.scss',
+  selector: "app-leaderboard",
   standalone: true,
-  imports: [ShortAddressPipe, InvitationsAmountPipe, CommonModule],
+  imports: [ShortAddressPipe],
+  templateUrl: "./leaderboard.component.html",
+  styleUrl: "./leaderboard.component.scss",
 })
 export class LeaderboardComponent implements OnInit {
-  @Select(AppSelectors.leaderboard)
-  leaderboard$!: Observable<User[]>;
+  private readonly store = inject(Store);
 
-  @Select(AppSelectors.address)
-  address$!: Observable<string>;
+  readonly top = toSignal(this.store.select(AppSelectors.leaderboard), {
+    initialValue: [],
+  });
+  readonly around = toSignal(this.store.select(AppSelectors.around), {
+    initialValue: [],
+  });
+  readonly address = toSignal(this.store.select(AppSelectors.address), {
+    initialValue: null,
+  });
 
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.innerWidth = window.innerWidth;
-  }
-
-  innerWidth: number = 0;
-
-  constructor() {}
+  readonly isEmpty = computed(() => this.top().length === 0);
 
   ngOnInit(): void {
-    this.innerWidth = window.innerWidth;
+    this.store.dispatch(new LoadLeaderboard());
+  }
+
+  isYou(rowAddress: string): boolean {
+    return rowAddress.toLowerCase() === this.address()?.toLowerCase();
   }
 }
