@@ -1,0 +1,38 @@
+$font-base-path: "./assets/fonts/";
+
+@font-face {
+  font-family: "Tomorrow";
+  src: url($font-base-path + "Tomorrow-Light.ttf");
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tomorrow";
+  src: url($font-base-path + "Tomorrow-Bold.ttf");
+  font-weight: 700;
+  font-display: swap;
+}
+
+h1 {
+  font-size: var(--qo-text-2xl);
+  font-weight: 700;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+h2 {
+  font-size: var(--qo-text-xl);
+  font-weight: 700;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+label {
+  display: block;
+  margin-bottom: var(--qo-space-2);
+  color: var(--qo-ink-muted);
+  font-size: var(--qo-text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
