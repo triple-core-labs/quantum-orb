@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, computed, inject, signal } from "@angular/core";
+import { Component, OnInit, computed, inject, input, signal } from "@angular/core";
 import { CountdownComponent, CountdownEvent } from "ngx-countdown";
 import { Store } from "@ngxs/store";
 import { formatEther } from "ethers";
@@ -21,23 +21,22 @@ export class OrbComponent implements OnInit {
   private readonly contract = inject(ContractService);
   private readonly wallet = inject(WalletService);
 
-  @Input({ required: true }) orbType!: OrbType;
-  @Input() priceWei = 0n;
+  readonly orbType = input.required<OrbType>();
+  readonly priceWei = input<bigint>(0n);
 
   readonly secondsUntilReady = signal(0);
 
-  readonly label = computed(() => ORB_LABELS[this.orbType]);
-  readonly slug = computed(() => ORB_SLUGS[this.orbType]);
+  readonly label = computed(() => ORB_LABELS[this.orbType()]);
+  readonly slug = computed(() => ORB_SLUGS[this.orbType()]);
   readonly priceLabel = computed(() =>
-    this.priceWei > 0n ? formatEther(this.priceWei) : "",
+    this.priceWei() > 0n ? formatEther(this.priceWei()) : "",
+  );
+  readonly locked = computed(
+    () => this.orbType() === OrbType.DAILY && this.secondsUntilReady() > 0,
   );
 
-  get locked(): boolean {
-    return this.orbType === OrbType.DAILY && this.secondsUntilReady() > 0;
-  }
-
   async ngOnInit(): Promise<void> {
-    if (this.orbType !== OrbType.DAILY) return;
+    if (this.orbType() !== OrbType.DAILY) return;
 
     const address = this.wallet.address();
     if (!address) return;
@@ -55,8 +54,8 @@ export class OrbComponent implements OnInit {
   }
 
   open(): void {
-    if (this.locked) return;
-    this.store.dispatch(new OpenOrb(this.orbType, this.priceWei));
+    if (this.locked()) return;
+    this.store.dispatch(new OpenOrb(this.orbType(), this.priceWei()));
   }
 
   onCountdown(event: CountdownEvent): void {
