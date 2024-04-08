@@ -20,11 +20,24 @@ export class WalletUnavailableError extends Error {
 @Injectable({ providedIn: "root" })
 export class WalletService {
   readonly address = signal<string | null>(null);
+  readonly available = signal(WalletService.detect());
 
   private provider: BrowserProvider | null = null;
 
-  get available(): boolean {
+  constructor() {
+    if (typeof window === "undefined") return;
+    window.addEventListener("ethereum#initialized", () => this.refresh(), {
+      once: true,
+    });
+    setTimeout(() => this.refresh(), 500);
+  }
+
+  private static detect(): boolean {
     return typeof window !== "undefined" && !!window.ethereum;
+  }
+
+  private refresh(): void {
+    this.available.set(WalletService.detect());
   }
 
   get hexChainId(): string {
@@ -32,7 +45,8 @@ export class WalletService {
   }
 
   async restore(): Promise<void> {
-    if (!this.available) return;
+    this.refresh();
+    if (!this.available()) return;
 
     window.ethereum!.on?.("chainChanged", () => window.location.reload());
     window.ethereum!.on?.("accountsChanged", (...args: unknown[]) => {
@@ -47,7 +61,8 @@ export class WalletService {
   }
 
   async connect(): Promise<string | null> {
-    if (!this.available) throw new WalletUnavailableError();
+    this.refresh();
+    if (!this.available()) throw new WalletUnavailableError();
 
     const accounts = (await window.ethereum!.request({
       method: "eth_requestAccounts",
@@ -58,7 +73,7 @@ export class WalletService {
   }
 
   async ensureChain(): Promise<void> {
-    if (!this.available) throw new WalletUnavailableError();
+    if (!this.available()) throw new WalletUnavailableError();
 
     try {
       await window.ethereum!.request({
@@ -72,7 +87,7 @@ export class WalletService {
   }
 
   async getSigner(): Promise<JsonRpcSigner> {
-    if (!this.available) throw new WalletUnavailableError();
+    if (!this.available()) throw new WalletUnavailableError();
     this.provider ??= new BrowserProvider(window.ethereum as never);
     return this.provider.getSigner();
   }
