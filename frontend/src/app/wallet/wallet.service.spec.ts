@@ -28,7 +28,7 @@ describe("WalletService", () => {
 
   it("reports no wallet when the page has no provider", () => {
     delete (window as any).ethereum;
-    expect(TestBed.inject(WalletService).available).toBeFalse();
+    expect(TestBed.inject(WalletService).available()).toBeFalse();
   });
 
   it("does not throw when constructed without a provider", () => {
@@ -38,7 +38,7 @@ describe("WalletService", () => {
 
   it("reports a wallet when a provider is present", () => {
     installProvider();
-    expect(TestBed.inject(WalletService).available).toBeTrue();
+    expect(TestBed.inject(WalletService).available()).toBeTrue();
   });
 
   it("connect resolves to the selected account", async () => {
