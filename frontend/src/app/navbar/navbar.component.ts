@@ -24,13 +24,12 @@ export class NavbarComponent {
 
   readonly walletAvailable = this.wallet.available;
 
-  readonly label = computed(() => {
-    if (!this.walletAvailable) return "No wallet found";
-    return this.address() ? "" : "Connect wallet";
-  });
+  readonly label = computed(() =>
+    this.walletAvailable() ? "Connect wallet" : "No wallet found",
+  );
 
   connect(): void {
-    if (!this.walletAvailable) return;
+    if (!this.walletAvailable()) return;
     this.store.dispatch(new Connect());
   }
 

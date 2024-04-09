@@ -24,7 +24,7 @@
   <button
     class="action-button"
     type="button"
-    [disabled]="!walletAvailable"
+    [disabled]="!walletAvailable()"
     (click)="connect()"
   >
     {{ label() }}
