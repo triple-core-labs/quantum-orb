@@ -9,6 +9,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scrollbar-gutter: stable;
+}
+
 html,
 body {
   @apply h-full w-full m-0 bg-black relative flex flex-col justify-start items-center;
@@ -86,6 +90,17 @@ body {
     @apply w-full border-collapse;
     font-variant-numeric: tabular-nums;
 
+    tbody tr {
+      transition:
+        background var(--qo-transition),
+        color var(--qo-transition);
+      animation: row-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    tbody tr:hover {
+      background: rgb(248 239 0 / 0.06);
+    }
+
     th,
     td {
       @apply px-4 py-3 text-left border-b border-solid;
@@ -125,6 +140,17 @@ body {
 .orb-dialog {
   .mat-mdc-dialog-surface {
     @apply p-4 bg-black flex flex-col justify-start items-center border-2 border-yellow rounded-none text-pale #{!important};
+  }
+}
+
+@keyframes row-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
