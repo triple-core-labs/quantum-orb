@@ -33,3 +33,11 @@
     }
   }
 }
+
+.board tbody tr {
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 28}ms;
+    }
+  }
+}
