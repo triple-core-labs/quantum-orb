@@ -48,3 +48,38 @@
     filter: brightness(1.35);
   }
 }
+
+.unboxing {
+  animation: unboxing-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.unboxing--revealed .unboxing__points {
+  animation: points-pop 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes unboxing-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes points-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+    filter: blur(8px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.12);
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
