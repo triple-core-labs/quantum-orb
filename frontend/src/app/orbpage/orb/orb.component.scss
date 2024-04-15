@@ -97,3 +97,17 @@
     transform: translateY(0) scale(1);
   }
 }
+
+:host {
+  .action-button {
+    @apply inline-flex items-center justify-center;
+    width: 160px;
+    gap: 0.35em;
+  }
+
+  .eth-icon {
+    width: auto;
+    height: 0.95em;
+    flex: none;
+  }
+}
