@@ -6,15 +6,13 @@
 />
 <app-navbar />
 
-@if (address()) {
-  <div class="balance-wrapper">
-    <p class="balance" title="Your quantum points">
-      <img src="assets/images/points-coin.svg" alt="" aria-hidden="true" />
-      <span class="balance__value">{{ points() }}</span>
-      <span class="balance__label">pts</span>
-    </p>
-  </div>
-}
+<div class="balance-wrapper">
+  <p class="balance" title="Your quantum points">
+    <img src="assets/images/points-coin.svg" alt="" aria-hidden="true" />
+    <span class="balance__value">{{ points() }}</span>
+    <span class="balance__label">pts</span>
+  </p>
+</div>
 
 <router-outlet />
 <app-footer />
