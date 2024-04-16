@@ -25,6 +25,9 @@ export class AppComponent implements OnInit {
   readonly points = toSignal(this.store.select(AppSelectors.points), {
     initialValue: 0,
   });
+  readonly address = toSignal(this.store.select(AppSelectors.address), {
+    initialValue: null,
+  });
 
   async ngOnInit(): Promise<void> {
     this.referralLink.capture(this.route.snapshot.queryParams);

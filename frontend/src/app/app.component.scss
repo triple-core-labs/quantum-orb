@@ -13,11 +13,23 @@
     pointer-events: none;
 
     .balance {
-      @apply w-[13%] text-center text-sm text-yellow flex justify-center items-center gap-x-1;
+      @apply text-sm text-yellow flex justify-end items-center gap-x-1.5 pr-2;
       font-variant-numeric: tabular-nums;
+      animation: fade-in-only 320ms ease-out both;
 
       img {
-        @apply h-[10px] w-[10px];
+        @apply h-[11px] w-[11px];
+      }
+
+      &__value {
+        font-weight: 700;
+      }
+
+      &__label {
+        @apply uppercase;
+        color: var(--qo-ink-muted);
+        font-size: var(--qo-text-xs);
+        letter-spacing: 0.12em;
       }
     }
   }
