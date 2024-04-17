@@ -13,7 +13,7 @@
     </thead>
     <tbody>
       @for (row of top(); track row.address) {
-        <tr [class.board__row--you]="isYou(row.address)">
+        <tr [class.active]="isYou(row.address)">
           <td>{{ row.rank }}</td>
           <td>
             <span class="board__full">{{ row.address }}</span>
@@ -30,7 +30,7 @@
     <table class="board">
       <tbody>
         @for (row of around(); track row.address) {
-          <tr [class.board__row--you]="isYou(row.address)">
+          <tr [class.active]="isYou(row.address)">
             <td>{{ row.rank }}</td>
             <td>
               <span class="board__full">{{ row.address }}</span>
