@@ -66,7 +66,7 @@
   }
 
   .menu-button {
-    @apply flex items-start pt-3 md:hidden;
+    @apply flex items-start pt-3 md:hidden relative z-50;
 
     svg {
       @apply w-[1.5em] fill-yellow;
@@ -78,13 +78,29 @@
   }
 
   &.active {
-    @apply max-md:h-[50%] max-md:bg-yellow/50;
+    @media (max-width: 768px) {
+      clip-path: none;
+
+      &:after {
+        display: none;
+      }
+    }
 
     nav {
-      @apply max-md:flex max-md:flex-col max-md:justify-end gap-y-8 max-md:top-1/2 max-md:-translate-y-1/2;
+      @apply max-md:fixed max-md:inset-0 max-md:w-screen max-md:h-screen max-md:flex max-md:flex-col max-md:justify-center max-md:items-center max-md:gap-y-10 max-md:bg-yellow max-md:translate-x-0 max-md:translate-y-0 max-md:left-0 max-md:top-0 max-md:z-40;
+      animation: menu-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
 
       a {
-        @apply max-md:text-black max-md:text-2xl hover:text-yellow;
+        @apply max-md:text-black max-md:text-3xl max-md:font-bold;
+        transition: opacity var(--qo-transition);
+
+        &:hover {
+          @apply max-md:opacity-60;
+        }
+
+        &:before {
+          @apply max-md:bg-black;
+        }
       }
     }
 
@@ -157,6 +173,15 @@
 }
 
 @keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes menu-in {
   from {
     opacity: 0;
   }
