@@ -1,4 +1,12 @@
-import { Component, computed, inject } from "@angular/core";
+import {
+  Component,
+  HostBinding,
+  HostListener,
+  computed,
+  effect,
+  inject,
+  signal,
+} from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { Store } from "@ngxs/store";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -23,19 +31,35 @@ export class NavbarComponent {
   });
 
   readonly walletAvailable = this.wallet.available;
+  readonly menuOpen = signal(false);
 
   readonly label = computed(() =>
-    this.walletAvailable() ? "Connect wallet" : "No wallet found",
+    this.walletAvailable() ? "CONNECT WALLET" : "NO WALLET FOUND",
   );
+
+  @HostBinding("class.active")
+  get isMenuOpen(): boolean {
+    return this.menuOpen();
+  }
+
+  constructor() {
+    effect(() => {
+      document.body.classList.toggle("menu-open", this.menuOpen());
+    });
+  }
+
+  @HostListener("document:keydown.escape")
+  closeMenu(): void {
+    this.menuOpen.set(false);
+  }
+
+  toggleMenu(): void {
+    this.menuOpen.update((open) => !open);
+  }
 
   connect(): void {
     if (!this.walletAvailable()) return;
+    this.closeMenu();
     this.store.dispatch(new Connect());
-  }
-
-  toggleMenu(event: Event): void {
-    (event.currentTarget as HTMLElement)
-      .closest("app-navbar")
-      ?.classList.toggle("active");
   }
 }
