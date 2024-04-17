@@ -11,6 +11,11 @@
 
 html {
   scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+}
+
+body.menu-open {
+  overflow: hidden;
 }
 
 html,
@@ -115,11 +120,6 @@ body {
 
     &__points {
       @apply text-right;
-    }
-
-    &__row--you {
-      @apply text-yellow;
-      background: rgb(248 239 0 / 0.12);
     }
 
     &__short {
