@@ -6,7 +6,9 @@
   }
 
   .orb {
-    @apply relative h-[300px] w-[300px] cursor-pointer;
+    @apply relative cursor-pointer;
+    width: min(300px, 78vw);
+    height: min(300px, 78vw);
 
     .top {
       @apply absolute w-full top-0 z-10 transition-all;
@@ -100,7 +102,7 @@
 
 :host {
   .action-button {
-    @apply inline-flex items-center justify-center;
+    @apply inline-flex items-center justify-center mt-4;
     width: 160px;
     gap: 0.35em;
   }
