@@ -33,3 +33,45 @@
     }
   }
 }
+
+:host {
+  .invite {
+    @apply w-full max-w-2xl flex flex-col gap-y-2;
+
+    &__row {
+      @apply flex items-stretch gap-x-3 max-md:flex-col max-md:gap-y-3;
+
+      input {
+        @apply flex-1 min-w-0 bg-yellow/5 border-2 border-yellow/40 px-4 py-2 text-pale text-sm;
+        font-variant-numeric: tabular-nums;
+        transition: border-color var(--qo-transition);
+
+        &:hover,
+        &:focus {
+          @apply border-yellow;
+        }
+
+        &:focus-visible {
+          outline: none;
+          box-shadow: var(--qo-focus);
+        }
+      }
+
+      .action-button {
+        @apply max-md:w-full flex items-center justify-center;
+        min-width: 130px;
+      }
+    }
+
+    &__hint,
+    &__total {
+      @apply text-sm;
+      color: var(--qo-ink-muted);
+    }
+
+    &__total {
+      @apply text-center;
+      color: var(--qo-pale);
+    }
+  }
+}
