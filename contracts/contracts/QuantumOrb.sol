@@ -31,6 +31,7 @@ contract QuantumOrb is
         uint64 lastDailyOpen;
         bool isPartner;
         bool registered;
+        uint32 dailyStreak;
     }
 
     struct Pending {
@@ -58,10 +59,13 @@ contract QuantumOrb is
     uint256 private constant BPS_DENOMINATOR = 10_000;
     uint256 private constant PARTNER_MULTIPLIER = 2;
 
-    uint256 private constant ROLL_SPACE = 10_000;
-    uint256 private constant RANK_4_ROLLS = 20;
-    uint256 private constant RANK_3_ROLLS = 800;
-    uint256 private constant RANK_2_ROLLS = 2100;
+    uint256 public constant ROLL_SPACE = 10_000;
+    uint256 public constant RANK_4_ROLLS = 20;
+    uint256 public constant RANK_3_ROLLS = 800;
+    uint256 public constant RANK_2_ROLLS = 2100;
+
+    uint32 public constant MAX_STREAK_BONUS_DAYS = 7;
+    uint256 private constant STREAK_BONUS_BPS_PER_DAY = 500;
 
     uint8 public constant REASON_SELF_OPEN = 0;
     uint8 public constant REASON_REFERRAL_BONUS = 1;
@@ -93,6 +97,7 @@ contract QuantumOrb is
     );
     event OrbConfigChanged(OrbType orbType, uint96 price, bool enabled);
     event PartnerChanged(address indexed user, bool isPartner);
+    event DailyStreakChanged(address indexed user, uint32 streak);
     event Withdrawn(address indexed to, uint256 amount);
 
     error InvalidPointsRange();
@@ -243,6 +248,9 @@ contract QuantumOrb is
         uint256 points = _pointsFor(seed, p.orbType, rank);
 
         User storage u = users[user];
+        if (p.orbType == OrbType.DAILY) {
+            points += _streakBonus(points, u.dailyStreak);
+        }
         u.points += uint128(points);
         emit OrbOpened(user, p.orbType, rank, points);
         emit PointsCredited(user, u.points, u.referralPoints, REASON_SELF_OPEN);
@@ -335,13 +343,34 @@ contract QuantumOrb is
     {
         uint64 readyAt = prevDailyOpen == 0 ? 0 : prevDailyOpen + 1 days;
         if (block.timestamp < readyAt) revert DailyNotReady(readyAt);
+
+        bool continues =
+            prevDailyOpen != 0 && block.timestamp <= prevDailyOpen + 2 days;
+        u.dailyStreak = continues ? u.dailyStreak + 1 : 1;
         u.lastDailyOpen = uint64(block.timestamp);
+
+        emit DailyStreakChanged(msg.sender, u.dailyStreak);
     }
 
     function _restoreDailyAllowance(User storage u, uint64 prevDailyOpen)
         internal
     {
         u.lastDailyOpen = prevDailyOpen;
+        if (u.dailyStreak > 0) u.dailyStreak -= 1;
+        emit DailyStreakChanged(msg.sender, u.dailyStreak);
+    }
+
+    function _streakBonus(uint256 points, uint32 streak)
+        internal
+        pure
+        returns (uint256)
+    {
+        if (streak <= 1) return 0;
+        uint32 rewarded = streak - 1;
+        if (rewarded > MAX_STREAK_BONUS_DAYS - 1) {
+            rewarded = MAX_STREAK_BONUS_DAYS - 1;
+        }
+        return (points * STREAK_BONUS_BPS_PER_DAY * rewarded) / BPS_DENOMINATOR;
     }
 
     function _creditReferrer(address referrer, uint256 points) internal {
