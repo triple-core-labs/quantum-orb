@@ -87,3 +87,8 @@
     }
   }
 }
+
+:host .action-button {
+  @apply inline-flex items-center justify-center no-underline;
+  min-width: 176px;
+}

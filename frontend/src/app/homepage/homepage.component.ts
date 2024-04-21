@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { StepCardComponent } from './step-card/step-card.component';
 import { CommonModule } from '@angular/common';
 
@@ -13,7 +14,7 @@ interface Question {
   templateUrl: './homepage.component.html',
   styleUrl: './homepage.component.scss',
   standalone: true,
-  imports: [StepCardComponent, CommonModule],
+  imports: [StepCardComponent, CommonModule, RouterLink],
 })
 export class HomepageComponent {
   questions: Question[] = [
