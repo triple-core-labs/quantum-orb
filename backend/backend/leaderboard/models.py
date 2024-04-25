@@ -22,6 +22,7 @@ class Player(models.Model):
     )
     is_partner = models.BooleanField(default=False)
     last_daily_open = models.BigIntegerField(default=0)
+    daily_streak = models.IntegerField(default=0)
     registered_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -34,6 +35,7 @@ class Player(models.Model):
 class OrbOpen(models.Model):
     tx_hash = models.CharField(max_length=66)
     log_index = models.IntegerField()
+    commit_block = models.BigIntegerField(default=0)
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="opens")
     orb_type = models.IntegerField(choices=OrbType.choices)
     rank = models.SmallIntegerField()
