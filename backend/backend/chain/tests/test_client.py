@@ -33,4 +33,5 @@ def test_event_names_cover_what_the_indexer_handles():
         "OrbOpened",
         "OrbExpired",
         "PointsCredited",
+        "DailyStreakChanged",
     }
