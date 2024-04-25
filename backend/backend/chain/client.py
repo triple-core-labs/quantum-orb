@@ -12,6 +12,7 @@ EVENT_NAMES = {
     "OrbOpened",
     "OrbExpired",
     "PointsCredited",
+    "DailyStreakChanged",
 }
 
 
