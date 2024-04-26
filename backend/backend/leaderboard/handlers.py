@@ -43,11 +43,13 @@ def handle_orb_committed(ev: dict) -> None:
 
 def handle_orb_opened(ev: dict) -> None:
     player = _player(ev["args"]["user"])
+    pending = PendingOrb.objects.filter(player=player).first()
     OrbOpen.objects.update_or_create(
         tx_hash=ev["transactionHash"],
         log_index=ev["logIndex"],
         defaults={
             "player": player,
+            "commit_block": pending.commit_block if pending else 0,
             "orb_type": ev["args"]["orbType"],
             "rank": ev["args"]["rank"],
             "points": ev["args"]["points"],
@@ -78,8 +80,15 @@ def _set_authoritative_totals(
     player.save(update_fields=["points", "referral_points"])
 
 
+def handle_daily_streak_changed(ev: dict) -> None:
+    player = _player(ev["args"]["user"])
+    player.daily_streak = ev["args"]["streak"]
+    player.save(update_fields=["daily_streak"])
+
+
 HANDLERS = {
     "UserRegistered": handle_user_registered,
+    "DailyStreakChanged": handle_daily_streak_changed,
     "OrbCommitted": handle_orb_committed,
     "OrbOpened": handle_orb_opened,
     "OrbExpired": handle_orb_expired,
