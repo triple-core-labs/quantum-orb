@@ -10,13 +10,23 @@ from rest_framework.response import Response
 
 from backend.chain.client import get_contract
 from backend.leaderboard.models import Player
-from backend.leaderboard.queries import player_rank, top, window_around
+from backend.leaderboard.queries import (
+    global_stats,
+    opens_for,
+    player_rank,
+    recent_opens,
+    top,
+    top_referrers,
+    window_around,
+)
 from backend.leaderboard.serializers import ADDRESS_RE, AddressQuerySerializer
 
 log = logging.getLogger(__name__)
 
 TOP_SIZE = 20
 WINDOW_SIZE = 5
+ACTIVITY_SIZE = 20
+HISTORY_SIZE = 50
 REFERRAL_BPS = 1000  # 10%, matching the contract
 
 
@@ -82,6 +92,7 @@ def player_detail(request, address: str):
             "points": player.points,
             "referralPoints": player.referral_points,
             "rank": player_rank(player.address),
+            "dailyStreak": player.daily_streak,
             "isPartner": player.is_partner,
             "referrer": player.referrer_id,
             "referralCount": player.referrals.count(),
@@ -129,3 +140,27 @@ def player_pending(request, address: str):
             }
         }
     )
+
+
+@api_view(["GET"])
+def activity(request):
+    return Response({"opens": recent_opens(limit=ACTIVITY_SIZE)})
+
+
+@api_view(["GET"])
+def stats(request):
+    return Response(global_stats())
+
+
+@api_view(["GET"])
+def referrers(request):
+    return Response({"referrers": top_referrers(limit=TOP_SIZE)})
+
+
+@api_view(["GET"])
+def player_opens(request, address: str):
+    if _bad_address(address):
+        return Response({"address": ["Malformed address"]}, status=400)
+
+    get_object_or_404(Player, address=address.lower())
+    return Response({"opens": opens_for(address, limit=HISTORY_SIZE)})
