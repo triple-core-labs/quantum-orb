@@ -1,9 +1,9 @@
 """Leaderboard reads, ranked by one window function over the table."""
 
-from django.db.models import F, Window
-from django.db.models.functions import Rank
+from django.db.models import Count, F, Max, Sum, Window
+from django.db.models.functions import Coalesce, Rank
 
-from backend.leaderboard.models import Player
+from backend.leaderboard.models import OrbOpen, Player
 
 
 def ranked_players():
@@ -47,3 +47,62 @@ def window_around(address: str, size: int = 5) -> list[dict]:
     start = max(0, position - size)
     end = position + size + 1
     return _rows(ordered[start:end])
+
+
+def recent_opens(limit: int = 20) -> list[dict]:
+    rows = OrbOpen.objects.select_related("player").order_by(
+        "-block_number", "-log_index"
+    )[:limit]
+    return [_open_row(row) for row in rows]
+
+
+def opens_for(address: str, limit: int = 50) -> list[dict]:
+    rows = (
+        OrbOpen.objects.select_related("player")
+        .filter(player__address=address.lower())
+        .order_by("-block_number", "-log_index")[:limit]
+    )
+    return [_open_row(row) for row in rows]
+
+
+def _open_row(row) -> dict:
+    return {
+        "address": row.player_id,
+        "orbType": row.orb_type,
+        "rank": row.rank,
+        "points": row.points,
+        "txHash": row.tx_hash,
+        "commitBlock": row.commit_block,
+        "revealBlock": row.block_number,
+        "timestamp": row.block_timestamp,
+    }
+
+
+def global_stats() -> dict:
+    totals = OrbOpen.objects.aggregate(
+        open_count=Count("id"),
+        points_total=Coalesce(Sum("points"), 0),
+        points_best=Coalesce(Max("points"), 0),
+    )
+    return {
+        "players": Player.objects.count(),
+        "orbsOpened": totals["open_count"],
+        "pointsAwarded": totals["points_total"],
+        "biggestOpen": totals["points_best"],
+    }
+
+
+def top_referrers(limit: int = 20) -> list[dict]:
+    rows = (
+        Player.objects.annotate(invited=Count("referrals"))
+        .filter(invited__gt=0)
+        .order_by("-referral_points", "-invited")[:limit]
+    )
+    return [
+        {
+            "address": row.address,
+            "invited": row.invited,
+            "referralPoints": row.referral_points,
+        }
+        for row in rows
+    ]
