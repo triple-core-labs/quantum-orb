@@ -86,7 +86,11 @@ contract QuantumOrb is
         address indexed user, OrbType orbType, uint64 commitBlock
     );
     event OrbOpened(
-        address indexed user, OrbType orbType, uint8 rank, uint256 points
+        address indexed user,
+        OrbType orbType,
+        uint8 rank,
+        uint256 points,
+        uint64 commitBlock
     );
     event OrbExpired(address indexed user, OrbType orbType, uint256 refunded);
     event PointsCredited(
@@ -252,7 +256,7 @@ contract QuantumOrb is
             points += _streakBonus(points, u.dailyStreak);
         }
         u.points += uint128(points);
-        emit OrbOpened(user, p.orbType, rank, points);
+        emit OrbOpened(user, p.orbType, rank, points, p.commitBlock);
         emit PointsCredited(user, u.points, u.referralPoints, REASON_SELF_OPEN);
 
         address referrer = u.referrer;
