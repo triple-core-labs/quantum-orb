@@ -17,12 +17,18 @@ describe("ContractService", () => {
     service = TestBed.inject(ContractService);
   });
 
-  function orbOpenedLog(user: string, rank: number, points: number) {
+  function orbOpenedLog(
+    user: string,
+    rank: number,
+    points: number,
+    commitBlock = 100,
+  ) {
     return iface.encodeEventLog(iface.getEvent("OrbOpened")!, [
       user,
       OrbType.GENESIS,
       rank,
       points,
+      commitBlock,
     ]);
   }
 
