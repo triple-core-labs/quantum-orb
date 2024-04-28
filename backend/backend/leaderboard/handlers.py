@@ -43,13 +43,12 @@ def handle_orb_committed(ev: dict) -> None:
 
 def handle_orb_opened(ev: dict) -> None:
     player = _player(ev["args"]["user"])
-    pending = PendingOrb.objects.filter(player=player).first()
     OrbOpen.objects.update_or_create(
         tx_hash=ev["transactionHash"],
         log_index=ev["logIndex"],
         defaults={
             "player": player,
-            "commit_block": pending.commit_block if pending else 0,
+            "commit_block": ev["args"]["commitBlock"],
             "orb_type": ev["args"]["orbType"],
             "rank": ev["args"]["rank"],
             "points": ev["args"]["points"],
