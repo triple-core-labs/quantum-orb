@@ -52,7 +52,7 @@ def test_orb_opened_records_the_open_and_clears_pending():
     apply_event(
         event(
             "OrbOpened",
-            {"user": ALICE, "orbType": 0, "rank": 3, "points": 275},
+            {"user": ALICE, "orbType": 0, "rank": 3, "points": 275, "commitBlock": 5},
             log_index=1,
         )
     )
@@ -67,7 +67,7 @@ def test_orb_opened_is_idempotent():
     apply_event(event("UserRegistered", {"user": ALICE, "referrer": None}))
     payload = event(
         "OrbOpened",
-        {"user": ALICE, "orbType": 0, "rank": 1, "points": 30},
+        {"user": ALICE, "orbType": 0, "rank": 1, "points": 30, "commitBlock": 9},
         log_index=1,
     )
     apply_event(payload)
@@ -126,3 +126,21 @@ def test_orb_expired_clears_pending():
 
 def test_unknown_events_are_ignored():
     apply_event(event("Paused", {}))  # must not raise
+
+
+def test_orb_opened_records_the_commit_block_from_the_event():
+    apply_event(event("UserRegistered", {"user": ALICE, "referrer": None}))
+    apply_event(
+        event(
+            "OrbOpened",
+            {
+                "user": ALICE,
+                "orbType": 1,
+                "rank": 2,
+                "points": 1500,
+                "commitBlock": 4242,
+            },
+            log_index=3,
+        )
+    )
+    assert OrbOpen.objects.get(player__address=ALICE).commit_block == 4242

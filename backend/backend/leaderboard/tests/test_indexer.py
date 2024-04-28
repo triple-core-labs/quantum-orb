@@ -27,7 +27,13 @@ class FakeChain:
 def opened(block, log_index=0):
     return {
         "event": "OrbOpened",
-        "args": {"user": ALICE, "orbType": 0, "rank": 1, "points": 50},
+        "args": {
+            "user": ALICE,
+            "orbType": 0,
+            "rank": 1,
+            "points": 50,
+            "commitBlock": block - 3,
+        },
         "transactionHash": f"0x{block:064x}",
         "logIndex": log_index,
         "blockNumber": block,
