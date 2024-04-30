@@ -3,11 +3,14 @@ import { Injectable, inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
 import {
+  ActivityResponse,
   ChainConfig,
+  GlobalStats,
   LeaderboardResponse,
   PendingResponse,
   PlayerDetail,
   ReferralsResponse,
+  ReferrersResponse,
 } from "./api.types";
 
 @Injectable({ providedIn: "root" })
@@ -35,6 +38,24 @@ export class ApiService {
   referrals(address: string): Observable<ReferralsResponse> {
     return this.http.get<ReferralsResponse>(
       `${this.base}/players/${address}/referrals`,
+    );
+  }
+
+  activity(): Observable<ActivityResponse> {
+    return this.http.get<ActivityResponse>(`${this.base}/activity`);
+  }
+
+  stats(): Observable<GlobalStats> {
+    return this.http.get<GlobalStats>(`${this.base}/stats`);
+  }
+
+  referrers(): Observable<ReferrersResponse> {
+    return this.http.get<ReferrersResponse>(`${this.base}/referrers`);
+  }
+
+  opens(address: string): Observable<ActivityResponse> {
+    return this.http.get<ActivityResponse>(
+      `${this.base}/players/${address}/opens`,
     );
   }
 

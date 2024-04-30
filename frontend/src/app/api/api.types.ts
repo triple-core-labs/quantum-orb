@@ -15,6 +15,7 @@ export interface PlayerDetail {
   points: number;
   referralPoints: number;
   rank: number | null;
+  dailyStreak: number;
   isPartner: boolean;
   referrer: string | null;
   referralCount: number;
@@ -53,4 +54,39 @@ export interface ChainConfig {
   orbs?: Record<string, OrbPrice>;
   revealDelay?: number;
   revealWindow?: number;
+  rollSpace?: number;
+  rankBands?: { rank4: number; rank3: number; rank2: number };
+  pointRanges?: Record<string, { min: number[]; max: number[] }>;
+}
+
+export interface OrbOpenRow {
+  address: string;
+  orbType: number;
+  rank: number;
+  points: number;
+  txHash: string;
+  commitBlock: number;
+  revealBlock: number;
+  timestamp: number;
+}
+
+export interface ActivityResponse {
+  opens: OrbOpenRow[];
+}
+
+export interface GlobalStats {
+  players: number;
+  orbsOpened: number;
+  pointsAwarded: number;
+  biggestOpen: number;
+}
+
+export interface ReferrerRow {
+  address: string;
+  invited: number;
+  referralPoints: number;
+}
+
+export interface ReferrersResponse {
+  referrers: ReferrerRow[];
 }
