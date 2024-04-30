@@ -47,7 +47,21 @@ def _chain_constants() -> dict:
         "orbs": orbs,
         "revealDelay": contract.functions.REVEAL_DELAY().call(),
         "revealWindow": contract.functions.REVEAL_WINDOW().call(),
+        "rollSpace": contract.functions.ROLL_SPACE().call(),
+        "rankBands": {
+            "rank4": contract.functions.RANK_4_ROLLS().call(),
+            "rank3": contract.functions.RANK_3_ROLLS().call(),
+            "rank2": contract.functions.RANK_2_ROLLS().call(),
+        },
+        "pointRanges": {
+            str(orb_type): _point_ranges(contract, orb_type) for orb_type in (0, 1, 2)
+        },
     }
+
+
+def _point_ranges(contract, orb_type: int) -> dict:
+    minimums, maximums = contract.functions.getOrbPoints(orb_type).call()
+    return {"min": list(minimums), "max": list(maximums)}
 
 
 @api_view(["GET"])
