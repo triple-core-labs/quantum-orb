@@ -1,0 +1,73 @@
+<h1>Provably fair</h1>
+
+<section class="fair-block">
+  <h2>How an orb is decided</h2>
+  <ol class="fair-steps">
+    <li>You pay. The transaction records the block it landed in and nothing else.</li>
+    <li>
+      {{ revealDelay() }} blocks later, the hash of that future block is used as
+      the seed. It did not exist when you paid, so nobody could predict it.
+    </li>
+    <li>
+      The seed decides the rarity, then a second hash of the same seed decides
+      the points inside that rarity's range.
+    </li>
+  </ol>
+  <p class="fair-note">
+    Every input is on chain. Anyone can recompute any result from the block
+    hash, the player address and the commit block.
+  </p>
+</section>
+
+<section class="fair-block">
+  <h2>The odds</h2>
+  @if (odds().length) {
+    <table class="board">
+      <thead>
+        <tr>
+          <th scope="col">Rarity</th>
+          <th scope="col" class="board__points">Chance</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of odds(); track row.rank) {
+          <tr>
+            <td [attr.data-rarity]="row.rarity.slug">{{ row.rarity.name }}</td>
+            <td class="board__points">{{ row.percent }}%</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <p class="fair-note">Read live from the contract, not from this page.</p>
+  } @else {
+    <p class="empty">Waiting for the chain.</p>
+  }
+</section>
+
+<section class="fair-block">
+  <h2>Verify a recent open</h2>
+  @if (recent().length) {
+    <table class="board">
+      <thead>
+        <tr>
+          <th scope="col">Player</th>
+          <th scope="col">Orb</th>
+          <th scope="col">Result</th>
+          <th scope="col" class="board__points">Commit block</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of recent(); track row.txHash) {
+          <tr>
+            <td>{{ row.address | shortAddress }}</td>
+            <td>{{ orbLabel(row.orbType) }}</td>
+            <td>{{ rarityName(row.rank) }} · {{ row.points }}</td>
+            <td class="board__points">{{ row.commitBlock }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p class="empty">No orbs opened yet.</p>
+  }
+</section>
