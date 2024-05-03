@@ -1,3 +1,56 @@
-@for (orbType of orbTypes; track orbType) {
-  <app-orb [orbType]="orbType" [priceWei]="priceFor(orbType)" />
+@if (profile(); as me) {
+  @if (me.dailyStreak > 1) {
+    <p class="streak">
+      <span class="streak__value">{{ me.dailyStreak }}</span>
+      <span class="streak__label">day streak · daily orbs pay more</span>
+    </p>
+  }
+}
+
+@if (status()?.kind === "committed") {
+  <p class="pending-banner">
+    You have an orb waiting to be opened. It resolves on its own in a few
+    seconds.
+  </p>
+}
+
+@if (status()?.kind === "expired") {
+  <p class="pending-banner pending-banner--warn">
+    An orb timed out before anyone opened it.
+    <button type="button" class="link-button" (click)="reclaim()">
+      Reclaim your payment
+    </button>
+  </p>
+}
+
+<div class="orb-grid">
+  @for (orbType of orbTypes; track orbType) {
+    <app-orb [orbType]="orbType" [priceWei]="priceFor(orbType)" />
+  }
+</div>
+
+@if (history().length) {
+  <section class="history">
+    <h2>Your opens</h2>
+    <table class="board">
+      <thead>
+        <tr>
+          <th scope="col">Orb</th>
+          <th scope="col">Result</th>
+          <th scope="col" class="board__points">Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of history(); track row.txHash) {
+          <tr>
+            <td>{{ orbLabel(row.orbType) }}</td>
+            <td [attr.data-rarity]="raritySlug(row.rank)">
+              {{ rarityName(row.rank) }}
+            </td>
+            <td class="board__points">{{ row.points }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
 }

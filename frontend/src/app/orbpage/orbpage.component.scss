@@ -1,10 +1,65 @@
 :host {
+  @apply w-full flex flex-col items-center gap-y-12;
+}
+
+.orb-grid {
   @apply grid grid-cols-1 md:grid-cols-2 gap-y-16 md:gap-y-24 gap-x-12 lg:gap-x-48;
   align-items: start;
   justify-items: center;
 }
 
-:host app-orb {
+.streak {
+  @apply flex items-baseline gap-x-2 px-4 py-2 border border-solid;
+  border-color: var(--qo-yellow);
+  background: rgb(248 239 0 / 0.08);
+
+  &__value {
+    @apply text-yellow font-bold text-xl;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__label {
+    @apply uppercase text-xs;
+    color: var(--qo-pale);
+    letter-spacing: 0.1em;
+  }
+}
+
+.pending-banner {
+  @apply w-full text-center px-4 py-3 border border-solid text-sm;
+  border-color: var(--qo-line);
+  color: var(--qo-pale);
+  background: rgb(248 239 0 / 0.04);
+
+  &--warn {
+    border-color: var(--qo-yellow);
+  }
+}
+
+.link-button {
+  @apply underline text-yellow bg-transparent border-0 cursor-pointer p-0 ml-1;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--qo-focus);
+  }
+}
+
+.history {
+  @apply w-full flex flex-col gap-y-4;
+
+  h2 {
+    @apply text-yellow uppercase text-lg;
+    letter-spacing: 0.1em;
+  }
+
+  td[data-rarity="common"] { color: #b9c0c8; }
+  td[data-rarity="rare"] { color: #5fa8ff; }
+  td[data-rarity="epic"] { color: #c07dff; }
+  td[data-rarity="legendary"] { color: var(--qo-yellow); }
+}
+
+.orb-grid app-orb {
   @for $i from 1 through 3 {
     &:nth-child(#{$i}) {
       animation-delay: #{($i - 1) * 90}ms;

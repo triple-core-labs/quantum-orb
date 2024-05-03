@@ -6,7 +6,9 @@ import { OrbComponent } from "./orb/orb.component";
 import { UnboxingDialogComponent } from "./unboxing-dialog/unboxing-dialog.component";
 import { ApiService } from "../api/api.service";
 import { AppSelectors } from "../store/app/app.selectors";
-import { OrbType } from "../contract/orb-type";
+import { ORB_LABELS, OrbType, rarityOf } from "../contract/orb-type";
+import { OrbOpenRow, PlayerDetail } from "../api/api.types";
+import { ReclaimOrb } from "../store/app/app.actions";
 
 @Component({
   selector: "app-orbpage",
@@ -27,7 +29,13 @@ export class OrbpageComponent implements OnInit {
     [OrbType.QUANTUM]: 0n,
   });
 
-  private readonly status = toSignal(this.store.select(AppSelectors.orbStatus));
+  readonly status = toSignal(this.store.select(AppSelectors.orbStatus));
+  readonly address = toSignal(this.store.select(AppSelectors.address), {
+    initialValue: null,
+  });
+
+  readonly history = signal<OrbOpenRow[]>([]);
+  readonly profile = signal<PlayerDetail | null>(null);
   private dialogOpen = false;
 
   constructor() {
@@ -48,6 +56,15 @@ export class OrbpageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const address = this.address();
+    if (address) {
+      this.api.opens(address).subscribe(({ opens }) => this.history.set(opens));
+      this.api.player(address).subscribe({
+        next: (profile) => this.profile.set(profile),
+        error: () => this.profile.set(null),
+      });
+    }
+
     this.api.config().subscribe((config) => {
       if (!config.orbs) return;
       const next: Record<number, bigint> = { ...this.prices() };
@@ -60,5 +77,21 @@ export class OrbpageComponent implements OnInit {
 
   priceFor(orbType: OrbType): bigint {
     return this.prices()[orbType] ?? 0n;
+  }
+
+  orbLabel(orbType: number): string {
+    return ORB_LABELS[orbType as OrbType] ?? "Orb";
+  }
+
+  rarityName(rank: number): string {
+    return rarityOf(rank).name;
+  }
+
+  raritySlug(rank: number): string {
+    return rarityOf(rank).slug;
+  }
+
+  reclaim(): void {
+    this.store.dispatch(new ReclaimOrb());
   }
 }
