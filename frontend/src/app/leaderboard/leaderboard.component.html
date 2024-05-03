@@ -1,5 +1,7 @@
 <h1>Leaderboard</h1>
 
+<app-activity-feed />
+
 @if (isEmpty()) {
   <p class="empty">No orbs opened yet. Be the first.</p>
 } @else {
@@ -42,4 +44,29 @@
       </tbody>
     </table>
   }
+}
+
+@if (referrers().length) {
+  <h2 class="section-heading">Top inviters</h2>
+  <table class="board">
+    <thead>
+      <tr>
+        <th scope="col">Player</th>
+        <th scope="col" class="board__points">Invited</th>
+        <th scope="col" class="board__points">Points earned</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of referrers(); track row.address) {
+        <tr [class.active]="isYou(row.address)">
+          <td>
+            <span class="board__full">{{ row.address }}</span>
+            <span class="board__short">{{ row.address | shortAddress }}</span>
+          </td>
+          <td class="board__points">{{ row.invited }}</td>
+          <td class="board__points">{{ row.referralPoints }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
 }
