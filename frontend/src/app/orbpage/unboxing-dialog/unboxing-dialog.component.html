@@ -7,20 +7,20 @@
   }
   @case ("committed") {
     <div class="unboxing unboxing--opening">
-      <img src="assets/images/opening_orb.png" alt="" aria-hidden="true" />
+      <img src="assets/images/opening_orb.webp" alt="" aria-hidden="true" />
       <h2>Opening your {{ orbLabel() }} orb</h2>
       <p>The result is being sealed into a later block.</p>
     </div>
   }
   @case ("revealing") {
     <div class="unboxing unboxing--opening">
-      <img src="assets/images/opening_orb.png" alt="" aria-hidden="true" />
+      <img src="assets/images/opening_orb.webp" alt="" aria-hidden="true" />
       <h2>Almost there</h2>
     </div>
   }
   @case ("revealed") {
-    <div class="unboxing unboxing--revealed">
-      <p class="unboxing__rank">Rank {{ rank() }}</p>
+    <div class="unboxing unboxing--revealed" [attr.data-rarity]="rarity().slug">
+      <p class="unboxing__rank">{{ rarity().name }}</p>
       <p class="unboxing__points">{{ points() }}</p>
       <p class="unboxing__label">quantum points</p>
       <button type="button" class="action-button" (click)="dismiss()">

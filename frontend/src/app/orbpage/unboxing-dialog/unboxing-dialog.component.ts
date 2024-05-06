@@ -4,7 +4,7 @@ import { Store } from "@ngxs/store";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { AppSelectors } from "../../store/app/app.selectors";
 import { DismissOutcome, ReclaimOrb } from "../../store/app/app.actions";
-import { ORB_LABELS, OrbType } from "../../contract/orb-type";
+import { ORB_LABELS, OrbType, rarityOf } from "../../contract/orb-type";
 import { OrbStatus } from "../../store/orb/orb-status";
 
 @Component({
@@ -30,6 +30,8 @@ export class UnboxingDialogComponent {
     const status = this.status();
     return status.kind === "revealed" ? status.rank : 0;
   });
+
+  readonly rarity = computed(() => rarityOf(this.rank()));
 
   readonly points = computed(() => {
     const status = this.status();

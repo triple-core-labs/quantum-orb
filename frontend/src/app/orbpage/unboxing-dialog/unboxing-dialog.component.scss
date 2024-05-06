@@ -83,3 +83,34 @@
     transform: scale(1);
   }
 }
+
+.unboxing--revealed {
+  --rarity: var(--qo-pale);
+
+  &[data-rarity="common"] {
+    --rarity: #b9c0c8;
+  }
+
+  &[data-rarity="rare"] {
+    --rarity: #5fa8ff;
+  }
+
+  &[data-rarity="epic"] {
+    --rarity: #c07dff;
+  }
+
+  &[data-rarity="legendary"] {
+    --rarity: var(--qo-yellow);
+  }
+
+  .unboxing__rank {
+    color: var(--rarity);
+    font-weight: 700;
+    letter-spacing: 0.22em;
+  }
+
+  .unboxing__points {
+    color: var(--rarity);
+    text-shadow: 0 0 24px color-mix(in srgb, var(--rarity) 55%, transparent);
+  }
+}
