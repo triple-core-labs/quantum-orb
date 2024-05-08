@@ -95,6 +95,11 @@ body {
     @apply w-full border-collapse;
     font-variant-numeric: tabular-nums;
 
+    th:first-child,
+    td:first-child {
+      width: 64px;
+    }
+
     tbody tr {
       transition:
         background var(--qo-transition),
