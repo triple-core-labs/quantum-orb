@@ -41,3 +41,10 @@
     }
   }
 }
+
+:host {
+  .section-heading {
+    @apply w-full text-yellow uppercase text-lg mt-4;
+    letter-spacing: 0.1em;
+  }
+}

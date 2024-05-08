@@ -51,14 +51,16 @@
   <table class="board">
     <thead>
       <tr>
+        <th scope="col">#</th>
         <th scope="col">Player</th>
         <th scope="col" class="board__points">Invited</th>
         <th scope="col" class="board__points">Points earned</th>
       </tr>
     </thead>
     <tbody>
-      @for (row of referrers(); track row.address) {
+      @for (row of referrers(); track row.address; let i = $index) {
         <tr [class.active]="isYou(row.address)">
+          <td>{{ i + 1 }}</td>
           <td>
             <span class="board__full">{{ row.address }}</span>
             <span class="board__short">{{ row.address | shortAddress }}</span>
