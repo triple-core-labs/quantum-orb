@@ -22,6 +22,7 @@ html,
 body {
   @apply h-full w-full m-0 bg-black relative flex flex-col justify-start items-center;
   font-family: Tomorrow, "Helvetica Neue", sans-serif;
+  color: var(--qo-pale);
 }
 
 @layer base {
@@ -95,9 +96,17 @@ body {
     @apply w-full border-collapse;
     font-variant-numeric: tabular-nums;
 
-    th:first-child,
-    td:first-child {
+    table-layout: fixed;
+
+    th.board__rank,
+    td.board__rank {
       width: 64px;
+      text-align: center;
+    }
+
+    th.board__points,
+    td.board__points {
+      width: 160px;
     }
 
     tbody tr {
