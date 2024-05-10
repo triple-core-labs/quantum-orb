@@ -12,9 +12,7 @@
       @apply uppercase text-yellow text-sm md:text-lg px-2 text-left;
     }
 
-    th:first-child {
-      @apply text-center;
-    }
+
 
     th.board__points,
     td.board__points {
@@ -36,8 +34,8 @@
     td {
       @apply text-left text-pale px-2 py-4 text-sm;
 
-      &:first-of-type {
-        @apply font-bold text-center;
+      &.board__rank {
+        @apply font-bold;
       }
     }
   }
