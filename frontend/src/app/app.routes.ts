@@ -30,6 +30,12 @@ export const routes: Routes = [
       ),
   },
   {
+    path: "faq",
+    title: "FAQ",
+    loadComponent: () =>
+      import("./faq/faq.component").then((m) => m.FaqComponent),
+  },
+  {
     path: "fairness",
     title: "Provably Fair",
     loadComponent: () =>
