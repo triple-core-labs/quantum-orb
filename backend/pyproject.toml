@@ -27,7 +27,6 @@ DJANGO_SETTINGS_MODULE = "backend.settings"
 python_files = ["test_*.py"]
 addopts = "-q"
 filterwarnings = [
-    # web3 7 still imports websockets.legacy; not ours to fix.
     "ignore:websockets.legacy is deprecated:DeprecationWarning",
 ]
 
