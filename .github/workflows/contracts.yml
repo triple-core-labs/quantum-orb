@@ -34,8 +34,6 @@ jobs:
       - name: Test
         run: npm test
 
-      # Guards the failure that broke the previous version: an event changed in
-      # the contract without the artifact its consumers read following along.
       - name: Verify the exported ABI is current
         run: |
           npm run export-abi
