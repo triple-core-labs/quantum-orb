@@ -196,8 +196,6 @@ router-outlet + * {
   }
 }
 
-// Reduced motion asks for less movement, not less feedback. Entrances keep
-// their cross-fade and lose their travel; anything that only moves stops.
 @media (prefers-reduced-motion: reduce) {
   router-outlet + *,
   app-navbar,
