@@ -38,7 +38,6 @@ services:
     environment:
       DATABASE_URL: postgres://quantumorb:quantumorb@db:5432/quantumorb
     volumes:
-      # The exported ABI is the single source of truth, mounted read-only.
       - ./contracts/abi:/app/contracts/abi:ro
       - ./backend/backend:/app/backend
       - ./backend/pyproject.toml:/app/pyproject.toml:ro
