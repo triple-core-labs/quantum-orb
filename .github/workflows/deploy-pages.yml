@@ -33,6 +33,15 @@ jobs:
       - run: npm ci
         working-directory: frontend
 
+      - run: npm run set-env
+        working-directory: frontend
+        env:
+          API_BASE_URL: ${{ vars.API_BASE_URL }}
+          CHAIN_ID: ${{ vars.CHAIN_ID }}
+          CHAIN_NAME: ${{ vars.CHAIN_NAME }}
+          RPC_URL: ${{ vars.RPC_URL }}
+          BLOCK_EXPLORER_URL: ${{ vars.BLOCK_EXPLORER_URL }}
+
       - run: npm run build -- --base-href=/quantum-orb/
         working-directory: frontend
 
