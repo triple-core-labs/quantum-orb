@@ -7,7 +7,8 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test --watch=false --browsers=ChromeHeadless",
-    "sync-abi": "node scripts/sync-abi.js"
+    "sync-abi": "node scripts/sync-abi.js",
+    "set-env": "node scripts/write-environment.js"
   },
   "dependencies": {
     "@angular/animations": "^22.1.0",
