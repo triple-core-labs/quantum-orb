@@ -8,7 +8,8 @@
     "build": "ng build",
     "test": "ng test --watch=false --browsers=ChromeHeadless",
     "sync-abi": "node scripts/sync-abi.js",
-    "set-env": "node scripts/write-environment.js"
+    "set-env": "node scripts/write-environment.js",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@angular/animations": "^22.1.0",
@@ -31,6 +32,7 @@
     "@angular/build": "^22.1.0",
     "@angular/cli": "^22.1.0",
     "@angular/compiler-cli": "^22.1.0",
+    "@playwright/test": "^1.62.1",
     "@types/jasmine": "~5.1.0",
     "autoprefixer": "^10.4.20",
     "jasmine-core": "~5.5.0",
