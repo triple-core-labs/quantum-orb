@@ -105,9 +105,22 @@ cd contracts
 npm run deploy:sepolia
 ```
 
-Put the deployed address and its block into `backend/.env`, set
-`apiBaseUrl` in `frontend/src/environments/environment.prod.ts` to wherever the
-API is hosted, and bring the stack up as above.
+Put the deployed address and its block into `backend/.env` and bring the stack
+up as above.
+
+The frontend learns where the API lives at build time, not from a value edited
+into the source:
+
+```bash
+cd frontend
+API_BASE_URL=https://api.your-host/api npm run set-env
+npm run build
+```
+
+`CHAIN_ID`, `CHAIN_NAME`, `RPC_URL` and `BLOCK_EXPLORER_URL` may be set the same
+way and otherwise keep the Blast Sepolia values already in the file. The Pages
+workflow reads all five from repository variables, so a deploy needs no code
+change.
 
 ## Tests
 
@@ -134,9 +147,8 @@ the ones it cannot invent.
 
 - No end-to-end browser test. The specs cover services, state and rendering, but
   nothing drives a real wallet through a real open.
-- The production `apiBaseUrl` is a placeholder until the API has a public host.
-- The orb art is 3.6 MB of PNG. It loads outside the initial bundle, but it
-  should be WebP at responsive sizes.
+- The API has no public host yet, so the committed `apiBaseUrl` still points at
+  a placeholder domain until `API_BASE_URL` is set for a real deploy.
 - A committed orb resolves when its receipt returns or on the next page load.
   A socket would let a second tab update on its own.
 
