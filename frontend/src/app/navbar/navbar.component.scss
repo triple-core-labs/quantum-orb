@@ -94,8 +94,9 @@
         @apply max-md:text-black max-md:text-3xl max-md:font-bold;
         transition: opacity var(--qo-transition);
 
-        &:hover {
-          @apply max-md:opacity-60;
+        &:hover,
+        &:focus-visible {
+          @apply max-md:text-black max-md:opacity-60;
         }
 
         &:before {
@@ -105,7 +106,7 @@
     }
 
     .action-button {
-      @apply max-md:block max-md:absolute max-md:left-1/2 max-md:-translate-x-1/2 max-md:bottom-4;
+      @apply max-md:block max-md:fixed max-md:left-1/2 max-md:-translate-x-1/2 max-md:top-[calc(100dvh-7rem)] max-md:z-50 max-md:max-w-[calc(100vw-2rem)];
 
       svg {
         @apply hidden;
@@ -122,7 +123,7 @@
       }
 
       #close {
-        @apply block;
+        @apply block max-md:fill-black;
       }
     }
   }
@@ -155,8 +156,10 @@
   nav a {
     transition: color var(--qo-transition);
 
-    &:hover {
-      color: var(--qo-yellow);
+    @media (min-width: 768px) {
+      &:hover {
+        color: var(--qo-yellow);
+      }
     }
   }
 }
