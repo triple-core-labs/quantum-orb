@@ -130,6 +130,12 @@ cd backend   && poetry run pytest
 cd frontend  && npm test && npm run build
 ```
 
+With the whole stack running, `cd frontend && npm run e2e` drives a real browser
+through it: a wallet is injected that forwards every call to the local chain, an
+orb is opened, and the test waits for the relayer to reveal it and the indexer
+to report it back through the API. Those specs need the stack, so CI does not
+run them.
+
 Contract coverage sits at 99% of statements and 93% of branches, and
 `scripts/check-coverage.js` fails the build below the floor. Four GitHub Actions
 workflows run the same commands, plus an ABI drift guard that fails if the
@@ -145,8 +151,6 @@ the ones it cannot invent.
 
 ## What is deliberately missing
 
-- No end-to-end browser test. The specs cover services, state and rendering, but
-  nothing drives a real wallet through a real open.
 - The API has no public host yet, so the committed `apiBaseUrl` still points at
   a placeholder domain until `API_BASE_URL` is set for a real deploy.
 - A committed orb resolves when its receipt returns or on the next page load.
