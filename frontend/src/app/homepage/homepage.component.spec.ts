@@ -54,11 +54,29 @@ describe("HomepageComponent", () => {
         "1": { price: "1500000000000000", enabled: true },
         "2": { price: "2700000000000000", enabled: true },
       },
+      pointRanges: {
+        "1": { min: [401, 1001, 2001, 3501], max: [1000, 2000, 3500, 9999] },
+      },
     });
     fixture.detectChanges();
 
     expect(text()).toContain("0.0015 ETH");
     expect(text()).toContain("0.0027 ETH");
+  });
+
+  it("quotes the point range the contract publishes", () => {
+    config.next({
+      chainId: 31337,
+      contractAddress: "0x0",
+      rpcUrl: "http://localhost:8545",
+      confirmations: 1,
+      pointRanges: {
+        "1": { min: [401, 1001, 2001, 3501], max: [1000, 2000, 3500, 9999] },
+      },
+    });
+    fixture.detectChanges();
+
+    expect(text()).toContain("401 – 9,999 points");
   });
 
   it("no longer carries the FAQ", () => {
