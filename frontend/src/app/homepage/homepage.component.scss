@@ -68,6 +68,11 @@
       font-variant-numeric: tabular-nums;
     }
 
+    &__range {
+      @apply text-sm text-pale;
+      font-variant-numeric: tabular-nums;
+    }
+
     &__note {
       @apply text-sm;
       color: var(--qo-ink-muted);
