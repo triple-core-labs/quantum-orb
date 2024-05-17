@@ -5,7 +5,13 @@ const target = join(__dirname, "..", "src", "environments", "environment.ts");
 
 const fromEnv = (name) => {
   const value = process.env[name];
-  return value === undefined || value.trim() === "" ? undefined : value.trim();
+  if (value === undefined || value.trim() === "") return undefined;
+  const trimmed = value.trim();
+  if (/["\\r\n]/.test(trimmed)) {
+    console.error(`${name} holds a character the file cannot carry: ${trimmed}`);
+    process.exit(1);
+  }
+  return trimmed;
 };
 
 const apiBaseUrl = fromEnv("API_BASE_URL");
@@ -38,6 +44,11 @@ const rpcUrl = fromEnv("RPC_URL") ?? fallback("rpcUrl", /rpcUrl: "(.*)"/);
 const explorer =
   fromEnv("BLOCK_EXPLORER_URL") ??
   fallback("blockExplorerUrl", /blockExplorerUrl: "(.*)"/);
+
+if (!Number.isInteger(Number(chainId)) || Number(chainId) <= 0) {
+  console.error(`CHAIN_ID is not a chain id: ${chainId}`);
+  process.exit(1);
+}
 
 writeFileSync(
   target,
