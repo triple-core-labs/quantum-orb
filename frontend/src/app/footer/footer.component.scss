@@ -1,5 +1,6 @@
 :host {
-  @apply w-full md:w-[calc(100%-4rem)] h-[70px] max-w-screen-limit flex justify-center items-center space-x-8 text-pale text-sm pt-4 fixed bottom-0 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-md z-50;
+  @apply w-full md:w-[calc(100%-4rem)] md:h-[70px] max-w-screen-limit flex flex-wrap justify-center items-center gap-x-8 md:space-x-8 text-pale text-sm pt-4 fixed bottom-0 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-md z-50;
+  @apply max-md:gap-x-4 max-md:gap-y-1 max-md:px-4 max-md:pb-3 max-md:text-xs max-md:min-h-[70px];
 
   clip-path: polygon(
     0 100%,
