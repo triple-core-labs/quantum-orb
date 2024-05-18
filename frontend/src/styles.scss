@@ -10,12 +10,16 @@
 @tailwind utilities;
 
 html {
-  scrollbar-gutter: stable;
   scroll-behavior: smooth;
+  scrollbar-width: none;
 }
 
 body.menu-open {
   overflow: hidden;
+}
+
+body.menu-open app-footer {
+  display: none;
 }
 
 html,
@@ -26,21 +30,13 @@ body {
 }
 
 @layer base {
+  * {
+    scrollbar-width: none;
+  }
+
   *::-webkit-scrollbar {
-    width: 7px;
-    height: 8px;
-  }
-
-  *::-webkit-scrollbar-track {
-    @apply bg-black;
-  }
-
-  *::-webkit-scrollbar-thumb {
-    @apply bg-yellow;
-  }
-
-  *::-webkit-scrollbar-thumb:hover {
-    @apply bg-yellow/80;
+    width: 0;
+    height: 0;
   }
 
   h1 {
@@ -107,6 +103,23 @@ body {
     th.board__points,
     td.board__points {
       width: 160px;
+    }
+
+    @media (max-width: 768px) {
+      th.board__rank,
+      td.board__rank {
+        width: 36px;
+      }
+
+      th.board__points,
+      td.board__points {
+        width: 80px;
+      }
+
+      th,
+      td {
+        @apply px-2 text-xs;
+      }
     }
 
     tbody tr {
