@@ -1,6 +1,13 @@
 import { expect, test } from "@playwright/test";
 
-const ROUTES = ["/home", "/orbs", "/leaderboard", "/referrals", "/faq", "/fairness"];
+const ROUTES = [
+  "/home",
+  "/orbs",
+  "/leaderboard",
+  "/referrals",
+  "/faq",
+  "/fairness",
+];
 const WIDTHS = [320, 390, 768];
 
 test.describe("small screens", () => {
@@ -17,7 +24,9 @@ test.describe("small screens", () => {
           clientWidth: document.documentElement.clientWidth,
         }));
 
-        expect(scrollWidth, `${route} at ${width}px`).toBeLessThanOrEqual(clientWidth);
+        expect(scrollWidth, `${route} at ${width}px`).toBeLessThanOrEqual(
+          clientWidth,
+        );
       }
     });
   }
@@ -52,7 +61,9 @@ test.describe("small screens", () => {
     await expect(page.locator("app-footer")).toBeVisible();
   });
 
-  test("the menu keeps its links readable under the finger", async ({ page }) => {
+  test("the menu keeps its links readable under the finger", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 390, height: 800 });
     await page.goto("/home");
     await page.locator("app-navbar .menu-button").click();
@@ -86,5 +97,46 @@ test.describe("small screens", () => {
       expect(box!.x).toBeGreaterThanOrEqual(0);
       expect(box!.x + box!.width).toBeLessThanOrEqual(320);
     }
+  });
+  test("the menu fades rather than snapping", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 800 });
+    await page.goto("/home");
+
+    const seconds = () =>
+      page.evaluate(() => {
+        const nav = document.querySelector("app-navbar nav");
+        const links = [...document.querySelectorAll("app-navbar nav a")];
+        const delay = (el) => parseFloat(getComputedStyle(el).transitionDelay);
+        return {
+          duration: parseFloat(getComputedStyle(nav).transitionDuration),
+          firstDelay: delay(links[0]),
+          lastDelay: delay(links[links.length - 1]),
+        };
+      });
+
+    expect((await seconds()).duration).toBeGreaterThan(0);
+
+    await page.locator("app-navbar .menu-button").click();
+    await expect(page.locator("app-navbar nav")).toBeVisible();
+
+    const open = await seconds();
+    expect(open.duration).toBeGreaterThan(0);
+    expect(open.lastDelay).toBeGreaterThan(open.firstDelay);
+  });
+
+  test("the burger turns into the close icon", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 800 });
+    await page.goto("/home");
+
+    const burger = page.locator("app-navbar #burger");
+    const close = page.locator("app-navbar #close");
+
+    await expect(burger).toHaveCSS("opacity", "1");
+    await expect(close).toHaveCSS("opacity", "0");
+
+    await page.locator("app-navbar .menu-button").click();
+
+    await expect(burger).toHaveCSS("opacity", "0");
+    await expect(close).toHaveCSS("opacity", "1");
   });
 });
