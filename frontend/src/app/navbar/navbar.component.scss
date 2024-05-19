@@ -37,7 +37,13 @@
     @apply absolute left-1/2 -translate-x-1/2 top-10 hidden md:flex justify-center items-center gap-x-8 text-pale text-sm;
 
     a {
-      @apply relative transition-colors hover:text-yellow;
+      @apply relative transition-colors;
+
+      @media (min-width: 768px) {
+        &:hover {
+          color: var(--qo-yellow);
+        }
+      }
 
       &:before {
         @apply absolute left-0 top-full w-0 bg-yellow h-[2px] transition-[width];
@@ -45,6 +51,35 @@
 
       &.active {
         @apply before:w-full;
+      }
+    }
+
+    @media (max-width: 767.98px) {
+      @apply fixed inset-0 left-0 top-0 w-screen h-screen flex flex-col justify-center items-center gap-y-10 bg-yellow translate-x-0 z-40;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-18px);
+      transition:
+        opacity 260ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0s linear 260ms;
+
+      a {
+        @apply text-black text-3xl font-bold;
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+          opacity 200ms ease,
+          transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+
+        &:hover,
+        &:focus-visible {
+          @apply text-black opacity-60;
+        }
+
+        &:before {
+          @apply bg-black;
+        }
       }
     }
   }
@@ -66,19 +101,25 @@
   }
 
   .menu-button {
-    @apply flex items-start pt-3 md:hidden relative z-50;
+    @apply flex items-start justify-center pt-3 md:hidden relative z-50 w-[1.5em];
 
     svg {
       @apply w-[1.5em] fill-yellow;
+      transition:
+        opacity 200ms ease,
+        transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+        fill 200ms ease;
     }
 
     #close {
-      @apply hidden;
+      @apply absolute left-0 top-3 fill-black;
+      opacity: 0;
+      transform: rotate(-90deg) scale(0.6);
     }
   }
 
   &.active {
-    @media (max-width: 768px) {
+    @media (max-width: 767.98px) {
       clip-path: none;
 
       &:after {
@@ -87,26 +128,34 @@
     }
 
     nav {
-      @apply max-md:fixed max-md:inset-0 max-md:w-screen max-md:h-screen max-md:flex max-md:flex-col max-md:justify-center max-md:items-center max-md:gap-y-10 max-md:bg-yellow max-md:translate-x-0 max-md:translate-y-0 max-md:left-0 max-md:top-0 max-md:z-40;
-      animation: menu-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      @media (max-width: 767.98px) {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        transition:
+          opacity 300ms cubic-bezier(0.22, 1, 0.36, 1),
+          transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+          visibility 0s;
 
-      a {
-        @apply max-md:text-black max-md:text-3xl max-md:font-bold;
-        transition: opacity var(--qo-transition);
+        a {
+          opacity: 1;
+          transform: translateY(0);
 
-        &:hover,
-        &:focus-visible {
-          @apply max-md:text-black max-md:opacity-60;
-        }
-
-        &:before {
-          @apply max-md:bg-black;
+          @for $i from 1 through 6 {
+            &:nth-child(#{$i}) {
+              transition-delay: 60ms + ($i - 1) * 45ms;
+            }
+          }
         }
       }
     }
 
     .action-button {
       @apply max-md:block max-md:fixed max-md:left-1/2 max-md:-translate-x-1/2 max-md:top-[calc(100dvh-7rem)] max-md:z-50 max-md:max-w-[calc(100vw-2rem)];
+
+      @media (max-width: 767.98px) {
+        animation: menu-item-in 300ms cubic-bezier(0.22, 1, 0.36, 1) 320ms both;
+      }
 
       svg {
         @apply hidden;
@@ -119,11 +168,13 @@
 
     .menu-button {
       #burger {
-        @apply hidden;
+        opacity: 0;
+        transform: rotate(90deg) scale(0.6);
       }
 
       #close {
-        @apply block max-md:fill-black;
+        opacity: 1;
+        transform: rotate(0) scale(1);
       }
     }
   }
@@ -152,15 +203,20 @@
     font-variant-numeric: tabular-nums;
     animation: fade-in 320ms ease-out both;
   }
+}
 
-  nav a {
-    transition: color var(--qo-transition);
+@media (prefers-reduced-motion: reduce) and (max-width: 767.98px) {
+  :host nav,
+  :host nav a,
+  :host .menu-button svg {
+    transform: none !important;
+    transition-duration: 180ms !important;
+    transition-delay: 0s !important;
+  }
 
-    @media (min-width: 768px) {
-      &:hover {
-        color: var(--qo-yellow);
-      }
-    }
+  :host.active .action-button {
+    animation-delay: 0s !important;
+    animation-duration: 180ms !important;
   }
 }
 
@@ -184,11 +240,13 @@
   }
 }
 
-@keyframes menu-in {
+@keyframes menu-item-in {
   from {
     opacity: 0;
+    transform: translate(-50%, 16px);
   }
   to {
     opacity: 1;
+    transform: translate(-50%, 0);
   }
 }
