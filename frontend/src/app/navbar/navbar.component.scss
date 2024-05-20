@@ -58,19 +58,19 @@
       @apply fixed inset-0 left-0 top-0 w-screen h-screen flex flex-col justify-center items-center gap-y-10 bg-yellow translate-x-0 z-40;
       opacity: 0;
       visibility: hidden;
-      transform: translateY(-18px);
+      transform: translateY(-100%);
       transition:
-        opacity 260ms cubic-bezier(0.22, 1, 0.36, 1),
-        transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
-        visibility 0s linear 260ms;
+        transform 420ms cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 200ms ease-in 200ms,
+        visibility 0s linear 420ms;
 
       a {
         @apply text-black text-3xl font-bold;
         opacity: 0;
-        transform: translateY(14px);
+        transform: translateY(18px);
         transition:
-          opacity 200ms ease,
-          transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+          opacity 0s linear 420ms,
+          transform 0s linear 420ms;
 
         &:hover,
         &:focus-visible {
@@ -106,9 +106,9 @@
     svg {
       @apply w-[1.5em] fill-yellow;
       transition:
-        opacity 200ms ease,
-        transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
-        fill 200ms ease;
+        opacity 280ms ease,
+        transform 460ms cubic-bezier(0.16, 1, 0.3, 1),
+        fill 280ms ease;
     }
 
     #close {
@@ -133,17 +133,20 @@
         visibility: visible;
         transform: translateY(0);
         transition:
-          opacity 300ms cubic-bezier(0.22, 1, 0.36, 1),
-          transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+          transform 520ms cubic-bezier(0.16, 1, 0.3, 1),
+          opacity 180ms ease-out,
           visibility 0s;
 
         a {
           opacity: 1;
           transform: translateY(0);
+          transition:
+            opacity 360ms ease-out,
+            transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
 
           @for $i from 1 through 6 {
             &:nth-child(#{$i}) {
-              transition-delay: 60ms + ($i - 1) * 45ms;
+              transition-delay: 220ms + ($i - 1) * 70ms;
             }
           }
         }
@@ -154,7 +157,7 @@
       @apply max-md:block max-md:fixed max-md:left-1/2 max-md:-translate-x-1/2 max-md:top-[calc(100dvh-7rem)] max-md:z-50 max-md:max-w-[calc(100vw-2rem)];
 
       @media (max-width: 767.98px) {
-        animation: menu-item-in 300ms cubic-bezier(0.22, 1, 0.36, 1) 320ms both;
+        animation: menu-item-in 420ms cubic-bezier(0.16, 1, 0.3, 1) 560ms both;
       }
 
       svg {
