@@ -1,36 +1,46 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { User } from '../interfaces/user';
-import { Select } from '@ngxs/store';
-import { AppSelectors } from '../store/app/app.selectors';
-import { Observable } from 'rxjs';
-import { ShortAddressPipe } from '../pipes/short-address.pipe';
-import { InvitationsAmountPipe } from '../pipes/invitations-amount.pipe';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, computed, inject, signal } from "@angular/core";
+import { Store } from "@ngxs/store";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { AppSelectors } from "../store/app/app.selectors";
+import { LoadLeaderboard } from "../store/app/app.actions";
+import { ShortAddressPipe } from "../pipes/short-address.pipe";
+import { ActivityFeedComponent } from "../activity/activity-feed.component";
+import { ApiService } from "../api/api.service";
+import { ReferrerRow } from "../api/api.types";
 
 @Component({
-  selector: 'leaderboard',
-  templateUrl: './leaderboard.component.html',
-  styleUrl: './leaderboard.component.scss',
+  selector: "app-leaderboard",
   standalone: true,
-  imports: [ShortAddressPipe, InvitationsAmountPipe, CommonModule],
+  imports: [ShortAddressPipe, ActivityFeedComponent],
+  templateUrl: "./leaderboard.component.html",
+  styleUrl: "./leaderboard.component.scss",
 })
 export class LeaderboardComponent implements OnInit {
-  @Select(AppSelectors.users)
-  users$!: Observable<User[]>;
+  private readonly store = inject(Store);
+  private readonly api = inject(ApiService);
 
-  @Select(AppSelectors.address)
-  address$!: Observable<string>;
+  readonly referrers = signal<ReferrerRow[]>([]);
 
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.innerWidth = window.innerWidth;
-  }
+  readonly top = toSignal(this.store.select(AppSelectors.leaderboard), {
+    initialValue: [],
+  });
+  readonly around = toSignal(this.store.select(AppSelectors.around), {
+    initialValue: [],
+  });
+  readonly address = toSignal(this.store.select(AppSelectors.address), {
+    initialValue: null,
+  });
 
-  innerWidth: number = 0;
-
-  constructor() {}
+  readonly isEmpty = computed(() => this.top().length === 0);
 
   ngOnInit(): void {
-    this.innerWidth = window.innerWidth;
+    this.store.dispatch(new LoadLeaderboard());
+    this.api.referrers().subscribe(({ referrers }) =>
+      this.referrers.set(referrers),
+    );
+  }
+
+  isYou(rowAddress: string): boolean {
+    return rowAddress.toLowerCase() === this.address()?.toLowerCase();
   }
 }

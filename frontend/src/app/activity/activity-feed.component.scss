@@ -1,0 +1,70 @@
+:host {
+  @apply w-full flex flex-col gap-y-6;
+
+  h2 {
+    @apply text-yellow uppercase text-lg;
+    letter-spacing: 0.1em;
+  }
+
+  .stats {
+    @apply grid grid-cols-2 md:grid-cols-4 gap-4 w-full;
+
+    &__tile {
+      @apply flex flex-col gap-y-1 px-4 py-3 border border-solid;
+      border-color: var(--qo-line);
+      background: rgb(248 239 0 / 0.03);
+    }
+
+    &__value {
+      @apply text-yellow font-bold text-xl;
+      font-variant-numeric: tabular-nums;
+    }
+
+    &__label {
+      @apply uppercase text-xs;
+      color: var(--qo-ink-muted);
+      letter-spacing: 0.1em;
+    }
+  }
+
+  .feed {
+    @apply flex flex-col gap-y-1 w-full list-none p-0 m-0;
+
+    &__row {
+      @apply grid items-center gap-x-3 px-4 py-3 border-b border-solid text-sm;
+      grid-template-columns: auto 1fr auto auto;
+      border-color: var(--qo-line);
+      color: var(--qo-pale);
+      animation: row-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+
+      @media (max-width: 767px) {
+        grid-template-columns: auto auto;
+        row-gap: 4px;
+      }
+    }
+
+    &__who {
+      @apply text-yellow;
+      font-variant-numeric: tabular-nums;
+    }
+
+    &__what {
+      color: var(--qo-ink-muted);
+    }
+
+    &__rarity {
+      @apply uppercase text-xs;
+      letter-spacing: 0.1em;
+
+      &[data-rarity="common"] { color: #b9c0c8; }
+      &[data-rarity="rare"] { color: #5fa8ff; }
+      &[data-rarity="epic"] { color: #c07dff; }
+      &[data-rarity="legendary"] { color: var(--qo-yellow); }
+    }
+
+    &__points {
+      @apply font-bold;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}

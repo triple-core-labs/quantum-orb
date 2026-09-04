@@ -37,7 +37,13 @@
     @apply absolute left-1/2 -translate-x-1/2 top-10 hidden md:flex justify-center items-center gap-x-8 text-pale text-sm;
 
     a {
-      @apply relative transition-colors hover:text-yellow;
+      @apply relative transition-colors;
+
+      @media (min-width: 768px) {
+        &:hover {
+          color: var(--qo-yellow);
+        }
+      }
 
       &:before {
         @apply absolute left-0 top-full w-0 bg-yellow h-[2px] transition-[width];
@@ -47,10 +53,50 @@
         @apply before:w-full;
       }
     }
+
+    @media (max-width: 767.98px) {
+      @apply fixed inset-0 left-0 top-0 w-screen h-screen flex flex-col justify-center items-center gap-y-10 bg-yellow translate-x-0 z-40;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-100%);
+      transition:
+        transform 560ms cubic-bezier(0.45, 0.05, 0.55, 0.95),
+        opacity 0s linear 560ms,
+        visibility 0s linear 560ms;
+
+      a {
+        @apply text-black text-3xl font-bold;
+        opacity: 0;
+        transform: translateY(18px);
+        transition:
+          opacity 0s linear 560ms,
+          transform 0s linear 560ms;
+
+        &:hover,
+        &:focus-visible {
+          @apply text-black opacity-60;
+        }
+
+        &:before {
+          @apply bg-black;
+        }
+      }
+    }
   }
 
   .action-button {
     @apply hidden md:block;
+
+    @media (max-width: 767.98px) {
+      @apply block fixed left-1/2 top-[calc(100dvh-7rem)] z-50 max-w-[calc(100vw-2rem)];
+      opacity: 0;
+      visibility: hidden;
+      transform: translate(-50%, 16px);
+      transition:
+        opacity 200ms ease,
+        transform 200ms ease,
+        visibility 0s linear 200ms;
+    }
 
     svg {
       @apply w-[1.5em] lg:hidden;
@@ -66,30 +112,68 @@
   }
 
   .menu-button {
-    @apply flex items-start pt-3 md:hidden;
+    @apply flex items-start justify-center pt-3 md:hidden relative z-50 w-[1.5em];
 
     svg {
       @apply w-[1.5em] fill-yellow;
+      transition:
+        opacity 280ms ease,
+        transform 460ms cubic-bezier(0.16, 1, 0.3, 1),
+        fill 280ms ease;
     }
 
     #close {
-      @apply hidden;
+      @apply absolute left-0 top-3 fill-black;
+      opacity: 0;
+      transform: rotate(-90deg) scale(0.6);
     }
   }
 
   &.active {
-    @apply max-md:h-[50%] max-md:bg-yellow/50;
+    @media (max-width: 767.98px) {
+      clip-path: none;
+
+      &:after {
+        display: none;
+      }
+    }
 
     nav {
-      @apply max-md:flex max-md:flex-col max-md:justify-end gap-y-8 max-md:top-1/2 max-md:-translate-y-1/2;
+      @media (max-width: 767.98px) {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        transition:
+          transform 520ms cubic-bezier(0.16, 1, 0.3, 1),
+          opacity 180ms ease-out,
+          visibility 0s;
 
-      a {
-        @apply max-md:text-black max-md:text-2xl hover:text-yellow;
+        a {
+          opacity: 1;
+          transform: translateY(0);
+          transition:
+            opacity 360ms ease-out,
+            transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+
+          @for $i from 1 through 6 {
+            &:nth-child(#{$i}) {
+              transition-delay: 220ms + ($i - 1) * 70ms;
+            }
+          }
+        }
       }
     }
 
     .action-button {
-      @apply max-md:block max-md:absolute max-md:left-1/2 max-md:-translate-x-1/2 max-md:bottom-4;
+      @media (max-width: 767.98px) {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, 0);
+        transition:
+          opacity 360ms ease-out 520ms,
+          transform 420ms cubic-bezier(0.16, 1, 0.3, 1) 520ms,
+          visibility 0s;
+      }
 
       svg {
         @apply hidden;
@@ -102,12 +186,75 @@
 
     .menu-button {
       #burger {
-        @apply hidden;
+        opacity: 0;
+        transform: rotate(90deg) scale(0.6);
       }
 
       #close {
-        @apply block;
+        opacity: 1;
+        transform: rotate(0) scale(1);
       }
     }
   }
 }
+
+:host {
+  animation: nav-in 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  .logo-link {
+    display: inline-flex;
+    transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+
+    &:hover {
+      transform: scale(1.06) rotate(-2deg);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--qo-focus);
+    }
+  }
+
+  .wallet-address {
+    color: var(--qo-yellow);
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+    animation: fade-in 320ms ease-out both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 767.98px) {
+  :host nav,
+  :host nav a,
+  :host .menu-button svg {
+    transform: none !important;
+    transition-duration: 180ms !important;
+    transition-delay: 0s !important;
+  }
+
+  :host.active .action-button {
+    animation-delay: 0s !important;
+    animation-duration: 180ms !important;
+  }
+}
+
+@keyframes nav-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+

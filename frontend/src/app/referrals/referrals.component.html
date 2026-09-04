@@ -1,30 +1,47 @@
-<h1 *ngIf="(referrals$ | async)?.length == 0; else referralsTable">
-  You don't have any referrals yet
-</h1>
-<ng-template #referralsTable>
-  <h1>Your referrals</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Position</th>
-        <th>Address</th>
-        <th>Shared Points</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let referral of referrals$ | async; index as i">
-        <td>{{ i + 1 }}</td>
-        <td>
-          <ng-container *ngIf="innerWidth > 768; else shortAddress"
-            >0x{{ referral.address }}</ng-container
-          >
-          <ng-template #shortAddress>{{
-            referral.address | shortAddress
-          }}</ng-template>
-        </td>
-        <td>{{ referral.shared_points }}</td>
-      </tr>
-    </tbody>
-  </table>
-</ng-template>
-<button class="action-button">copy invite link</button>
+<h1>Referrals</h1>
+
+@if (!address()) {
+  <p class="empty">Connect a wallet to get your invite link.</p>
+} @else {
+  <section class="invite">
+    <label for="invite-link">Your invite link</label>
+    <div class="invite__row">
+      <input id="invite-link" type="text" readonly [value]="inviteLink()" />
+      <button type="button" class="action-button" (click)="copy()">
+        {{ copied() ? "Copied" : "Copy" }}
+      </button>
+    </div>
+    <p class="invite__hint">
+      You earn 10% of the points everyone you invite opens.
+    </p>
+  </section>
+
+  @if (referrals().length) {
+    <p class="invite__total">
+      {{ referrals().length }} invited · {{ totalEarned() }} points earned
+    </p>
+    <table class="board">
+      <thead>
+        <tr>
+          <th scope="col">Player</th>
+          <th scope="col" class="board__points">Their points</th>
+          <th scope="col" class="board__points">You earned</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of referrals(); track row.address) {
+          <tr>
+            <td>
+              <span class="board__full">{{ row.address }}</span>
+              <span class="board__short">{{ row.address | shortAddress }}</span>
+            </td>
+            <td class="board__points">{{ row.points }}</td>
+            <td class="board__points">{{ row.earned }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p class="empty">Nobody has used your link yet.</p>
+  }
+}

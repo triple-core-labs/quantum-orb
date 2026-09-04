@@ -1,6 +1,6 @@
 # Byte-compiled / optimized / DLL files
 .DS_Store
-__pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -162,5 +162,9 @@ cython_debug/
 
 node_modules/
 .angular/
-# VS Code 
+# VS Code
 /.vscode/settings.json
+
+# macOS
+.DS_Store
+**/.DS_Store

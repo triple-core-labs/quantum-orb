@@ -1,5 +1,5 @@
 :host {
-  @apply flex flex-col justify-start items-center gap-y-48 w-full z-10;
+  @apply flex flex-col justify-start items-center gap-y-32 w-full z-10;
 
   .opening {
     @apply w-full flex flex-col md:flex-row justify-start gap-x-8 gap-y-16 md:justify-between items-center;
@@ -33,57 +33,61 @@
     @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-16 gap-y-32 px-0 md:px-16;
   }
 
-  .faq {
-    @apply flex flex-col w-full justify-start items-start text-pale gap-y-8;
+  app-activity-feed {
+    @apply w-full;
+  }
 
-    .caption {
-      @apply text-6xl font-bold;
-    }
+  .lineup,
+  .fair-teaser {
+    @apply w-full flex flex-col justify-start items-start gap-y-8 text-pale;
 
-    .questions {
-      @apply flex flex-col justify-start items-start w-full;
-
-      .question-wrapper {
-        @apply relative p-4 pr-12 flex flex-col justify-start items-start gap-y-2 transition-all bg-transparent w-full cursor-pointer;
-
-        &:hover {
-          @apply bg-yellow/10;
-        }
-
-        .question {
-          @apply text-lg leading-none md:text-2xl flex justify-start items-center gap-x-4;
-
-          span {
-            @apply text-yellow text-lg border-pale/30 border rounded-full text-center w-[40px] aspect-square flex justify-center items-center font-bold shrink-0;
-          }
-        }
-
-        .answer-wrapper {
-          @apply grid grid-rows-[0fr] transition-all;
-
-          .answer {
-            @apply overflow-hidden text-sm md:text-base pl-[56px];
-          }
-        }
-
-        svg {
-          @apply absolute right-4 top-1/2 -translate-y-1/2 fill-yellow w-[20px] transition-all;
-        }
-
-        &.active {
-          .question {
-            @apply text-yellow;
-          }
-
-          .answer-wrapper {
-            @apply grid-rows-[1fr];
-          }
-
-          svg {
-            @apply rotate-180;
-          }
-        }
-      }
+    h2 {
+      @apply text-2xl md:text-4xl font-bold uppercase text-pale;
+      letter-spacing: 0.02em;
     }
   }
+
+  .lineup {
+    &__grid {
+      @apply grid grid-cols-1 md:grid-cols-3 gap-6 w-full;
+    }
+
+    &__item {
+      @apply flex flex-col gap-y-2 px-6 py-6 border border-solid;
+      border-color: var(--qo-line);
+      background: rgb(248 239 0 / 0.03);
+    }
+
+    &__name {
+      @apply text-yellow uppercase text-lg font-bold;
+      letter-spacing: 0.1em;
+    }
+
+    &__price {
+      @apply text-pale text-2xl;
+      font-variant-numeric: tabular-nums;
+    }
+
+    &__range {
+      @apply text-sm text-pale;
+      font-variant-numeric: tabular-nums;
+    }
+
+    &__note {
+      @apply text-sm;
+      color: var(--qo-ink-muted);
+    }
+  }
+
+  .fair-teaser {
+    p {
+      @apply text-base md:w-3/4;
+      color: var(--qo-ink-muted);
+    }
+  }
+}
+
+:host .action-button {
+  @apply inline-flex items-center justify-center no-underline;
+  min-width: 176px;
 }

@@ -1,0 +1,28 @@
+:root {
+  --qo-yellow: #f8ef00;
+  --qo-yellow-dim: #c4bc00;
+  --qo-pale: #fcfdc7;
+  --qo-black: #000000;
+  --qo-surface: #0d0f08;
+  --qo-line: #2a2c18;
+  --qo-ink-muted: #8f9179;
+  --qo-danger: #ff4d4d;
+
+  --qo-space-1: 4px;
+  --qo-space-2: 8px;
+  --qo-space-3: 12px;
+  --qo-space-4: 16px;
+  --qo-space-5: 24px;
+  --qo-space-6: 32px;
+  --qo-space-7: 48px;
+
+  --qo-text-xs: 0.75rem;
+  --qo-text-sm: 0.875rem;
+  --qo-text-base: 1rem;
+  --qo-text-lg: 1.25rem;
+  --qo-text-xl: 1.75rem;
+  --qo-text-2xl: 2.5rem;
+
+  --qo-focus: 0 0 0 2px var(--qo-black), 0 0 0 4px var(--qo-yellow);
+  --qo-transition: 160ms ease;
+}

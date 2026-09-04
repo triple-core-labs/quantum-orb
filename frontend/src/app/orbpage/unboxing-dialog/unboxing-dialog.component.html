@@ -1,0 +1,49 @@
+@switch (status().kind) {
+  @case ("awaiting_signature") {
+    <div class="unboxing unboxing--waiting">
+      <h2>Confirm in your wallet</h2>
+      <p>Approve the transaction to open your {{ orbLabel() }} orb.</p>
+    </div>
+  }
+  @case ("committed") {
+    <div class="unboxing unboxing--opening">
+      <img src="assets/images/opening_orb.webp" alt="" aria-hidden="true" />
+      <h2>Opening your {{ orbLabel() }} orb</h2>
+      <p>The result is being sealed into a later block.</p>
+    </div>
+  }
+  @case ("revealing") {
+    <div class="unboxing unboxing--opening">
+      <img src="assets/images/opening_orb.webp" alt="" aria-hidden="true" />
+      <h2>Almost there</h2>
+    </div>
+  }
+  @case ("revealed") {
+    <div class="unboxing unboxing--revealed" [attr.data-rarity]="rarity().slug">
+      <p class="unboxing__rank">{{ rarity().name }}</p>
+      <p class="unboxing__points">{{ points() }}</p>
+      <p class="unboxing__label">quantum points</p>
+      <button type="button" class="action-button" (click)="dismiss()">
+        Collect
+      </button>
+    </div>
+  }
+  @case ("expired") {
+    <div class="unboxing unboxing--expired">
+      <h2>This orb timed out</h2>
+      <p>Nobody opened it in time, so your payment goes back to you.</p>
+      <button type="button" class="action-button" (click)="reclaim()">
+        Reclaim payment
+      </button>
+    </div>
+  }
+  @case ("error") {
+    <div class="unboxing unboxing--error">
+      <h2>That did not go through</h2>
+      <p>{{ message() }}</p>
+      <button type="button" class="action-button" (click)="dismiss()">
+        Close
+      </button>
+    </div>
+  }
+}

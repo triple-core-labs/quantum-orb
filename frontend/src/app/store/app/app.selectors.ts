@@ -1,8 +1,6 @@
-import { Selector } from '@ngxs/store';
-import { AppState } from './app.state';
-import { AppStateModel } from './app-state.model';
-import { BigNumber } from 'ethers';
-import { from, map, tap } from 'rxjs';
+import { Selector } from "@ngxs/store";
+import { AppState } from "./app.state";
+import { AppStateModel } from "./app-state.model";
 
 export class AppSelectors {
   @Selector([AppState])
@@ -11,15 +9,28 @@ export class AppSelectors {
   }
 
   @Selector([AppState])
-  static users({ users }: AppStateModel) {
-    return users.sort((a, b) => b.points - a.points);
+  static orbStatus({ orbStatus }: AppStateModel) {
+    return orbStatus;
   }
 
   @Selector([AppState])
-  static referrals({ address, users }: AppStateModel) {
-    return users
-      .filter((user) => user.parent === users.at(users.length - 1)?.address)
-      .sort((a, b) => b.shared_points - a.shared_points);
+  static leaderboard({ leaderboard }: AppStateModel) {
+    return leaderboard;
+  }
+
+  @Selector([AppState])
+  static around({ around }: AppStateModel) {
+    return around;
+  }
+
+  @Selector([AppState])
+  static referrals({ referrals }: AppStateModel) {
+    return referrals;
+  }
+
+  @Selector([AppState])
+  static referralCount({ referralCount }: AppStateModel) {
+    return referralCount;
   }
 
   @Selector([AppState])

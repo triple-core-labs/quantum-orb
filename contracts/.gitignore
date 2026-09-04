@@ -4,7 +4,6 @@ node_modules
 # Hardhat files
 /cache
 /artifacts
-/.openzeppelin
 
 # TypeChain files
 /typechain
@@ -14,5 +13,6 @@ node_modules
 /coverage
 /coverage.json
 
-package-lock.json
-.openzeppelin/
+# OpenZeppelin upgrade manifests: commit the ones for real networks so
+# upgrades validate against the deployed layout; ignore ephemeral local chains.
+.openzeppelin/unknown-*.json

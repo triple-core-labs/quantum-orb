@@ -1,9 +1,12 @@
-import { Contract } from 'ethers';
-import { User } from '../../interfaces/user';
+import { LeaderboardRow, Referral } from "../../api/api.types";
+import { OrbStatus } from "../orb/orb-status";
 
 export interface AppStateModel {
   address: string | null;
+  orbStatus: OrbStatus;
+  leaderboard: LeaderboardRow[];
+  around: LeaderboardRow[];
+  referrals: Referral[];
+  referralCount: number;
   points: number;
-  contract: Contract | null;
-  users: User[];
 }

@@ -1,0 +1,116 @@
+.unboxing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--qo-space-4);
+  text-align: center;
+  min-width: 280px;
+
+  img {
+    width: 180px;
+    animation: orb-pulse 2s ease-in-out infinite;
+  }
+
+  &__rank {
+    color: var(--qo-ink-muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: var(--qo-text-xs);
+    margin: 0;
+  }
+
+  &__points {
+    color: var(--qo-yellow);
+    font-size: var(--qo-text-2xl);
+    font-weight: 700;
+    line-height: 1;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__label {
+    color: var(--qo-pale);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: var(--qo-text-xs);
+    margin: 0;
+  }
+}
+
+@keyframes orb-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.06);
+    filter: brightness(1.35);
+  }
+}
+
+.unboxing {
+  animation: unboxing-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.unboxing--revealed .unboxing__points {
+  animation: points-pop 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes unboxing-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes points-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+    filter: blur(8px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.12);
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.unboxing--revealed {
+  --rarity: var(--qo-pale);
+
+  &[data-rarity="common"] {
+    --rarity: #b9c0c8;
+  }
+
+  &[data-rarity="rare"] {
+    --rarity: #5fa8ff;
+  }
+
+  &[data-rarity="epic"] {
+    --rarity: #c07dff;
+  }
+
+  &[data-rarity="legendary"] {
+    --rarity: var(--qo-yellow);
+  }
+
+  .unboxing__rank {
+    color: var(--rarity);
+    font-weight: 700;
+    letter-spacing: 0.22em;
+  }
+
+  .unboxing__points {
+    color: var(--rarity);
+    text-shadow: 0 0 24px color-mix(in srgb, var(--rarity) 55%, transparent);
+  }
+}

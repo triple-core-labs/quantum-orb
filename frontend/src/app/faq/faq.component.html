@@ -1,0 +1,26 @@
+<h1>FAQ</h1>
+
+<div class="questions">
+  @for (item of questions; track item.question; let i = $index) {
+    <div class="question-wrapper" [class.active]="open() === i">
+      <button
+        type="button"
+        class="question"
+        [attr.aria-expanded]="open() === i"
+        (click)="toggle(i)"
+      >
+        <span>{{ i + 1 }}</span>
+        {{ item.question }}
+      </button>
+      <div class="answer-wrapper">
+        <p class="answer">{{ item.answer }}</p>
+      </div>
+    </div>
+  }
+</div>
+
+<p class="faq-footer">
+  Still unsure how a result is decided? The
+  <a routerLink="/fairness">provably fair</a> page shows the odds straight from
+  the contract.
+</p>
