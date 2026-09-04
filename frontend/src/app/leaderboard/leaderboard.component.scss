@@ -9,7 +9,14 @@
     @apply w-full;
 
     th {
-      @apply uppercase text-yellow text-sm md:text-lg px-2;
+      @apply uppercase text-yellow text-sm md:text-lg px-2 text-left;
+    }
+
+
+
+    th.board__points,
+    td.board__points {
+      @apply text-right;
     }
 
     tr.active {
@@ -25,11 +32,26 @@
     }
 
     td {
-      @apply text-center text-pale px-2 py-4 text-sm;
+      @apply text-left text-pale px-2 py-4 text-sm;
 
-      &:first-of-type {
+      &.board__rank {
         @apply font-bold;
       }
     }
+  }
+}
+
+.board tbody tr {
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 28}ms;
+    }
+  }
+}
+
+:host {
+  .section-heading {
+    @apply w-full text-yellow uppercase text-lg mt-4;
+    letter-spacing: 0.1em;
   }
 }

@@ -164,3 +164,7 @@ node_modules/
 .angular/
 # VS Code
 /.vscode/settings.json
+
+# macOS
+.DS_Store
+**/.DS_Store

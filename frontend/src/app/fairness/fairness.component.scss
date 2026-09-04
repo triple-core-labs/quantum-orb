@@ -1,0 +1,48 @@
+:host {
+  @apply w-full flex flex-col gap-y-16 justify-start items-center;
+
+  h1 {
+    @apply w-full text-center text-pale uppercase max-md:text-4xl;
+  }
+
+  .fair-block {
+    @apply w-full flex flex-col gap-y-4;
+
+    h2 {
+      @apply text-yellow uppercase text-lg;
+      letter-spacing: 0.1em;
+    }
+  }
+
+  .fair-steps {
+    @apply flex flex-col gap-y-3 pl-6;
+    list-style: decimal;
+    color: var(--qo-pale);
+
+    li::marker {
+      color: var(--qo-yellow);
+      font-weight: 700;
+    }
+  }
+
+  .fair-note {
+    color: var(--qo-ink-muted);
+    @apply text-sm;
+  }
+
+  td[data-rarity="common"] {
+    color: #b9c0c8;
+  }
+
+  td[data-rarity="rare"] {
+    color: #5fa8ff;
+  }
+
+  td[data-rarity="epic"] {
+    color: #c07dff;
+  }
+
+  td[data-rarity="legendary"] {
+    color: var(--qo-yellow);
+  }
+}

@@ -1,57 +1,51 @@
 @use "@angular/material" as mat;
+@use "styles/tokens";
+@use "styles/typography";
 
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-$typography: mat.define-typography-config(
-  $font-family: "Tomorrow, 'Helvetica Neue', sans-serif",
-);
-
-$font-base-path: "./assets/fonts/";
-
-@include mat.all-component-typographies($typography);
-
-@font-face {
-  font-family: "Tomorrow";
-  src: url($font-base-path + "Tomorrow-Light.ttf");
-  font-weight: normal;
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: none;
 }
 
-@font-face {
-  font-family: "Tomorrow";
-  src: url($font-base-path + "Tomorrow-Bold.ttf");
-  font-weight: bold;
+body.menu-open {
+  overflow: hidden;
+}
+
+body.menu-open app-footer {
+  display: none;
 }
 
 html,
 body {
   @apply h-full w-full m-0 bg-black relative flex flex-col justify-start items-center;
-  font-family: Tomorrow, "Helvetica Neue", sans-serif !important;
+  font-family: Tomorrow, "Helvetica Neue", sans-serif;
+  color: var(--qo-pale);
 }
 
 @layer base {
+  * {
+    scrollbar-width: none;
+  }
+
   *::-webkit-scrollbar {
-    width: 7px;
-    height: 8px;
-  }
-
-  *::-webkit-scrollbar-track {
-    @apply bg-black;
-  }
-
-  *::-webkit-scrollbar-thumb {
-    @apply bg-yellow;
-  }
-
-  *::-webkit-scrollbar-thumb:hover {
-    @apply bg-yellow/80;
+    width: 0;
+    height: 0;
   }
 
   h1 {
     @apply text-6xl font-bold;
+  }
+
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--qo-focus);
   }
 
   .action-button {
@@ -73,7 +67,7 @@ body {
       @apply content-[''] w-[4px] h-0 absolute bg-red-500 right-0 bottom-0 transition-all;
     }
 
-    &:hover {
+    &:hover:not(:disabled) {
       @apply pr-8 before:h-full;
       clip-path: polygon(
         0 0,
@@ -90,96 +84,162 @@ body {
     }
 
     &:disabled {
-      @apply bg-neutral-400 pointer-events-none;
+      @apply bg-neutral-500 text-neutral-800 cursor-not-allowed;
     }
   }
-}
 
-html,
-body {
-  height: 100%;
-}
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-}
+  .board {
+    @apply w-full border-collapse;
+    font-variant-numeric: tabular-nums;
 
-.twitter-dialog {
-  .mat-mdc-dialog-surface {
-    @apply p-4 bg-black flex flex-col justify-start items-start gap-y-16 border-2 border-yellow rounded-none text-pale #{!important};
+    table-layout: fixed;
 
-    .caption {
-      @apply font-bold text-lg;
+    th.board__rank,
+    td.board__rank {
+      width: 64px;
+      text-align: center;
     }
 
-    .list {
-      @apply w-full flex flex-col justify-start items-start gap-y-2;
+    th.board__points,
+    td.board__points {
+      width: 160px;
+    }
 
-      a {
-        @apply text-yellow hover:underline;
+    @media (max-width: 768px) {
+      th.board__rank,
+      td.board__rank {
+        width: 36px;
+      }
+
+      th.board__points,
+      td.board__points {
+        width: 80px;
+      }
+
+      th,
+      td {
+        @apply px-2 text-xs;
       }
     }
 
-    .actions {
-      @apply w-full flex flex-col justify-start items-center gap-y-4;
+    tbody tr {
+      transition:
+        background var(--qo-transition),
+        color var(--qo-transition);
+      animation: row-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
-    mat-form-field {
-      @apply w-full #{!important};
-
-      .mat-mdc-text-field-wrapper {
-        @apply text-lg overflow-visible px-2 py-4 bg-yellow/10;
-
-        .mat-mdc-floating-label {
-          @apply text-yellow uppercase #{!important};
-        }
-
-        .mdc-line-ripple {
-          @apply hidden #{!important};
-        }
-      }
-
-      .mat-mdc-form-field-subscript-wrapper {
-        @apply hidden #{!important};
-      }
+    tbody tr:hover {
+      background: rgb(248 239 0 / 0.06);
     }
+
+    th,
+    td {
+      @apply px-4 py-3 text-left border-b border-solid;
+      border-color: var(--qo-line);
+    }
+
+    th {
+      @apply uppercase tracking-widest;
+      color: var(--qo-ink-muted);
+      font-size: var(--qo-text-xs);
+    }
+
+    &__points {
+      @apply text-right;
+    }
+
+    &__short {
+      @apply hidden max-md:inline;
+    }
+
+    &__full {
+      @apply inline max-md:hidden;
+    }
+  }
+
+  .empty {
+    @apply py-8;
+    color: var(--qo-ink-muted);
   }
 }
 
 .orb-dialog {
   .mat-mdc-dialog-surface {
     @apply p-4 bg-black flex flex-col justify-start items-center border-2 border-yellow rounded-none text-pale #{!important};
+  }
+}
 
-    .default-texts {
-      @apply flex flex-col justify-start items-center gap-y-4;
+@keyframes row-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-      .caption {
-        @apply font-bold text-lg flex justify-center w-full items-center gap-x-2;
-      }
+router-outlet + * {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  animation: page-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
 
-      p {
-        @apply text-pale;
-      }
-    }
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-    .win {
-      @apply flex flex-col justify-start items-center gap-y-8;
+@keyframes fade-in-only {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
-      h4 {
-        @apply font-bold text-xl flex justify-center w-full items-center;
-      }
+@media (prefers-reduced-motion: reduce) {
+  router-outlet + *,
+  app-navbar,
+  app-orb,
+  .board tbody tr,
+  .unboxing,
+  .unboxing--revealed .unboxing__points {
+    animation-name: fade-in-only !important;
+    animation-duration: 240ms !important;
+    animation-timing-function: ease-out !important;
+  }
 
-      p {
-        @apply text-pale;
+  .orb,
+  .orb .top,
+  .orb .bottom,
+  .logo-link {
+    transition-property: opacity, filter !important;
+  }
 
-        span {
-          @apply text-yellow flex justify-center items-center gap-x-1;
+  .orb:hover,
+  .orb:hover .top,
+  .orb:hover .bottom,
+  .logo-link:hover {
+    transform: none !important;
+  }
 
-          svg {
-            @apply h-[15px] w-[15px] fill-yellow;
-          }
-        }
-      }
-    }
+  .unboxing img {
+    animation: none !important;
+  }
+
+  html {
+    scroll-behavior: auto !important;
   }
 }

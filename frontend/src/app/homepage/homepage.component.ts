@@ -1,65 +1,59 @@
-import { Component } from '@angular/core';
-import { StepCardComponent } from './step-card/step-card.component';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, signal } from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { formatEther } from "ethers";
+import { StepCardComponent } from "./step-card/step-card.component";
+import { ActivityFeedComponent } from "../activity/activity-feed.component";
+import { ApiService } from "../api/api.service";
 
-interface Question {
-  question: string;
-  answer: string;
-  active: boolean;
+interface PointRange {
+  min: number;
+  max: number;
 }
 
 @Component({
-  selector: 'homepage',
-  templateUrl: './homepage.component.html',
-  styleUrl: './homepage.component.scss',
+  selector: "app-homepage",
+  templateUrl: "./homepage.component.html",
+  styleUrl: "./homepage.component.scss",
   standalone: true,
-  imports: [StepCardComponent, CommonModule],
+  imports: [StepCardComponent, RouterLink, ActivityFeedComponent],
 })
-export class HomepageComponent {
-  questions: Question[] = [
-    {
-      question: 'What is Quantum Orbs?',
-      answer:
-        'Quantum Orbs is a GambleFi project built on the layer 2 blockchain Blast. It offers users the opportunity to participate in a unique gaming experience by opening orbs and winning quantum points, which are essential for increasing your leaderboard ranking.',
-      active: false,
-    },
-    {
-      question: 'How does Quantum Orbs work?',
-      answer:
-        'Users participate by opening differen orbs some of which may contain 5 to 10 times more quantum points. We also offer a special Twitter/X orb that users can obtain by completing tasks on Twitter/X. By opening orbs users get quantum points and therefore rank up in the leaderboard.',
-      active: false,
-    },
-    {
-      question: 'Why is leaderboard important? How is profit shared?',
-      answer:
-        "We commit to sharing 50% of the drops received with our most active users through the leaderboard. Users' positions on the leaderboard determine their rewards. The higher the position, the more drops they receive. Additionally, our referral system grants 10% of the commission per transaction to the inviter for referrals.",
-      active: false,
-    },
-    {
-      question: 'Is Quantum Orbs secure?',
-      answer:
-        'Yes, Quantum Orbs prioritizes the security of user funds and personal information, implementing robust security measures.',
-      active: false,
-    },
-    {
-      question:
-        'What is the Blast blockchain, and why is it used for Quantum Orbs?',
-      answer:
-        'The Blast blockchain is a layer 2 scaling solution for Ethereum, providing faster and more cost-effective transactions. Quantum Orbs leverages Blast to enhance the user experience, reduce transaction fees, and improve scalability.',
-      active: false,
-    },
-    {
-      question: 'How can I contact customer support?',
-      answer:
-        'For any inquiries or assistance, please reach out to our customer support team at quantum-orbs@gmail.com.',
-      active: false,
-    },
-    {
-      question:
-        'Where can I find updates and announcements about Quantum Orbs?',
-      answer:
-        "Stay informed about the latest updates, announcements, and developments by following our official Twitter/X - @QuantumOrbs. You can also follow our developer's team - @egenston_ @fortisai @dmpahuba for more insights.",
-      active: false,
-    },
-  ];
+export class HomepageComponent implements OnInit {
+  private readonly api = inject(ApiService);
+
+  private readonly prices = signal<Record<number, bigint>>({});
+  private readonly ranges = signal<Record<number, PointRange>>({});
+
+  ngOnInit(): void {
+    this.api.config().subscribe((config) => {
+      if (config.orbs) {
+        const prices: Record<number, bigint> = {};
+        for (const [key, value] of Object.entries(config.orbs)) {
+          prices[Number(key)] = BigInt(value.price);
+        }
+        this.prices.set(prices);
+      }
+
+      if (config.pointRanges) {
+        const ranges: Record<number, PointRange> = {};
+        for (const [key, band] of Object.entries(config.pointRanges)) {
+          ranges[Number(key)] = {
+            min: Math.min(...band.min),
+            max: Math.max(...band.max),
+          };
+        }
+        this.ranges.set(ranges);
+      }
+    });
+  }
+
+  price(orbType: number): string {
+    const wei = this.prices()[orbType];
+    return wei === undefined ? "—" : formatEther(wei) + " ETH";
+  }
+
+  pointRange(orbType: number): string {
+    const range = this.ranges()[orbType];
+    if (!range) return "";
+    return `${range.min.toLocaleString("en-US")} – ${range.max.toLocaleString("en-US")} points`;
+  }
 }

@@ -5,8 +5,44 @@
     @apply w-full text-center text-pale uppercase max-md:text-4xl mb-4;
   }
 
-  h2{
-      @apply mt-6 mb-2;
+  h2 {
+    @apply mt-8 mb-2 text-yellow uppercase text-lg;
+    letter-spacing: 0.08em;
   }
 
+  p,
+  li {
+    max-width: 72ch;
+  }
+
+  ul {
+    @apply list-disc pl-6 flex flex-col gap-y-2 mb-2;
+  }
+
+  strong {
+    color: var(--qo-yellow);
+    font-weight: 700;
+  }
+
+  code {
+    @apply px-1;
+    background: rgb(248 239 0 / 0.1);
+    color: var(--qo-yellow);
+  }
+
+  a {
+    @apply underline;
+    color: var(--qo-yellow);
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--qo-focus);
+    }
+  }
+
+  .updated {
+    @apply uppercase text-xs mb-6;
+    color: var(--qo-ink-muted);
+    letter-spacing: 0.1em;
+  }
 }

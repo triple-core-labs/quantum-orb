@@ -1,0 +1,39 @@
+@if (stats(); as totals) {
+  <div class="stats">
+    <div class="stats__tile">
+      <span class="stats__value">{{ totals.orbsOpened }}</span>
+      <span class="stats__label">orbs opened</span>
+    </div>
+    <div class="stats__tile">
+      <span class="stats__value">{{ totals.pointsAwarded }}</span>
+      <span class="stats__label">points awarded</span>
+    </div>
+    <div class="stats__tile">
+      <span class="stats__value">{{ totals.players }}</span>
+      <span class="stats__label">players</span>
+    </div>
+    <div class="stats__tile">
+      <span class="stats__value">{{ totals.biggestOpen }}</span>
+      <span class="stats__label">biggest open</span>
+    </div>
+  </div>
+}
+
+<h2>Latest opens</h2>
+
+@if (opens().length) {
+  <ul class="feed">
+    @for (row of opens(); track row.txHash) {
+      <li class="feed__row">
+        <span class="feed__who">{{ row.address | shortAddress }}</span>
+        <span class="feed__what">opened {{ orbLabel(row.orbType) }}</span>
+        <span class="feed__rarity" [attr.data-rarity]="raritySlug(row.rank)">
+          {{ rarityName(row.rank) }}
+        </span>
+        <span class="feed__points">{{ row.points }}</span>
+      </li>
+    }
+  </ul>
+} @else {
+  <p class="empty">Nothing opened yet. The first orb is waiting.</p>
+}

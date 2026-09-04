@@ -1,35 +1,53 @@
-import { AfterViewInit, Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { Store } from '@ngxs/store';
-import { GetLastOpenedDaily, GetPoints } from '../../store/app/app.actions';
-import { CommonModule } from '@angular/common';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Component, computed, inject } from "@angular/core";
+import { MatDialogModule } from "@angular/material/dialog";
+import { Store } from "@ngxs/store";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { AppSelectors } from "../../store/app/app.selectors";
+import { DismissOutcome, ReclaimOrb } from "../../store/app/app.actions";
+import { ORB_LABELS, OrbType, rarityOf } from "../../contract/orb-type";
+import { OrbStatus } from "../../store/orb/orb-status";
 
 @Component({
-  selector: 'app-unboxing-dialog',
-  templateUrl: './unboxing-dialog.component.html',
-  styleUrl: './unboxing-dialog.component.scss',
+  selector: "app-unboxing-dialog",
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatProgressSpinnerModule],
+  imports: [MatDialogModule],
+  templateUrl: "./unboxing-dialog.component.html",
+  styleUrl: "./unboxing-dialog.component.scss",
 })
 export class UnboxingDialogComponent {
-  pointsWon: number | undefined;
-  isOrbOpened: boolean = false;
-  constructor(
-    private store: Store,
-    @Inject(MAT_DIALOG_DATA)
-    public data: any
-  ) {
-    this.openOrb();
+  private readonly store = inject(Store);
+
+  readonly status = toSignal(this.store.select(AppSelectors.orbStatus), {
+    initialValue: { kind: "idle" } as OrbStatus,
+  });
+
+  readonly orbLabel = computed(() => {
+    const status = this.status();
+    return "orbType" in status ? ORB_LABELS[status.orbType as OrbType] : "";
+  });
+
+  readonly rank = computed(() => {
+    const status = this.status();
+    return status.kind === "revealed" ? status.rank : 0;
+  });
+
+  readonly rarity = computed(() => rarityOf(this.rank()));
+
+  readonly points = computed(() => {
+    const status = this.status();
+    return status.kind === "revealed" ? status.points : 0;
+  });
+
+  readonly message = computed(() => {
+    const status = this.status();
+    return status.kind === "error" ? status.message : "";
+  });
+
+  reclaim(): void {
+    this.store.dispatch(new ReclaimOrb());
   }
 
-  async openOrb() {
-    if (!this.data) return;
-    return this.data.wait().then((response: any) => {
-      this.isOrbOpened = true;
-      this.pointsWon = parseInt(response.events[1].data, 16);
-      this.store.dispatch(new GetPoints());
-      this.store.dispatch(new GetLastOpenedDaily());
-    });
+  dismiss(): void {
+    this.store.dispatch(new DismissOutcome());
   }
 }

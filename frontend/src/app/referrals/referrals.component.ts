@@ -1,32 +1,46 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { Select } from '@ngxs/store';
-import { AppSelectors } from '../store/app/app.selectors';
-import { Observable } from 'rxjs';
-import { User } from '../interfaces/user';
-import { CommonModule } from '@angular/common';
-import { ShortAddressPipe } from '../pipes/short-address.pipe';
+import { Component, OnInit, computed, inject, signal } from "@angular/core";
+import { Store } from "@ngxs/store";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { AppSelectors } from "../store/app/app.selectors";
+import { LoadReferrals } from "../store/app/app.actions";
+import { ReferralLinkService } from "./referral-link.service";
+import { ShortAddressPipe } from "../pipes/short-address.pipe";
 
 @Component({
-  selector: 'app-referrals',
-  templateUrl: './referrals.component.html',
-  styleUrl: './referrals.component.scss',
+  selector: "app-referrals",
   standalone: true,
-  imports: [CommonModule, ShortAddressPipe],
+  imports: [ShortAddressPipe],
+  templateUrl: "./referrals.component.html",
+  styleUrl: "./referrals.component.scss",
 })
 export class ReferralsComponent implements OnInit {
-  // @Select(AppSelectors.referrals)
-  // referrals$!: Observable<User[]>;
+  private readonly store = inject(Store);
+  private readonly links = inject(ReferralLinkService);
 
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.innerWidth = window.innerWidth;
-  }
+  readonly referrals = toSignal(this.store.select(AppSelectors.referrals), {
+    initialValue: [],
+  });
+  readonly address = toSignal(this.store.select(AppSelectors.address), {
+    initialValue: null,
+  });
+  readonly copied = signal(false);
 
-  innerWidth: number = 0;
+  readonly inviteLink = computed(() => {
+    const address = this.address();
+    return address ? this.links.linkFor(address) : "";
+  });
 
-  constructor() {}
+  readonly totalEarned = computed(() =>
+    this.referrals().reduce((sum, row) => sum + row.earned, 0),
+  );
 
   ngOnInit(): void {
-    this.innerWidth = window.innerWidth;
+    this.store.dispatch(new LoadReferrals());
+  }
+
+  async copy(): Promise<void> {
+    await navigator.clipboard.writeText(this.inviteLink());
+    this.copied.set(true);
+    setTimeout(() => this.copied.set(false), 2000);
   }
 }

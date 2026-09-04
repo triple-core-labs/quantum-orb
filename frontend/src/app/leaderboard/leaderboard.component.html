@@ -1,29 +1,74 @@
 <h1>Leaderboard</h1>
-<table>
-  <thead>
-    <tr>
-      <th>Position</th>
-      <th>Address</th>
-      <!-- <th>Invitations</th> -->
-      <th>Points</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr
-      *ngFor="let user of leaderboard$ | async"
-      [ngClass]="{ active: user.address === (address$ | async) }"
-    >
-      <td>{{ user.rank }}</td>
-      <td>
-        <ng-container *ngIf="innerWidth > 768; else shortAddress">{{
-          user.address
-        }}</ng-container>
-        <ng-template #shortAddress>{{
-          user.address | shortAddress
-        }}</ng-template>
-      </td>
-      <!-- <td>{{ user | invitationsAmount }}</td> -->
-      <td>{{ user.points }}</td>
-    </tr>
-  </tbody>
-</table>
+
+<app-activity-feed />
+
+@if (isEmpty()) {
+  <p class="empty">No orbs opened yet. Be the first.</p>
+} @else {
+  <table class="board">
+    <thead>
+      <tr>
+        <th scope="col" class="board__rank">#</th>
+        <th scope="col">Player</th>
+        <th scope="col" class="board__points">Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of top(); track row.address) {
+        <tr [class.active]="isYou(row.address)">
+          <td class="board__rank">{{ row.rank }}</td>
+          <td>
+            <span class="board__full">{{ row.address }}</span>
+            <span class="board__short">{{ row.address | shortAddress }}</span>
+          </td>
+          <td class="board__points">{{ row.points }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (around().length) {
+    <h2>Around you</h2>
+    <table class="board">
+      <tbody>
+        @for (row of around(); track row.address) {
+          <tr [class.active]="isYou(row.address)">
+            <td class="board__rank">{{ row.rank }}</td>
+            <td>
+              <span class="board__full">{{ row.address }}</span>
+              <span class="board__short">{{ row.address | shortAddress }}</span>
+            </td>
+            <td class="board__points">{{ row.points }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+}
+
+@if (referrers().length) {
+  <h2 class="section-heading">Top inviters</h2>
+  <table class="board">
+    <thead>
+      <tr>
+        <th scope="col" class="board__rank">#</th>
+        <th scope="col">Player</th>
+        <th scope="col" class="board__points">Invited</th>
+        <th scope="col" class="board__points">Points earned</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of referrers(); track row.address; let i = $index) {
+        <tr [class.active]="isYou(row.address)">
+          <td class="board__rank">{{ i + 1 }}</td>
+          <td>
+            <span class="board__full">{{ row.address }}</span>
+            <span class="board__short">{{ row.address | shortAddress }}</span>
+          </td>
+          <td class="board__points">{{ row.invited }}</td>
+          <td class="board__points">{{ row.referralPoints }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

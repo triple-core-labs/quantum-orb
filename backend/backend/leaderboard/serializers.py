@@ -1,27 +1,18 @@
-from django.core.validators import RegexValidator
+import re
+
 from rest_framework import serializers
 
-from .models import BlastAddress
+ADDRESS_RE = re.compile(r"^0x[0-9a-fA-F]{40}$")
 
 
-class BlastAddressSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BlastAddress
-        fields = ["address", "points"]
+class AddressQuerySerializer(serializers.Serializer):
+    address = serializers.CharField(required=False, allow_blank=True)
 
-
-class AddressSerializer(serializers.Serializer):
-    address = serializers.CharField(
-        max_length=42,
-        validators=[
-            RegexValidator(
-                regex=r"^0x[0-9a-fA-F]{40}$",
-                message="Address must be a valid EVM address",
+    def validate_address(self, value: str) -> str:
+        if not value:
+            return ""
+        if not ADDRESS_RE.match(value):
+            raise serializers.ValidationError(
+                "Address must be a 0x-prefixed 40-character hex string"
             )
-        ],
-    )
-
-    def to_internal_value(self, data):
-        internal_value = super().to_internal_value(data)
-        internal_value["address"] = internal_value["address"].lower()
-        return internal_value
+        return value.lower()
