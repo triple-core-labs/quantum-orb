@@ -118,9 +118,8 @@ npm run build
 ```
 
 `CHAIN_ID`, `CHAIN_NAME`, `RPC_URL` and `BLOCK_EXPLORER_URL` may be set the same
-way and otherwise keep the Blast Sepolia values already in the file. The Pages
-workflow reads all five from repository variables, so a deploy needs no code
-change.
+way and otherwise keep the Blast Sepolia values already in the file, so pointing
+a build at a different host needs no code change.
 
 ## Tests
 
@@ -137,9 +136,10 @@ to report it back through the API. Those specs need the stack, so CI does not
 run them.
 
 Contract coverage sits at 99% of statements and 93% of branches, and
-`scripts/check-coverage.js` fails the build below the floor. Four GitHub Actions
-workflows run the same commands, plus an ABI drift guard that fails if the
-exported ABI and the committed copies disagree.
+`scripts/check-coverage.js` fails the build below the floor. Nothing runs these
+for you: the project deploys nowhere yet, so it carries no CI. Before a commit,
+`npm run export-abi` in `contracts` and `npm run sync-abi` in `frontend` keep the
+ABI copies from drifting apart.
 
 ## Environment
 
