@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { Action, State, StateContext } from "@ngxs/store";
-import { firstValueFrom } from "rxjs";
+import { catchError, firstValueFrom, of } from "rxjs";
 import { ApiService } from "../../api/api.service";
 import { ContractService } from "../../contract/contract.service";
 import { WalletService } from "../../wallet/wallet.service";
@@ -56,10 +56,11 @@ export class AppState {
   ) {
     ctx.patchState({ address });
 
-    const [pending, board, referrals] = await Promise.all([
+    const [pending, board, referrals, points] = await Promise.all([
       firstValueFrom(this.api.pending(address)),
       firstValueFrom(this.api.leaderboard(address)),
       firstValueFrom(this.api.referrals(address)),
+      this.pointsOf(address),
     ]);
 
     ctx.patchState({
@@ -67,6 +68,7 @@ export class AppState {
       around: board.around,
       referrals: referrals.referrals,
       referralCount: referrals.count,
+      points,
       orbStatus: pending.pending
         ? {
             kind: "committed",
@@ -101,6 +103,9 @@ export class AppState {
               points: outcome.points,
             }
           : { kind: "committed", orbType, commitBlock: receipt.blockNumber },
+        points: outcome
+          ? ctx.getState().points + outcome.points
+          : ctx.getState().points,
       });
     } catch (error) {
       ctx.patchState({
@@ -131,6 +136,15 @@ export class AppState {
     const address = ctx.getState().address ?? undefined;
     const board = await firstValueFrom(this.api.leaderboard(address));
     ctx.patchState({ leaderboard: board.top, around: board.around });
+
+    if (address) ctx.patchState({ points: await this.pointsOf(address) });
+  }
+
+  private async pointsOf(address: string): Promise<number> {
+    const player = await firstValueFrom(
+      this.api.player(address).pipe(catchError(() => of(null))),
+    );
+    return player?.points ?? 0;
   }
 
   @Action(LoadReferrals)

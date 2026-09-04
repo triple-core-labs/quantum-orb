@@ -156,6 +156,22 @@ the ones it cannot invent.
 - A committed orb resolves when its receipt returns or on the next page load.
   A socket would let a second tab update on its own.
 
+## The pages
+
+Captured against a local chain with a wallet connected, so the numbers are real
+ones the contract paid out rather than mockups.
+
+| Page                                                                                                               | Desktop                                                                                                      | Phone                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| **Home**<br><sub>The hero, the four steps, live totals and the latest opens.</sub>                                 | <img src="docs/screenshots/home-desktop.png" alt="Home on a desktop screen" width="520">                     | <img src="docs/screenshots/home-mobile.png" alt="Home on a phone" width="170">                     |
+| **Orbs**<br><sub>Where an orb is opened. The daily one counts down; the paid ones show their price.</sub>          | <img src="docs/screenshots/orbs-desktop.png" alt="Orbs on a desktop screen" width="520">                     | <img src="docs/screenshots/orbs-mobile.png" alt="Orbs on a phone" width="170">                     |
+| **Leaderboard**<br><sub>Live standings, global totals and the top inviters.</sub>                                  | <img src="docs/screenshots/leaderboard-desktop.png" alt="Leaderboard on a desktop screen" width="520">       | <img src="docs/screenshots/leaderboard-mobile.png" alt="Leaderboard on a phone" width="170">       |
+| **Referrals**<br><sub>Your invite link and what each person you brought has earned you.</sub>                      | <img src="docs/screenshots/referrals-desktop.png" alt="Referrals on a desktop screen" width="520">           | <img src="docs/screenshots/referrals-mobile.png" alt="Referrals on a phone" width="170">           |
+| **FAQ**<br><sub>Ten questions, answered without marketing.</sub>                                                   | <img src="docs/screenshots/faq-desktop.png" alt="FAQ on a desktop screen" width="520">                       | <img src="docs/screenshots/faq-mobile.png" alt="FAQ on a phone" width="170">                       |
+| **Provably fair**<br><sub>The published odds, and a verifier that recomputes any past result in the browser.</sub> | <img src="docs/screenshots/fairness-desktop.png" alt="Provably fair on a desktop screen" width="520">        | <img src="docs/screenshots/fairness-mobile.png" alt="Provably fair on a phone" width="170">        |
+| **Privacy policy**<br><sub>What the chain records, what the backend stores, and what neither of them holds.</sub>  | <img src="docs/screenshots/privacy-policy-desktop.png" alt="Privacy policy on a desktop screen" width="520"> | <img src="docs/screenshots/privacy-policy-mobile.png" alt="Privacy policy on a phone" width="170"> |
+| **Terms of use**<br><sub>Testnet terms: points are points, not currency.</sub>                                     | <img src="docs/screenshots/terms-of-use-desktop.png" alt="Terms of use on a desktop screen" width="520">     | <img src="docs/screenshots/terms-of-use-mobile.png" alt="Terms of use on a phone" width="170">     |
+
 ## Licence
 
 Testnet software. Points are points; they are not currency and they are not a
