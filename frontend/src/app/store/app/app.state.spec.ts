@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import { Store, provideStore } from "@ngxs/store";
-import { Observable, of } from "rxjs";
+import { Observable, of, throwError } from "rxjs";
 import { AppState } from "./app.state";
 import { OpenOrb, ReclaimOrb, RestoreSession } from "./app.actions";
 import { AppSelectors } from "./app.selectors";
@@ -8,6 +8,19 @@ import { ApiService } from "../../api/api.service";
 import { ContractService } from "../../contract/contract.service";
 import { WalletService } from "../../wallet/wallet.service";
 import { OrbType } from "../../contract/orb-type";
+
+function player(points: number) {
+  return {
+    address: "0xabc",
+    points,
+    referralPoints: 0,
+    rank: 1,
+    dailyStreak: 0,
+    isPartner: false,
+    referrer: null,
+    referralCount: 0,
+  };
+}
 
 function settled(dispatched: Observable<unknown>): Promise<void> {
   return new Promise((resolve) => dispatched.subscribe(() => resolve()));
@@ -28,12 +41,14 @@ describe("AppState", () => {
       "leaderboard",
       "pending",
       "referrals",
+      "player",
     ]);
     const wallet = jasmine.createSpyObj("WalletService", ["connect", "restore"]);
 
     api.leaderboard.and.returnValue(of({ top: [], around: [] }));
     api.pending.and.returnValue(of({ pending: null }));
     api.referrals.and.returnValue(of({ count: 0, referrals: [] }));
+    api.player.and.returnValue(of(player(0)));
 
     TestBed.configureTestingModule({
       providers: [
@@ -108,5 +123,32 @@ describe("AppState", () => {
   it("loads the leaderboard for the restored address", async () => {
     await settled(store.dispatch(new RestoreSession("0xabc")));
     expect(api.leaderboard).toHaveBeenCalledWith("0xabc");
+  });
+
+  it("shows the points the backend already knows about", async () => {
+    api.player.and.returnValue(of(player(272)));
+
+    await settled(store.dispatch(new RestoreSession("0xabc")));
+
+    expect(store.selectSnapshot(AppSelectors.points)).toBe(272);
+  });
+
+  it("settles on zero for a player the backend has never seen", async () => {
+    api.player.and.returnValue(throwError(() => new Error("404")));
+
+    await settled(store.dispatch(new RestoreSession("0xabc")));
+
+    expect(store.selectSnapshot(AppSelectors.points)).toBe(0);
+  });
+
+  it("adds a revealed orb to the running total", async () => {
+    api.player.and.returnValue(of(player(100)));
+    await settled(store.dispatch(new RestoreSession("0xabc")));
+
+    contract.openOrb.and.resolveTo({ logs: [] } as never);
+    contract.pointsFromReceipt.and.returnValue({ rank: 2, points: 50 });
+    await settled(store.dispatch(new OpenOrb(OrbType.GENESIS, 0n)));
+
+    expect(store.selectSnapshot(AppSelectors.points)).toBe(150);
   });
 });
